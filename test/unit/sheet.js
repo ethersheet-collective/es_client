@@ -2,7 +2,7 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define(function (require) {
 
 var Sheet = require('es_client/models/sheet');
-var ES = require('es_client/config');
+var config = require('es_client/config');
 var expect = require('chai').expect;
 var should = require('chai').should();
 
@@ -26,21 +26,21 @@ describe('Sheet', function(){
     });
 
     it('rowCount should get row count', function(){
-      sheet.rowCount().should.equal(ES.DEFAULT_ROW_COUNT);
+      sheet.rowCount().should.equal(config.DEFAULT_ROW_COUNT);
     });
 
     it('colCount should get column count', function(){
-      sheet.colCount().should.equal(ES.DEFAULT_COL_COUNT);
+      sheet.colCount().should.equal(config.DEFAULT_COL_COUNT);
     });
 
     it('rowIds should return an array of ids', function(){
       var row_ids = sheet.rowIds();
-      row_ids.length.should.equal(ES.DEFAULT_ROW_COUNT);
+      row_ids.length.should.equal(config.DEFAULT_ROW_COUNT);
     });
 
     it('colIds should return an array of ids', function(){
       var col_ids = sheet.colIds();
-      col_ids.length.should.equal(ES.DEFAULT_COL_COUNT);
+      col_ids.length.should.equal(config.DEFAULT_COL_COUNT);
     });
   });
 
@@ -99,7 +99,7 @@ describe('Sheet', function(){
     });
 
     it('should remove the deleted row\'s cells', function(){
-      sheet.getValue(row_id,col_id).should.equal(false);
+      expect(sheet.getValue(row_id,col_id)).to.be.undefined;
       expect(sheet.cells[row_id][col_id]).to.be.undefined;
     });
   });
@@ -135,7 +135,7 @@ describe('Sheet', function(){
     });
 
     it('should remove the deleted column\'s cells', function(){
-      sheet.getValue(row_id,col_id).should.equal(false);
+      expect(sheet.getValue(row_id,col_id)).to.be.undefined;
       expect(sheet.cells[row_id][col_id]).to.be.undefined;
     });
   });

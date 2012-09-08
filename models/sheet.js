@@ -88,8 +88,8 @@ return Backbone.Model.extend({
     return true;
   },
   getValue: function(row_id,col_id){
-    if(!this.rowExists(row_id)) return false;
-    if(!this.colExists(col_id)) return false;
+    if(!this.rowExists(row_id)) return undefined;
+    if(!this.colExists(col_id)) return undefined;
     if(_.isUndefined(this.cells[row_id])) return null; 
     return this.cells[row_id][col_id] || null;
   }
