@@ -61,23 +61,26 @@ return Backbone.Model.extend({
     if(row_pos === -1) return false;
     this.cells[row_id] = {};
     this.rows.splice(row_pos,1);
+    this.trigger('delete_row',row_id);
     return true;
   },
   insertCol: function(position){
     var new_id = uid();
     this.cols.splice(position,0,new_id);
+    this.trigger('insert_col',new_id);
     return new_id;
   },
   deleteCol: function(col_id){
     var es = this;
-    var col_pos = _.indexOf(this.cols,col_id);
+    var col_pos = _.indexOf(es.cols,col_id);
     if(col_pos === -1) return false;
-    _.each(this.rows,function(row_id){
+    _.each(es.rows,function(row_id){
       if(es.cells[row_id]){
          delete es.cells[row_id][col_id];
       }
     });
-    this.cols.splice(col_pos,1);
+    es.cols.splice(col_pos,1);
+    es.trigger('delete_col',col_id);
     return true;
   },
   updateCell: function(row_id,col_id,value){
@@ -85,13 +88,19 @@ return Backbone.Model.extend({
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
     this.cells[row_id][col_id] = value;
+    this.trigger('update_cell',row_id,col_id,value);
     return true;
   },
-  getValue: function(row_id,col_id){
+  getRawValue: function(row_id,col_id){
     if(!this.rowExists(row_id)) return undefined;
     if(!this.colExists(col_id)) return undefined;
     if(_.isUndefined(this.cells[row_id])) return null; 
     return this.cells[row_id][col_id] || null;
+  },
+  getValue: function(row_id, col_id){
+    var raw = this.getRawValue(row_id, col_id);
+    if(raw) return raw.toString();
+    return '';
   }
 });
 

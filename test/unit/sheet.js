@@ -9,7 +9,7 @@ var should = require('chai').should();
 describe('Sheet', function(){
   var sheet, events;
 
-  initializeSheet = function(){
+  var initializeSheet = function(){
     events = [];
     sheet = new Sheet();
     sheet.on('all',function(){
@@ -18,6 +18,10 @@ describe('Sheet', function(){
         args: Array.prototype.slice.call(arguments,1)
       });
     });
+  };
+  
+  var clearEvents = function(){
+    events = [];
   };
 
   describe('getters', function(){
@@ -45,17 +49,30 @@ describe('Sheet', function(){
   });
 
   describe('update cell', function(){
-    var row_id, col_id, cell_id;
+    var new_value,row_id, col_id, success;
 
     before(function(){
       initializeSheet();
+      new_value = 5;
       row_id = sheet.rowIds()[0];
       col_id = sheet.colIds()[0];
-      cell_id = sheet.updateCell(row_id,col_id,5);
+      success = sheet.updateCell(row_id,col_id,new_value);
+    });
+
+    it('should return true', function(){
+      success.should.equal(true);
     });
 
     it('should change the cell value', function(){
-      sheet.getValue(row_id,col_id).should.equal(5);
+      sheet.getValue(row_id,col_id).should.equal(new_value.toString());
+    });
+
+    it('should trigger an update_cell event',function(){
+      events.length.should.equal(1);
+      events[0].name.should.equal('update_cell');
+      events[0].args[0].should.equal(row_id);
+      events[0].args[1].should.equal(col_id);
+      events[0].args[2].should.equal(new_value);
     });
   });
 
@@ -91,6 +108,7 @@ describe('Sheet', function(){
       row_id = sheet.rowIds()[0];
       col_id = sheet.colIds()[0];
       cell_id = sheet.updateCell(row_id,col_id,5);
+      clearEvents(); 
       sheet.deleteRow(row_id);
     });
 
@@ -99,8 +117,14 @@ describe('Sheet', function(){
     });
 
     it('should remove the deleted row\'s cells', function(){
-      expect(sheet.getValue(row_id,col_id)).to.be.undefined;
-      expect(sheet.cells[row_id][col_id]).to.be.undefined;
+      expect(sheet.getValue(row_id,col_id)).to.equal('')
+      expect(sheet.getRawValue(row_id,col_id)).to.be.undefined;
+    });
+    
+    it('should trigger a delete row event',function(){
+      events.length.should.equal(1);
+      events[0].name.should.equal('delete_row');
+      events[0].args[0].should.equal(row_id);
     });
   });
 
@@ -115,7 +139,16 @@ describe('Sheet', function(){
 
     it('should put the col in the correct position', function(){
       sheet.colIds()[1].should.equal(new_col_id);
+    });
+
+    it('should move the original call over one position', function(){
       sheet.colIds()[2].should.equal(second_col_id);
+    });
+
+    it('should trigger an insert column event',function(){
+      events.length.should.equal(1);
+      events[0].name.should.equal('insert_col');
+      events[0].args[0].should.equal(new_col_id);
     });
   });
 
@@ -127,6 +160,7 @@ describe('Sheet', function(){
       row_id = sheet.rowIds()[0];
       col_id = sheet.colIds()[0];
       cell_id = sheet.updateCell(row_id,col_id,5);
+      clearEvents(); 
       sheet.deleteCol(col_id);
     });
 
@@ -135,8 +169,14 @@ describe('Sheet', function(){
     });
 
     it('should remove the deleted column\'s cells', function(){
-      expect(sheet.getValue(row_id,col_id)).to.be.undefined;
-      expect(sheet.cells[row_id][col_id]).to.be.undefined;
+      expect(sheet.getValue(row_id,col_id)).to.equal('');
+      expect(sheet.getRawValue(row_id,col_id)).to.be.undefined;
+    });
+    
+    it('should trigger a delete column event',function(){
+      events.length.should.equal(1);
+      events[0].name.should.equal('delete_col');
+      events[0].args[0].should.equal(col_id);
     });
   });
 
