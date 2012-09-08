@@ -1,7 +1,8 @@
-<% for(var i=0; i<num_row; i++){ %>
+<% var _ = require('underscore'); %>
+<% _.each(sheet.rowIds(), function(row_id){ %>
   <tr class="table-row">
-    <% for(var j=0; j<num_col; j++){ %>
-      <td class="table-cell"></td>
-    <% } %>
+    <% _.each(sheet.colIds(), function(col_id){ %>
+      <td class="table-cell"><%= sheet.getValue(row_id,col_id) %></td>
+    <% }) %>
   </tr>
-<% } %>
+<% }) %>
