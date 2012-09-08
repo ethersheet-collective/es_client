@@ -1,7 +1,8 @@
 {
   "name": "es_client",
-  "version": "0.0.0",
-  "description": "ERROR: No README.md file found!",
+  "author": "tedsuo, cooperq",
+  "version": "0.0.1",
+  "description": "Ethersheet Client",
   "main-browser": "boot.js",
   "dependencies": {
     "underscore": ">=1.3",
