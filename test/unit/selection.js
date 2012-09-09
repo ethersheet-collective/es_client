@@ -31,7 +31,17 @@ describe('Selection', function(){
   var clearEvents = function(){
     events = [];
   };
-
+  describe('clear selection', function(){
+    before(function(){
+      initializeSelection();
+      selection.addCell(sheet,row_id,col_id);
+      selection.clear();
+    });
+    it('should be empty', function(){
+      selection.getCells().length.should.equal(0);
+      selection.getSheets().should.be.empty();
+    });
+  });
   describe('add cell',function(){
 
     before(function(){

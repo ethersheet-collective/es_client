@@ -9,8 +9,12 @@ var Backbone = require('backbone');
 var t = require('es_client/templates');
 
 return Backbone.View.extend({
+  events: {
+    'click .es-table-cell': 'selectCell'
+  },
   initialize: function(o){
     this.setSheet(o.sheet || null);
+    this.setSelections(o.selections || null);
     this.num_row = this.sheet.rowCount();
     this.num_col = this.sheet.colCount();
   },
@@ -27,6 +31,15 @@ return Backbone.View.extend({
     if(!this.sheet) return;
     this.sheet.off(null,null,this);
     this.sheet = undefined;
+  },
+  setSelections: function(selections){
+    this.unsetSelections();
+    this.selections = selections;
+  },
+  unsetSelections: function(){
+    if(!this.selections) return;
+    this.selections.off(null,null,this);
+    this.selections = undefined;
   },
   initializeElements: function(){
     this.$table = $('#data-table-'+this.getId(),$el);
@@ -57,6 +70,13 @@ return Backbone.View.extend({
   },
   swapElement: function(){
     this.$el.html(this._$el);
+  },
+  selectCell: function(e){
+    var s = this.selections.getLocal();
+    var data = $(e.currentTarget).data();
+    console.log(data);
+    s.clear();
+    s.addCell(this.sheet,data.row_id,data.col_id);
   },
   destroy: function(){
     this.remove();

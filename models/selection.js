@@ -26,6 +26,12 @@ return Backbone.Model.extend({
     this.trigger('add_cell',cell);
   },
 
+  clear: function(should_emit){
+    this.cells = [];
+    this.removeSheets();
+    if(should_emit) this.trigger('change');
+  },
+
   getCells: function(){
     return this.cells;
   },
@@ -38,6 +44,19 @@ return Backbone.Model.extend({
     sheet.on('destroy',this.removeSheet,this);
     this.sheets[sheet.id] = sheet;
     return true;
+  },
+  removeSheets: function(){
+    s = this;
+    for(var id in this.sheets){
+      console.log('trying to remove sheet ' + id);
+      s.removeSheet(id);
+    }
+  },
+  removeSheet: function(sheet_id){
+    console.log('removing sheet ' + sheet_id);
+    if(!this.sheets[sheet_id]) return false;
+    this.sheets[sheet_id].off(null,null,this);
+    delete this.sheets[sheet_id];
   },
 
   updateCell: function(){
