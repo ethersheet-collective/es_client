@@ -47,11 +47,11 @@ describe('Sheet', function(){
       col_ids.length.should.equal(config.DEFAULT_COL_COUNT);
     });
     it('colAt should return the id of the column at index', function(){
-      col_id = sheet.colIds()[0];
+      var col_id = sheet.colIds()[0];
       sheet.colAt(0).should.equal(col_id);
     });
     it('rowAt should return the id of the row at index', function(){
-      row_id = sheet.rowIds()[0];
+      var row_id = sheet.rowIds()[0];
       sheet.rowAt(0).should.equal(row_id);
     });
   });
@@ -78,9 +78,11 @@ describe('Sheet', function(){
     it('should trigger an update_cell event',function(){
       events.length.should.equal(1);
       events[0].name.should.equal('update_cell');
-      events[0].args[0].should.equal(row_id);
-      events[0].args[1].should.equal(col_id);
-      events[0].args[2].should.equal(new_value);
+      var cell = events[0].args[0];
+      cell.row_id.should.equal(row_id);
+      cell.col_id.should.equal(col_id);
+      cell.value.should.equal(new_value);
+      cell.sheet_id.should.equal(sheet.id);
     });
   });
 
@@ -104,7 +106,8 @@ describe('Sheet', function(){
     it('should trigger an insert_row event',function(){
       events.length.should.equal(1);
       events[0].name.should.equal('insert_row');
-      events[0].args[0].should.equal(new_row_id);
+      events[0].args[0].row_id.should.equal(new_row_id);
+      events[0].args[0].sheet_id.should.equal(sheet.id);
     });
   });
 
@@ -132,7 +135,8 @@ describe('Sheet', function(){
     it('should trigger a delete row event',function(){
       events.length.should.equal(1);
       events[0].name.should.equal('delete_row');
-      events[0].args[0].should.equal(row_id);
+      events[0].args[0].row_id.should.equal(row_id);
+      events[0].args[0].sheet_id.should.equal(sheet.id);
     });
   });
 
@@ -156,7 +160,8 @@ describe('Sheet', function(){
     it('should trigger an insert column event',function(){
       events.length.should.equal(1);
       events[0].name.should.equal('insert_col');
-      events[0].args[0].should.equal(new_col_id);
+      events[0].args[0].col_id.should.equal(new_col_id);
+      events[0].args[0].sheet_id.should.equal(sheet.id);
     });
   });
 
@@ -184,7 +189,8 @@ describe('Sheet', function(){
     it('should trigger a delete column event',function(){
       events.length.should.equal(1);
       events[0].name.should.equal('delete_col');
-      events[0].args[0].should.equal(col_id);
+      events[0].args[0].col_id.should.equal(col_id);
+      events[0].args[0].sheet_id.should.equal(sheet.id);
     });
   });
 

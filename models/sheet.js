@@ -11,6 +11,7 @@ var uid = require('es_client/helpers/uid');
 
 return Backbone.Model.extend({
   initialize: function(){
+    this.set({id:uid()},{silent:true});
     this.initializeRows();
     this.initializeCols();
     this.initializeCells();
@@ -59,7 +60,10 @@ return Backbone.Model.extend({
   insertRow: function(position){
     var new_id = uid();
     this.rows.splice(position,0,new_id);
-    this.trigger('insert_row',new_id);
+    this.trigger('insert_row',{
+      row_id:new_id,
+      sheet_id:this.id
+    });
     return new_id;
   },
   deleteRow: function(row_id){
@@ -67,13 +71,19 @@ return Backbone.Model.extend({
     if(row_pos === -1) return false;
     this.cells[row_id] = {};
     this.rows.splice(row_pos,1);
-    this.trigger('delete_row',row_id);
+    this.trigger('delete_row',{
+      row_id:row_id,
+      sheet_id:this.id
+    });
     return true;
   },
   insertCol: function(position){
     var new_id = uid();
     this.cols.splice(position,0,new_id);
-    this.trigger('insert_col',new_id);
+    this.trigger('insert_col',{
+      col_id:new_id,
+      sheet_id:this.id
+    });
     return new_id;
   },
   deleteCol: function(col_id){
@@ -86,7 +96,10 @@ return Backbone.Model.extend({
       }
     });
     es.cols.splice(col_pos,1);
-    es.trigger('delete_col',col_id);
+    es.trigger('delete_col',{
+      col_id:col_id,
+      sheet_id:this.id
+    });
     return true;
   },
   updateCell: function(row_id,col_id,value){
@@ -94,7 +107,12 @@ return Backbone.Model.extend({
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
     this.cells[row_id][col_id] = value;
-    this.trigger('update_cell',row_id,col_id,value);
+    this.trigger('update_cell',{
+      sheet_id:this.id,
+      row_id:row_id,
+      col_id:col_id,
+      value:value
+    });
     return true;
   },
   getRawValue: function(row_id,col_id){
