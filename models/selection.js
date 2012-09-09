@@ -46,17 +46,11 @@ return Backbone.Model.extend({
     return true;
   },
   removeSheets: function(){
-    s = this;
+    var s = this;
     for(var id in this.sheets){
       console.log('trying to remove sheet ' + id);
       s.removeSheet(id);
     }
-  },
-  removeSheet: function(sheet_id){
-    console.log('removing sheet ' + sheet_id);
-    if(!this.sheets[sheet_id]) return false;
-    this.sheets[sheet_id].off(null,null,this);
-    delete this.sheets[sheet_id];
   },
 
   updateCell: function(){
@@ -91,23 +85,27 @@ return Backbone.Model.extend({
     if(changed) this.trigger('change');
   },
 
-  removeSheet: function(o){
-    if(!this.sheets[o.id]) return;
+  removeSheet: function(sheet_id){
+    /*polymorph incase we got an object instead of an id from backbone by calling sheet.destroy()*/
+    if(sheet_id.id) sheet_id = sheet_id.id
+    console.log('removing sheet' + sheet_id);
+    if(!this.sheets[sheet_id]) return;
 
     var sel = this;
     var changed = false;
     
     this.cells = _.filter(this.cells,function(cell,index){
-      if(cell.sheet_id == o.id){
+      if(cell.sheet_id == sheet_id){
         changed = true;
         return false;
       }
       return true;
     });
 
-    this.sheets[o.id].off(null,null,this);
-    delete this.sheets[o.id];
+    this.sheets[sheet_id].off(null,null,this);
+    delete this.sheets[sheet_id];
 
+    console.log('removed sheet' + sheet_id);
     if(changed) this.trigger('change');
   },
 

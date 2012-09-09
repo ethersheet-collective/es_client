@@ -15,7 +15,7 @@ var $container = $('<div id="ethersheet-container" style="display:none;"></div')
 
 describe('TableView Interaction', function(){
 
-  var table, $el, sheet, user, selection;
+  var table, $el, sheet, user, selections;
 
   var initializeTable = function(){
     $container.empty()
@@ -48,4 +48,4 @@ describe('TableView Interaction', function(){
   });
 });
 
-});
+})

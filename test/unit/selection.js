@@ -39,7 +39,7 @@ describe('Selection', function(){
     });
     it('should be empty', function(){
       selection.getCells().length.should.equal(0);
-      selection.getSheets().should.be.empty();
+      selection.getSheets().should.be.empty;
     });
   });
   describe('add cell',function(){
