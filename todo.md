@@ -1,9 +1,5 @@
 # To Do List
 
-* deleted columns should be removed
-* deleted rows should be removed
-* added columns should be displayed
-* added rows should be displayed
 * cells should calculate simple forumlas
 * formulas should be able to reference other cells
 * formulas should have definable functions
@@ -23,3 +19,7 @@
 ## Done tasks
 
 * cell values should appear when typed in
+* deleted columns should be removed
+* deleted rows should be removed
+* added columns should be displayed
+* added rows should be displayed

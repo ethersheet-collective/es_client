@@ -50,6 +50,12 @@ return Backbone.Model.extend({
   colExists: function(col_id){
     return _.include(this.cols,col_id);
   },
+  rowAt: function(index){
+    return this.rows[index];
+  },
+  colAt: function(index){
+    return this.cols[index];
+  },
   insertRow: function(position){
     var new_id = uid();
     this.rows.splice(position,0,new_id);

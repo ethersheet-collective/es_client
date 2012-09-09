@@ -46,6 +46,14 @@ describe('Sheet', function(){
       var col_ids = sheet.colIds();
       col_ids.length.should.equal(config.DEFAULT_COL_COUNT);
     });
+    it('colAt should return the id of the column at index', function(){
+      col_id = sheet.colIds()[0];
+      sheet.colAt(0).should.equal(col_id);
+    });
+    it('rowAt should return the id of the row at index', function(){
+      row_id = sheet.rowIds()[0];
+      sheet.rowAt(0).should.equal(row_id);
+    });
   });
 
   describe('update cell', function(){

@@ -38,11 +38,11 @@ describe('TableView', function(){
 
     it('should have the right number of cells', function(){
       var expected_cell_count = ES.DEFAULT_ROW_COUNT * ES.DEFAULT_COL_COUNT;
-      $('#ethersheet .table-cell').length.should.equal(expected_cell_count);
+      $('#ethersheet .es-table-cell').length.should.equal(expected_cell_count);
     });
 
     it('should have the right number of rows', function(){
-      $('#ethersheet .table-row').length.should.equal(ES.DEFAULT_ROW_COUNT);
+      $('#ethersheet .es-table-row').length.should.equal(ES.DEFAULT_ROW_COUNT);
     });
 
     it('should have the right column headers', function(){
@@ -62,19 +62,139 @@ describe('TableView', function(){
   });
   
   describe('should respond to sheet events', function(){
-    var value, row_id, col_id;
+    var row_id, col_id, value;
 
-    before(function(){
+    beforeEach(function(){
       initializeTable();
       value = 5;
-      row_id = sheet.rowIds()[0];
-      col_id = sheet.colIds()[0];
-      sheet.updateCell(row_id,col_id,value);
+      row_id = sheet.rowAt(0);
+      col_id = sheet.colAt(0);
+    });
+    describe('on update cell', function(){
+      it('should draw a cell when we update the sheet\'s cell value',function(){
+        sheet.updateCell(row_id,col_id,value);
+        $('.es-table-cell',$el).first().text().should.equal(value.toString()); 
+      });
+    }); 
+    describe('on insert_col', function(){
+      it('should draw a new column', function(){
+        var original_col_count = $('.es-table-row',$el)
+                              .first()
+                              .find('.es-table-cell')
+                              .length;
+        sheet.insertCol(0);
+        var new_col_count = $('.es-table-row',$el)
+                              .first()
+                              .find('.es-table-cell')
+                              .length;
+        new_col_count.should.equal(original_col_count + 1);
+      });
+
+      it('should draw values in correct location', function(){
+        sheet.updateCell(row_id,col_id,value);
+        sheet.insertCol(0);
+        
+        $('.es-table-cell',$el)
+        .eq(0)
+        .text()
+        .should.equal(''); 
+        
+        $('.es-table-cell',$el)
+        .eq(1)
+        .text()
+        .should.equal(value.toString()); 
+      });
+    });
+    describe('on delete_col', function(){
+      it('should remove a column', function(){
+        var original_col_count = $('.es-table-row',$el)
+                              .first()
+                              .find('.es-table-cell')
+                              .length;
+        sheet.deleteCol(sheet.colAt(0));
+        var new_col_count = $('.es-table-row',$el)
+                              .first()
+                              .find('.es-table-cell')
+                              .length;
+        new_col_count.should.equal(original_col_count - 1);
+      });
+
+      it('should draw values in correct location', function(){
+        row_id = sheet.rowAt(0);
+        col_id = sheet.colAt(1);
+        sheet.updateCell(row_id,col_id,value);
+        sheet.deleteCol(sheet.colAt(0));
+        
+        $('.es-table-cell',$el)
+        .eq(0)
+        .text()
+        .should.equal(value.toString()); 
+        
+        $('.es-table-cell',$el)
+        .eq(1)
+        .text()
+        .should.equal(''); 
+      });
+    });
+    describe('on insert_row', function(){
+      it('should draw a new row', function(){
+        var original_row_count = $('.es-table-row',$el)
+                              .length;
+        sheet.insertRow(0);
+        var new_row_count = $('.es-table-row',$el)
+                              .length;
+        new_row_count.should.equal(original_row_count + 1);
+      });
+
+      it('should draw values in correct location', function(){
+        sheet.updateCell(row_id,col_id,value);
+        sheet.insertRow(0);
+        
+        $('.es-table-cell',$el)
+        .eq(0)
+        .text()
+        .should.equal(''); 
+        
+        $('.es-table-row',$el)
+        .eq(1)
+        .find('.es-table-cell')
+        .eq(0)
+        .text()
+        .should.equal(value.toString()); 
+      });
+    });
+    
+    describe('on delete_row', function(){
+      it('should draw a new row', function(){
+        var original_row_count = $('.es-table-row',$el)
+                              .length;
+        sheet.deleteRow(sheet.rowAt(0));
+        var new_row_count = $('.es-table-row',$el)
+                              .length;
+        new_row_count.should.equal(original_row_count - 1);
+      });
+
+      it('should draw values in correct location', function(){
+        row_id = sheet.rowAt(1);
+        col_id = sheet.colAt(0);
+        sheet.updateCell(row_id,col_id,value);
+        sheet.deleteRow(sheet.rowAt(0));
+        
+        $('.es-table-cell',$el)
+        .eq(0)
+        .text()
+        .should.equal(value.toString()); 
+        
+        $('.es-table-row',$el)
+        .eq(1)
+        .find('.es-table-cell')
+        .eq(0)
+        .text()
+        .should.equal(''); 
+      });
     });
 
-    it('should draw a cell when we update the sheet\'s cell value',function(){
-      $('td',$el).first().text().should.equal(value.toString()); 
-    });
+
   });
 });
 

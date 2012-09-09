@@ -13,11 +13,14 @@ return Backbone.View.extend({
     this.setSheet(o.sheet || null);
     this.num_row = this.sheet.rowCount();
     this.num_col = this.sheet.colCount();
-    this.elements_initialized = false;
   },
   setSheet: function(sheet){
     this.unsetSheet();
-    sheet.on('update_cell',this.renderTable,this);
+    sheet.on('update_cell',this.render,this);
+    sheet.on('insert_col',this.render,this);
+    sheet.on('delete_col',this.render,this);
+    sheet.on('insert_row',this.render,this);
+    sheet.on('delete_row',this.render,this);
     this.sheet = sheet;
   },
   unsetSheet: function(){
@@ -25,29 +28,35 @@ return Backbone.View.extend({
     this.sheet.off(null,null,this);
     this.sheet = undefined;
   },
-  render: function(){
-    this.initializeElements();
-    this.renderTable(); 
-    return this;
-  },
   initializeElements: function(){
-    if(this.elements_initialized) return;
-    this.$el.html(t.sheet_table({id:this.getId()}));
-    this.$table = $('#data-table-'+this.getId());
-    this.$table_col_headers = $('#column-headers-'+this.getId());
-    this.$table_row_headers = $('#row-headers-'+this.getId());
-    this.elements_initialized = true;
+    this.$table = $('#data-table-'+this.getId(),$el);
+    this.$table_col_headers = $('#column-headers-'+this.getId(),$el);
+    this.$table_row_headers = $('#row-headers-'+this.getId(),$el);
   },
   getId: function(){
     return this.sheet.cid;
   },
-  renderTable: function(){
-    var html = t.table({sheet:this.sheet});
-    this.$table.html(html);
-    html = t.table_col_headers({num_col:this.num_col});
-    this.$table_col_headers.html(html);
-    html = t.table_row_headers({num_row:this.num_row});
-    this.$table_row_headers.html(html);
+  render: function(){
+    
+    this._$el = $('<div>');
+    
+    var $el = this._$el;
+
+    $el.html(t.sheet_table({id:this.getId()}));
+
+    $('#data-table-'+this.getId(),$el)
+      .html(t.table({sheet:this.sheet}));
+    $('#column-headers-'+this.getId(),$el)
+      .html(t.table_col_headers({num_col:this.num_col}));
+    $('#row-headers-'+this.getId(),$el)
+      .html(t.table_row_headers({num_row:this.num_row}));
+
+    this.swapElement();
+    
+    return this;
+  },
+  swapElement: function(){
+    this.$el.html(this._$el);
   },
   destroy: function(){
     this.remove();

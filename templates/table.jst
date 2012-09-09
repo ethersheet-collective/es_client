@@ -1,8 +1,8 @@
 <% var _ = require('underscore'); %>
 <% _.each(sheet.rowIds(), function(row_id){ %>
-  <tr class="table-row">
+  <tr class="es-table-row">
     <% _.each(sheet.colIds(), function(col_id){ %>
-      <td class="table-cell"><%= sheet.getValue(row_id,col_id) %></td>
+      <td class="es-table-cell"><%= sheet.getValue(row_id,col_id) %></td>
     <% }) %>
   </tr>
 <% }) %>
