@@ -4,42 +4,38 @@ define( function(require){
 /*
     TableView
 */
-var $ = require('jquery');
-var Backbone = require('backbone');
-var t = require('es_client/templates');
 
-return Backbone.View.extend({
+var $ = require('jquery');
+var t = require('es_client/templates');
+var RefBinder = require('ref-binder');
+var View = require('backbone').View;
+
+return View.extend({
   events: {
     'click .es-table-cell': 'selectCell'
   },
   initialize: function(o){
+    this.ref = new RefBinder(this);
     this.setSheet(o.sheet || null);
     this.setSelections(o.selections || null);
-    this.num_row = this.sheet.rowCount();
-    this.num_col = this.sheet.colCount();
   },
   setSheet: function(sheet){
-    this.unsetSheet();
-    sheet.on('update_cell',this.render,this);
-    sheet.on('insert_col',this.render,this);
-    sheet.on('delete_col',this.render,this);
-    sheet.on('insert_row',this.render,this);
-    sheet.on('delete_row',this.render,this);
-    this.sheet = sheet;
+    this.ref.set('sheet',sheet,{
+      'update_cell': 'render',
+      'insert_col': 'render',
+      'delete_col': 'render',
+      'insert_row': 'render',
+      'delete_row': 'render'
+    });
   },
-  unsetSheet: function(){
-    if(!this.sheet) return;
-    this.sheet.off(null,null,this);
-    this.sheet = undefined;
+  getSheet: function(){
+    return this.ref.get('sheet');
   },
   setSelections: function(selections){
-    this.unsetSelections();
     this.selections = selections;
   },
-  unsetSelections: function(){
-    if(!this.selections) return;
-    this.selections.off(null,null,this);
-    this.selections = undefined;
+  getSelections: function(){
+    return this.selections;
   },
   initializeElements: function(){
     this.$table = $('#data-table-'+this.getId(),$el);
@@ -47,22 +43,20 @@ return Backbone.View.extend({
     this.$table_row_headers = $('#row-headers-'+this.getId(),$el);
   },
   getId: function(){
-    return this.sheet.cid;
+    return this.getSheet().cid;
   },
   render: function(){
     
-    this._$el = $('<div>');
+    var $el = this._$el = $('<div>');
     
-    var $el = this._$el;
-
     $el.html(t.sheet_table({id:this.getId()}));
 
     $('#data-table-'+this.getId(),$el)
-      .html(t.table({sheet:this.sheet}));
+      .html(t.table({sheet:this.getSheet()}));
     $('#column-headers-'+this.getId(),$el)
-      .html(t.table_col_headers({num_col:this.num_col}));
+      .html(t.table_col_headers({num_col:this.getSheet().colCount()}));
     $('#row-headers-'+this.getId(),$el)
-      .html(t.table_row_headers({num_row:this.num_row}));
+      .html(t.table_row_headers({num_row:this.getSheet().rowCount()}));
 
     this.swapElement();
     
@@ -72,15 +66,14 @@ return Backbone.View.extend({
     this.$el.html(this._$el);
   },
   selectCell: function(e){
-    var s = this.selections.getLocal();
+    var s = this.getSelections().getLocal();
     var data = $(e.currentTarget).data();
-    console.log(data);
     s.clear();
-    s.addCell(this.sheet,data.row_id,data.col_id);
+    s.addCell(this.getSheet(),data.row_id,data.col_id);
   },
   destroy: function(){
     this.remove();
-    this.unsetSheet();
+    this.ref.unsetAll();
   }
 });
 
