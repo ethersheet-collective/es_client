@@ -2,8 +2,21 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define( function(require){
 
 /*
-	model Sheet
-*/	
+
+  # Sheet
+
+  Data model for a single spreadsheet.
+
+  ## Custom Events
+  * add_cell
+  * update_cell
+  * insert_col
+  * delete_col
+  * insert_row
+  * delete_row
+
+*/
+
 var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('es_client/config');
@@ -40,10 +53,10 @@ return Backbone.Model.extend({
     return this.col_count;
   },
   rowIds: function(){
-    return this.rows; 
+    return this.rows;
   },
   colIds: function(){
-    return this.cols; 
+    return this.cols;
   },
   rowExists: function(row_id){
     return _.include(this.rows,row_id);
@@ -118,7 +131,7 @@ return Backbone.Model.extend({
   getRawValue: function(row_id,col_id){
     if(!this.rowExists(row_id)) return undefined;
     if(!this.colExists(col_id)) return undefined;
-    if(_.isUndefined(this.cells[row_id])) return null; 
+    if(_.isUndefined(this.cells[row_id])) return null;
     return this.cells[row_id][col_id] || null;
   },
   getValue: function(row_id, col_id){
