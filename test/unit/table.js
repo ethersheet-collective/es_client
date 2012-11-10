@@ -14,7 +14,7 @@ var $container = $('<div id="ethersheet-container" style="display:none;"></div')
 
 describe('TableView', function(){
 
-  var table, $el, sheet;
+  var table, $el, sheet, selections;
 
   var initializeTable = function(){
     $container.empty()
@@ -196,6 +196,30 @@ describe('TableView', function(){
 
 
   });
+
+  describe("when a cell is clicked", function(){
+    var initial_bgcolor, $clicked_cell;
+    before(function(){
+      initializeTable();
+      $clicked_cell = $('.es-table-cell').first()
+      initial_bgcolor = $clicked_cell.css('background-color');
+      $clicked_cell.click()
+    });
+
+    it("should create a selection", function(){
+      var cells = sheet.getSelections().getLocal().getCells();
+      cells.length.should.equal(1);
+      cells[0].col_id.should.equal(sheet.colAt(0));
+      cells[0].row_id.should.equal(sheet.rowAt(0));
+      cells[0].sheet_id.should.equal(sheet.id);
+    });
+    
+    it("should highlight selected cell", function(){
+      var bgcolor = $clicked_cell.css('background-color');
+      bgcolor.should.not.equal(initial_bgcolor);
+    });
+  });
+
 });
 
 });
