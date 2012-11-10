@@ -27,7 +27,6 @@ return View.extend({
   initialize: function(o){
     this.ref = new RefBinder(this);
     this.setSheet(o.sheet || null);
-    this.setSelections(o.selections || null);
   },
 
   setSheet: function(sheet){
@@ -44,12 +43,8 @@ return View.extend({
     return this.ref.get('sheet');
   },
 
-  setSelections: function(selections){
-    this.selections = selections;
-  },
-
   getSelections: function(){
-    return this.selections;
+    return this.getSheet().getSelections();
   },
 
   initializeElements: function(){

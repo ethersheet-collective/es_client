@@ -21,9 +21,11 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
-
+var SelectionCollection = require('es_client/models/selection_collection')
 return Backbone.Model.extend({
-  initialize: function(){
+  initialize: function(o){
+    o = o || {};
+    this.selections = o.selections || new SelectionCollection();
     this.set({id:uid()},{silent:true});
     this.initializeRows();
     this.initializeCols();
@@ -128,16 +130,26 @@ return Backbone.Model.extend({
     });
     return true;
   },
-  getRawValue: function(row_id,col_id){
+  getCell: function(row_id,col_id){
     if(!this.rowExists(row_id)) return undefined;
     if(!this.colExists(col_id)) return undefined;
     if(_.isUndefined(this.cells[row_id])) return null;
     return this.cells[row_id][col_id] || null;
   },
+  getRawValue: function(row_id,col_id){
+    var cell = this.getCell(row_id,col_id);
+    return cell;
+  },
   getValue: function(row_id, col_id){
     var raw = this.getRawValue(row_id, col_id);
     if(raw) return raw.toString();
     return '';
+  },
+  getColor: function(row_id, col_id){
+    return '#ffffff';      
+  },
+  getSelections: function(){
+    return this.selections
   }
 });
 
