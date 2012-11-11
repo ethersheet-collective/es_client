@@ -25,10 +25,13 @@ return Backbone.Model.extend({
     this.sheets = {};
   },
 
-  clear: function(should_emit){
+  clear: function(silent){
+    var cleared_cells = this.cells;
     this.cells = [];
     this.removeSheets();
-    if(should_emit) this.trigger('change');
+    if(silent) return;
+    this.trigger('change');
+    this.trigger('clear', cleared_cells);
   },
 
   getCells: function(){
