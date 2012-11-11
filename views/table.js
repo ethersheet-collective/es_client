@@ -104,8 +104,13 @@ return View.extend({
   },
 
   cellClicked: function(e){
+    this.removeCellInputs();
     this.selectCell(e);
-    this.createInput(e);
+    this.createCellInput(e);
+  },
+
+  removeCellInputs: function(){
+    $('.es-table-cell-input').remove();
   },
 
   selectCell: function(e){
@@ -115,7 +120,7 @@ return View.extend({
     s.addCell(this.getSheet(),data.row_id,data.col_id);
   },
 
-  createInput: function(e){
+  createCellInput: function(e){
     var $el = $(e.currentTarget);
     var x = $el.offset().left;
     var y = $el.offset().top;

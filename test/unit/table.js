@@ -235,6 +235,11 @@ describe('TableView', function(){
         var new_bgcolor = $clicked_cell.css('background-color');
         new_bgcolor.should.equal(initial_bgcolor);
       });
+
+      it("should remove the old input", function(){
+        $input = $('#'+$clicked_cell.attr('id')+'-input');
+        $input.length.should.equal(0);
+      });
     });
 
     describe("and type on the keyboard", function(){
