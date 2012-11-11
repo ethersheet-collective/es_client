@@ -27,6 +27,7 @@ return Backbone.Model.extend({
   initialize: function(o){
     o = o||{};
     var sheet_id = o.id||uid();
+    this.selections = o.selections || new SelectionCollection();
     this.set({id:sheet_id, silent:true});
     this.setSocket(o.socket);
     this.initializeRows();
