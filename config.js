@@ -4,7 +4,8 @@ define( function(require){
 // Ethersheet namespace and constants
 return {
   DEFAULT_ROW_COUNT: 100,
-  DEFAULT_COL_COUNT: 20
+  DEFAULT_COL_COUNT: 20,
+  SOCKET_URL: "http://localhost"
 };
 
 });

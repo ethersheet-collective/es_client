@@ -5,13 +5,14 @@ var Sheet = require('es_client/models/sheet');
 var config = require('es_client/config');
 var expect = require('chai').expect;
 var should = require('chai').should();
+var sinon = require('sinon');
 
 describe('Sheet', function(){
   var sheet, events;
 
-  var initializeSheet = function(){
+  var initializeSheet = function(o){
     events = [];
-    sheet = new Sheet();
+    sheet = new Sheet(o);
     sheet.on('all',function(){
       events.push({
         name: arguments[0],
@@ -191,6 +192,37 @@ describe('Sheet', function(){
       events[0].name.should.equal('delete_col');
       events[0].args[0].col_id.should.equal(col_id);
       events[0].args[0].sheet_id.should.equal(sheet.id);
+    });
+  });
+
+  describe('Websocket Connection', function(){
+    var websocket, mock;
+    before(function(){
+      websocket = {
+        emit: function(){return true;}
+      };
+      initializeSheet({socket:websocket});
+    });
+
+    it('should fire a websocket read event when sheet is fetched', function(){
+      mock = sinon.mock(websocket);
+      mock.expects('emit').withArgs('read', {item:sheet.attributes}).once();
+      sheet.fetch();
+      mock.verify();
+    });
+    
+    it('should fire a websocket update event when sheet is updated', function(){
+      mock = sinon.mock(websocket);
+      mock.expects('emit').withArgs('update', {item:sheet.attributes}).once();
+      sheet.save();
+      mock.verify();
+    });
+
+    it('should fire a websocket destroy event when a sheet deleted', function(){
+      mock = sinon.mock(websocket);
+      mock.expects('emit').withArgs('destroy', {item:sheet.attributes}).once();
+      sheet.setSocket(websocket);
+      sheet.destroy();
     });
   });
 

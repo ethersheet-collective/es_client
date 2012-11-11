@@ -1,6 +1,5 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define( function(require){
-
 /*
 
   # Sheet
@@ -22,14 +21,20 @@ var Backbone = require('backbone');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
 var SelectionCollection = require('es_client/models/selection_collection')
+var socket = require('es_client/lib/socket').connect();
+
 return Backbone.Model.extend({
   initialize: function(o){
-    o = o || {};
-    this.selections = o.selections || new SelectionCollection();
-    this.set({id:uid()},{silent:true});
+    o = o||{};
+    var sheet_id = o.id||uid();
+    this.set({id:sheet_id, silent:true});
+    this.setSocket(o.socket);
     this.initializeRows();
     this.initializeCols();
     this.initializeCells();
+  },
+  setSocket: function(sock){
+     this.socket = sock;
   },
   initializeRows: function(){
     this.row_count = config.DEFAULT_ROW_COUNT;
@@ -145,12 +150,44 @@ return Backbone.Model.extend({
     if(raw) return raw.toString();
     return '';
   },
+<<<<<<< HEAD
   getColor: function(row_id, col_id){
     return '#ffffff';      
   },
   getSelections: function(){
     return this.selections
+  },
+  sync: function(method, model, options){
+    var self = this;
+    var create = function(){
+      self.socket.emit('new', {item: model.attributes});  
+    }
+    var update = function(){
+      self.socket.emit('update', {item: model.attributes});
+    }
+    var read = function(){
+      self.socket.emit('read', {item: model.attributes});
+    }
+    var destroy = function(){
+      self.socket.emit('destroy', {item: model.attributes});
+    }
+
+    switch (method) {
+      case "create":
+        create();
+        break;
+      case "read":
+        read();
+        break;
+      case "update":
+        update();
+        break;
+      case "delete":
+        destroy();
+        break;
+    }
   }
+
 });
 
 });

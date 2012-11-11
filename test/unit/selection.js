@@ -12,12 +12,13 @@ var Backbone = require('backbone');
 Backbone.sync = function(){};
 
 describe('Selection', function(){
-  var selection, sheet, col_id,row_id, events;
+  var selection, sheet, col_id,row_id, events, websocket;
 
   var initializeSelection = function(){
     events = [];
     selection = new Selection();
-    sheet = new Sheet();
+    websocket = { emit: function(){ } };
+    sheet = new Sheet({socket: websocket});
     col_id = sheet.colAt(0),
     row_id = sheet.rowAt(0)
     selection.on('all',function(){
