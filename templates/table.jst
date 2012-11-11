@@ -2,7 +2,7 @@
 <% _.each(sheet.rowIds(), function(row_id){ %>
   <tr class="es-table-row" data-row_id="<%= row_id %>">
     <% _.each(sheet.colIds(), function(col_id){ %>
-      <td class="es-table-cell" style="background-color: <%= sheet.getColor(row_id, col_id) %>" data-row_id="<%= row_id %>" data-col_id="<%= col_id %>"><%= sheet.getValue(row_id,col_id) %></td>
+      <td id="<%= row_id %>:<%= col_id %>" class="es-table-cell" style="background-color: <%= sheet.getColor(row_id, col_id) %>" data-row_id="<%= row_id %>" data-col_id="<%= col_id %>"><%= sheet.getValue(row_id,col_id) %></td>
     <% }) %>
   </tr>
 <% }) %>
