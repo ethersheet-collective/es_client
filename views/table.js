@@ -45,8 +45,8 @@ return View.extend({
   },
 
   paintCell: function(cell){
-    var $el = $('#'+cell.row_id+':'+cell.col_id);
-    $el.css('background-color', cell.color);
+    var $cell = $('#'+cell.row_id+'-'+cell.col_id, this.el);
+    $cell.css('background-color', cell.color);
   },
     
   onAddCell: function(cell){
