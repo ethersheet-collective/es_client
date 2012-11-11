@@ -22,7 +22,8 @@ var _ = require('underscore');
 return View.extend({
 
   events: {
-    'click .es-table-cell': 'selectCell'
+    'click .es-table-cell': 'selectCell',
+    'keyup .es-table-cell': 'changeCell'
   },
 
   initialize: function(o){
@@ -107,6 +108,12 @@ return View.extend({
     var data = $(e.currentTarget).data();
     s.clear();
     s.addCell(this.getSheet(),data.row_id,data.col_id);
+  },
+
+  changeCell: function(e){
+    var $el = $(e.currentTarget);
+    var data = $el.data();
+    this.getSheet().updateCell(data.row_id, data.col_id, $el.text());
   },
 
   destroy: function(){
