@@ -218,7 +218,21 @@ describe('TableView', function(){
       var bgcolor = $clicked_cell.css('background-color');
       bgcolor.should.not.equal(initial_bgcolor);
     });
+
+    describe("and then a new cell is clicked", function(){
+      var $new_cell;
+      before(function(){
+        $new_cell = $('.es-table-cell').last();
+        $new_cell.click();
+      });
+
+      it("should unhighlight original cell", function(){
+        var new_bgcolor = $clicked_cell.css('background-color');
+        new_bgcolor.should.equal(initial_bgcolor);
+      });
+    });
   });
+
 
 });
 

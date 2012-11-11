@@ -17,6 +17,7 @@ var $ = require('jquery');
 var t = require('es_client/templates');
 var RefBinder = require('ref-binder');
 var View = require('backbone').View;
+var _ = require('underscore');
 
 return View.extend({
 
@@ -38,13 +39,27 @@ return View.extend({
       'delete_row': 'render'
     });
     this.models.set('selections',sheet.getSelections(),{
-      'add_cell': 'onAddCell'
+      'add_cell': 'onAddCell',
+      'clear': 'onClear'
     }); 
   },
 
+  paintCell: function(cell){
+    var el = document.getElementById(cell.row_id+':'+cell.col_id);
+    el.style.backgroundColor = cell.color;
+  },
+    
   onAddCell: function(cell){
-    var cell = document.getElementById(cell.row_id+':'+cell.col_id);
-    cell.style.backgroundColor = '#ffaa99';
+    cell.color = '#ffaa99';
+    this.paintCell(cell);
+  },
+
+  onClear: function(cells){
+    var table = this;
+    _.each(cells, function(cell){
+      cell.color = '#ffffff';
+      table.paintCell(cell);
+    });
   },
 
   getSheet: function(){
