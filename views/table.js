@@ -22,8 +22,7 @@ var _ = require('underscore');
 return View.extend({
 
   events: {
-    'click .es-table-cell': 'selectCell',
-    'keyup .es-table-cell': 'changeCell'
+    'click .es-table-cell': 'cellClicked',
   },
 
   initialize: function(o){
@@ -103,11 +102,32 @@ return View.extend({
     this.$el.html(this._$el);
   },
 
+  cellClicked: function(e){
+    this.selectCell(e);
+    this.createInput(e);
+  },
+
   selectCell: function(e){
     var s = this.getSelections().getLocal();
     var data = $(e.currentTarget).data();
     s.clear();
     s.addCell(this.getSheet(),data.row_id,data.col_id);
+  },
+
+  createInput: function(e){
+    var $el = $(e.currentTarget);
+    var x = $el.offset().left;
+    var y = $el.offset().top;
+    var width = $el.width();
+    var height = $el.height() - 2;
+    var color = "#ffaa99";
+    var row_id = $el.data().row_id;
+    var col_id = $el.data().col_id;
+
+    var $input = $("<input id='"+$el.attr('id')+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' class='es-table-cell-input' value='"+$el.text()+"' style='left: "+x+"px; top: "+y+"px; width: "+width+"px; height: "+height+"px; background-color: "+color+";' />");
+    
+    this.$el.append($input);
+    $input.focus();
   },
 
   changeCell: function(e){

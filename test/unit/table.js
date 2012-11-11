@@ -198,7 +198,7 @@ describe('TableView', function(){
   });
 
   describe("when a cell is clicked", function(){
-    var initial_bgcolor, $clicked_cell;
+    var initial_bgcolor, $clicked_cell, $input;
     before(function(){
       initializeTable();
       $clicked_cell = $('.es-table-cell').first()
@@ -217,6 +217,11 @@ describe('TableView', function(){
     it("should highlight selected cell", function(){
       var bgcolor = $clicked_cell.css('background-color');
       bgcolor.should.not.equal(initial_bgcolor);
+    });
+
+    it("should create an input for selected cell", function(){
+      $input = $('#'+$clicked_cell.attr('id')+'-input');
+      $input[0].should.not.equal(undefined);
     });
 
     describe("and then a new cell is clicked", function(){

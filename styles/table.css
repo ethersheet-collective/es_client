@@ -33,3 +33,7 @@ width: 36px;
 height: 12px;
 border:1px solid #666666;
 }
+.es-table-cell-input{
+  border: 0px;
+  position: absolute;
+}
