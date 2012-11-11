@@ -29,10 +29,10 @@ return Backbone.Model.extend({
     var sheet_id = o.id||uid();
     this.selections = o.selections || new SelectionCollection();
     this.set({id:sheet_id, silent:true});
-    this.setSocket(o.socket);
     this.initializeRows();
     this.initializeCols();
     this.initializeCells();
+    if(o.socket){ this.setSocket(o.socket) }
   },
   setSocket: function(sock){
      this.socket = sock;

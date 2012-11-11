@@ -223,6 +223,7 @@ describe('Sheet', function(){
       mock.expects('emit').withArgs('destroy', {item:sheet.attributes}).once();
       sheet.setSocket(websocket);
       sheet.destroy();
+      mock.verify();
     });
   });
 
