@@ -6,7 +6,7 @@ define( function(require){
 */
 
 return function uid() {
-  var mime ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  var mime ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
   var ua = [];
   var r32;
   for(var a = 0; a < 3; a++) {
