@@ -14,7 +14,10 @@ return Backbone.Collection.extend({
 
   initialize: function(o){
     o = o || {};
-    this.setLocal(o.local || new Selection());
+    
+    var local =  o.local || new Selection();
+    this.add(local);
+    this.setLocal(local);
   },
 
   setLocal: function(selection){
