@@ -25,26 +25,27 @@ return View.extend({
   },
 
   initialize: function(o){
-    this.ref = new RefBinder(this);
+    this.models = new RefBinder(this);
     this.setSheet(o.sheet || null);
   },
 
   setSheet: function(sheet){
-    this.ref.set('sheet',sheet,{
+    this.models.set('sheet',sheet,{
       'update_cell': 'render',
       'insert_col': 'render',
       'delete_col': 'render',
       'insert_row': 'render',
       'delete_row': 'render'
     });
+    this.models.set('selections',sheet.getSelections(),{}); 
   },
 
   getSheet: function(){
-    return this.ref.get('sheet');
+    return this.models.get('sheet');
   },
 
   getSelections: function(){
-    return this.getSheet().getSelections();
+    return this.models.get('selections');
   },
 
   initializeElements: function(){
@@ -88,7 +89,7 @@ return View.extend({
 
   destroy: function(){
     this.remove();
-    this.ref.unsetAll();
+    this.models.unsetAll();
   }
 });
 
