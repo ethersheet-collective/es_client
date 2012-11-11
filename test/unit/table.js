@@ -236,10 +236,11 @@ describe('TableView', function(){
       var row_id, col_id, initial_val;
       
       before(function(){
-        row_id = $clicked_cell.data("row-id");
-        col_id = $clicked_cell.data("col-id");
+        row_id = $clicked_cell.data("row_id");
+        col_id = $clicked_cell.data("col_id");
         initial_val = sheet.getValue(row_id, col_id);
-        $.event.trigger({ type : 'keypress', which : "a".charCodeAt(0) });
+        $clicked_cell.text('new text');
+        $clicked_cell.trigger('keyup');
       });
 
       it("should change the value of the cell", function(){
