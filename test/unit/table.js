@@ -231,8 +231,24 @@ describe('TableView', function(){
         new_bgcolor.should.equal(initial_bgcolor);
       });
     });
-  });
 
+    describe("and type on the keyboard", function(){
+      var row_id, col_id, initial_val;
+      
+      before(function(){
+        row_id = $clicked_cell.data("row-id");
+        col_id = $clicked_cell.data("col-id");
+        initial_val = sheet.getValue(row_id, col_id);
+        $.event.trigger({ type : 'keypress', which : "a".charCodeAt(0) });
+      });
+
+      it("should change the value of the cell", function(){
+        var new_val = sheet.getValue(row_id, col_id);
+        new_val.should.not.equal(initial_val);
+      });
+    });
+
+  });
 
 });
 
