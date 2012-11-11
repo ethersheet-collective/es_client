@@ -37,7 +37,14 @@ return View.extend({
       'insert_row': 'render',
       'delete_row': 'render'
     });
-    this.models.set('selections',sheet.getSelections(),{}); 
+    this.models.set('selections',sheet.getSelections(),{
+      'add_cell': 'onAddCell'
+    }); 
+  },
+
+  onAddCell: function(cell){
+    var cell = document.getElementById(cell.row_id+':'+cell.col_id);
+    cell.style.backgroundColor = '#ffaa99';
   },
 
   getSheet: function(){
