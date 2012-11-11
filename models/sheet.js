@@ -150,7 +150,7 @@ return Backbone.Model.extend({
     if(raw) return raw.toString();
     return '';
   },
-<<<<<<< HEAD
+  
   getColor: function(row_id, col_id){
     return '#ffffff';      
   },
