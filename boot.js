@@ -14,6 +14,9 @@ require.config({
     },
     'socket.io-client':{
       exports: 'io'
+    },
+    'sinon':{
+      exports: 'sinon'
     }
   }
 });
