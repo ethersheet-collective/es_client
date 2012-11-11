@@ -11,6 +11,9 @@ require.config({
     'backbone':{
       deps: ['underscore','jquery'],
       exports: 'Backbone'
+    },
+    'socket.io-client':{
+      exports: 'io'
     }
   }
 });
