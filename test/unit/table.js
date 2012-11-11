@@ -199,11 +199,12 @@ describe('TableView', function(){
 
   describe("when a cell is clicked", function(){
     var initial_bgcolor, $clicked_cell, $input;
-    before(function(){
+    beforeEach(function(){
       initializeTable();
       $clicked_cell = $('.es-table-cell').first()
       initial_bgcolor = $clicked_cell.css('background-color');
       $clicked_cell.click()
+      $input = $('#'+$clicked_cell.attr('id')+'-input');
     });
 
     it("should create a selection", function(){
@@ -220,13 +221,12 @@ describe('TableView', function(){
     });
 
     it("should create an input for selected cell", function(){
-      $input = $('#'+$clicked_cell.attr('id')+'-input');
       $input[0].should.not.equal(undefined);
     });
 
     describe("and then a new cell is clicked", function(){
       var $new_cell;
-      before(function(){
+      beforeEach(function(){
         $new_cell = $('.es-table-cell').last();
         $new_cell.click();
       });
@@ -240,7 +240,7 @@ describe('TableView', function(){
     describe("and type on the keyboard", function(){
       var row_id, col_id, initial_val;
       
-      before(function(){
+      beforeEach(function(){
         row_id = $clicked_cell.data("row_id");
         col_id = $clicked_cell.data("col_id");
         initial_val = sheet.getValue(row_id, col_id);
