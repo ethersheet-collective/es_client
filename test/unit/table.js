@@ -244,8 +244,8 @@ describe('TableView', function(){
         row_id = $clicked_cell.data("row_id");
         col_id = $clicked_cell.data("col_id");
         initial_val = sheet.getValue(row_id, col_id);
-        $clicked_cell.text('new text');
-        $clicked_cell.trigger('keyup');
+        $input.val('new text');
+        $input.trigger('change');
       });
 
       it("should change the value of the cell", function(){

@@ -23,6 +23,7 @@ return View.extend({
 
   events: {
     'click .es-table-cell': 'cellClicked',
+    'change .es-table-cell-input': 'changeCell'
   },
 
   initialize: function(o){
@@ -133,7 +134,7 @@ return View.extend({
   changeCell: function(e){
     var $el = $(e.currentTarget);
     var data = $el.data();
-    this.getSheet().updateCell(data.row_id, data.col_id, $el.text());
+    this.getSheet().updateCell(data.row_id, data.col_id, $el.val());
   },
 
   onUpdateCell: function(cell){
