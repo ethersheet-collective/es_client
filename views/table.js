@@ -33,7 +33,7 @@ return View.extend({
 
   setSheet: function(sheet){
     this.models.set('sheet',sheet,{
-      'update_cell': 'render',
+      'update_cell': 'onUpdateCell',
       'insert_col': 'render',
       'delete_col': 'render',
       'insert_row': 'render',
@@ -115,6 +115,11 @@ return View.extend({
     var data = $el.data();
     this.getSheet().updateCell(data.row_id, data.col_id, $el.text());
   },
+
+  onUpdateCell: function(cell){
+    var $el = $('#'+cell.row_id+'-'+cell.col_id);
+    $el.text(cell.value);
+  },  
 
   destroy: function(){
     this.remove();
