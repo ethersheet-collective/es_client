@@ -153,7 +153,9 @@ return Backbone.Model.extend({
   },
   
   getColor: function(row_id, col_id){
-    return '#ffffff';      
+    return '#ffffff';
+  },
+  setColor: function(row_id, col_id, color){
   },
   getSelections: function(){
     return this.selections

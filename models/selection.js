@@ -20,18 +20,29 @@ var Backbone = require('backbone');
 var config = require('es_client/config');
 
 return Backbone.Model.extend({
-  initialize: function(){
+  initialize: function(o){
+    o = o || {};
     this.cells = [];
     this.sheets = {};
+    this.color = o.color || config.DEFAULT_SELECTION_COLOR;
   },
 
   clear: function(silent){
+    this.clearCellColors();
     var cleared_cells = this.cells;
     this.cells = [];
     this.removeSheets();
     if(silent) return;
     this.trigger('change');
     this.trigger('clear', cleared_cells);
+  },
+
+  clearCellColors: function(){
+    var s = this;
+    _.each(this.cells, function(cell){
+      if(!s.sheets[cell.sheet_id]) return;
+      s.sheets[cell.sheet_id].setColor(config.DEFAULT_COLOR);
+    });
   },
 
   getCells: function(){
@@ -42,8 +53,10 @@ return Backbone.Model.extend({
     var cell = {
       sheet_id: sheet.id,
       col_id: col_id,
-      row_id: row_id
+      row_id: row_id,
+      color: this.color
     };
+    sheet.setColor(row_id, col_id, this.color);
     this.cells.push(cell);
     this.addSheet(sheet);
     this.trigger('add_cell',cell);

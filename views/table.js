@@ -51,7 +51,6 @@ return View.extend({
   },
     
   onAddCell: function(cell){
-    cell.color = '#ffaa99';
     this.paintCell(cell);
   },
 
