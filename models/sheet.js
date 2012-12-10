@@ -6,22 +6,24 @@ define( function(require){
 
   Data model for a single spreadsheet.
 
-  ## Custom Events
-  * add_cell
-  * update_cell
-  * insert_col
-  * delete_col
-  * insert_row
-  * delete_row
-
 */
 
 var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
-var SelectionCollection = require('es_client/models/selection_collection')
-var socket = require('es_client/lib/socket').connect();
+var SelectionCollection = require('es_client/models/selection_collection');
+
+var BROADCAST_CHANNEL = 'sheet';
+var BROADCAST_EVENTS = [
+  'add_cell',
+  'update_cell',
+  'insert_col',
+  'delete_col',
+  'insert_row',
+  'delete_row'
+];
+
 
 return Backbone.Model.extend({
   initialize: function(o){
@@ -32,10 +34,7 @@ return Backbone.Model.extend({
     this.initializeRows();
     this.initializeCols();
     this.initializeCells();
-    if(o.socket){ this.setSocket(o.socket) }
-  },
-  setSocket: function(sock){
-     this.socket = sock;
+    this.setSocket(o.socket);
   },
   initializeRows: function(){
     this.row_count = config.DEFAULT_ROW_COUNT;
@@ -54,6 +53,29 @@ return Backbone.Model.extend({
   initializeCells: function(){
     this.cells = {};
   },
+  setSocket: function(sock){
+    this.unsetSocket();
+    if(!sock) return;
+
+    var sheet = this;
+    this.socket = sock;
+
+    this.socket.on(BROADCAST_CHANNEL,function(data){
+      if(data.id !== sheet.id) return;
+    });
+    
+    BROADCAST_EVENTS.forEach(function(event_name){
+      sheet.on(event_name,function(data){
+        sheet.socket.emit(BROADCAST_CHANNEL,{
+          action: event_name,
+          params: data
+        });
+      });
+    });
+  },
+  unsetSocket: function(){
+    this.socket = undefined;
+  },  
   rowCount: function(){
     return this.row_count;
   },
@@ -129,7 +151,7 @@ return Backbone.Model.extend({
     if(!this.cells[row_id]) this.cells[row_id] = {};
     this.cells[row_id][col_id] = value;
     this.trigger('update_cell',{
-      sheet_id:this.id,
+      id:this.id,
       row_id:row_id,
       col_id:col_id,
       value:value
@@ -151,7 +173,6 @@ return Backbone.Model.extend({
     if(raw) return raw.toString();
     return '';
   },
-  
   getColor: function(row_id, col_id){
     return '#ffffff';
   },
@@ -161,34 +182,7 @@ return Backbone.Model.extend({
     return this.selections
   },
   sync: function(method, model, options){
-    var self = this;
-    var create = function(){
-      self.socket.emit('new', {item: model.attributes});  
-    }
-    var update = function(){
-      self.socket.emit('update', {item: model.attributes});
-    }
-    var read = function(){
-      self.socket.emit('read', {item: model.attributes});
-    }
-    var destroy = function(){
-      self.socket.emit('destroy', {item: model.attributes});
-    }
-
-    switch (method) {
-      case "create":
-        create();
-        break;
-      case "read":
-        read();
-        break;
-      case "update":
-        update();
-        break;
-      case "delete":
-        destroy();
-        break;
-    }
+    // no sync for you
   }
 
 });

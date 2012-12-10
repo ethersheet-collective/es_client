@@ -14,24 +14,16 @@ describe('Websockets', function(){
   before(function(){
     sheet = new Sheet({socket: socket});
   });
+
   it('should respond to update cell event', function(){
     var mock = sinon.mock(socket);
-    mock.expects('emit').withArgs('client_action', 
-                                  {
-                                    channel:"sheet", 
-                                    id:sheet.id, 
-                                    action:'update_cell', 
-                                    params:{row_id:1,col_id:1,value:1}
-                                  });
-
-    sheet.trigger('update_cell',{
-      sheet_id:this.id,
-      row_id:1,
-      col_id:1,
-      value:1
+    mock.expects('emit').withArgs('sheet',{
+      action:'update_cell', 
+      params:{id:sheet.id,row_id:sheet.rowAt(0),col_id:sheet.colAt(0),value:1}
     });
-    mock.verify()
 
+    sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),1);
+    mock.verify();
   });
 });
 
