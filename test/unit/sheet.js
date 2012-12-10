@@ -83,7 +83,7 @@ describe('Sheet', function(){
       cell.row_id.should.equal(row_id);
       cell.col_id.should.equal(col_id);
       cell.value.should.equal(new_value);
-      cell.sheet_id.should.equal(sheet.id);
+      cell.id.should.equal(sheet.id);
     });
   });
 
@@ -194,39 +194,6 @@ describe('Sheet', function(){
       events[0].args[0].sheet_id.should.equal(sheet.id);
     });
   });
-
-  describe('Websocket Connection', function(){
-    var websocket, mock;
-    before(function(){
-      websocket = {
-        emit: function(){return true;}
-      };
-      initializeSheet({socket:websocket});
-    });
-
-    it('should fire a websocket read event when sheet is fetched', function(){
-      mock = sinon.mock(websocket);
-      mock.expects('emit').withArgs('read', {item:sheet.attributes}).once();
-      sheet.fetch();
-      mock.verify();
-    });
-    
-    it('should fire a websocket update event when sheet is updated', function(){
-      mock = sinon.mock(websocket);
-      mock.expects('emit').withArgs('update', {item:sheet.attributes}).once();
-      sheet.save();
-      mock.verify();
-    });
-
-    it('should fire a websocket destroy event when a sheet deleted', function(){
-      mock = sinon.mock(websocket);
-      mock.expects('emit').withArgs('destroy', {item:sheet.attributes}).once();
-      sheet.setSocket(websocket);
-      sheet.destroy();
-      mock.verify();
-    });
-  });
-
 });
 
 });
