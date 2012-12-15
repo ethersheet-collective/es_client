@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Ethersheet Test Suite</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+  <!--Test Harness-->
+  <link id="mocha-styles" rel="stylesheet" type="text/css" href="mocha.css" />
+  <script src="mocha.js"></script>
+  <script src="setup_test_display.js"></script>
+
+  <!--Ethersheet-->
+  <link rel="stylesheet" type="text/css" href="../styles/table.css" />
+  <script src="../vendor/require.js"></script>
+
+  <script>
+    require.config({
+      baseUrl: '../vendor',
+      paths: {
+        es_client: '..',
+        test: '../test/unit'
+      },
+      shim:{
+        'underscore':{
+          exports: '_'
+        },
+        'backbone':{
+          deps: ['underscore','jquery'],
+          exports: 'Backbone'
+        },
+        'socket.io-client':{
+          exports: 'io'
+        },
+        'sinon':{
+          exports: 'sinon'
+        }
+      }
+    });
+
+    var deps = ['jquery'];
+    
+    var tests = [
+      'test/sheet',
+      'test/selection',
+      'test/table'
+    ];
+
+    mocha.setup({
+      ui:'bdd',
+      ignoreLeaks: true
+    });
+
+    require(deps.concat(tests), function($){
+      $(function(){
+        setupTestDisplay($);
+        mocha.run();
+      });
+    });
+  </script>
+    
+</head>
+<body style="margin-top:18px;">
+  <div id="mocha"></div>
+</body>
+</html>
