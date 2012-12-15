@@ -1,3 +1,38 @@
 [![Build Status](https://travis-ci.org/ethersheet-collective/es_client.png?branch=master)](https://travis-ci.org/ethersheet-collective/es_client)
 
 This is the web client for Ethersheet.
+
+````html
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ethersheet</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!--Ethersheet-->
+    <link rel="stylesheet" type="text/css" href="/es_client/styles/table.css" />
+    <script src="/es_client/vendor/require.js"></script>
+    <script src="/es_client/boot.js"></script>
+    <script type="text/javascript">
+
+      // global namespace
+      var e;
+
+      // create a new ethersheet
+      require(['es_client/ethersheet'], function(Ethersheet){
+        e  = new Ethersheet({
+          target: '#ethersheet-container',
+          sheet_id: '<%= sheet_id %>' 
+        });
+      });
+
+    </script>
+      
+  </head>
+  <body>
+    <div id="ethersheet-container"></div>
+  </body>
+</html>
+
+````
