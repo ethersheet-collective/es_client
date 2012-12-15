@@ -20,7 +20,7 @@
     "chai": "*"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make"
   },
   "repository": "",
   "author": "",
