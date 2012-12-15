@@ -1,6 +1,8 @@
-test:
+test-webkit: templates
+	phantomjs test/phantom-mocha.js test/phantom.html
+test-node: templates
 	./node_modules/.bin/mocha -R spec -r chai test/unit/*.js 
-test-webkit:
-	phantomjs test/phantom-mocha.js http://localhost:8080/es_client/test/
+templates:
+	./bin/build_templates.js
 
-.PHONY: test test-webkit
+.PHONY: test-webkit test-node templates
