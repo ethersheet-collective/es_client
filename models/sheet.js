@@ -40,14 +40,14 @@ return Backbone.Model.extend({
     this.row_count = config.DEFAULT_ROW_COUNT;
     this.rows = [];
     for(var i = 0; i<this.row_count; i++){
-      this.rows.push(uid());
+      this.rows.push(i);
     }
   },
   initializeCols: function(){
     this.col_count = config.DEFAULT_COL_COUNT;
     this.cols = [];
     for(var i = 0; i<this.col_count; i++){
-      this.cols.push(uid());
+      this.cols.push(i);
     }
   },
   initializeCells: function(){
@@ -61,17 +61,10 @@ return Backbone.Model.extend({
     this.socket = sock;
 
     this.socket.on(BROADCAST_TYPE,function(data){
+      if(data.id !== sheet.id) return;
       console.log('sheet',data);
-    });
-    
-    BROADCAST_EVENTS.forEach(function(event_name){
-      sheet.on(event_name,function(data){
-        sheet.socket.trigger('data',{
-          type: BROADCAST_TYPE,
-          action: event_name,
-          params: data
-        });
-      });
+      data.params.push(true);
+      sheet[data.action].apply(sheet,data.params);
     });
   },
   unsetSocket: function(){
@@ -146,7 +139,7 @@ return Backbone.Model.extend({
     });
     return true;
   },
-  updateCell: function(row_id,col_id,value){
+  updateCell: function(row_id,col_id,value,silent){
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
@@ -157,6 +150,14 @@ return Backbone.Model.extend({
       col_id:col_id,
       value:value
     });
+    if(this.socket && !silent){
+      this.socket.send({
+        id: this.id,
+        type: 'sheet',
+        action: 'updateCell',
+        params:[row_id,col_id,value]
+      });
+    }
     return true;
   },
   getCell: function(row_id,col_id){
