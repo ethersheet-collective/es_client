@@ -14,7 +14,7 @@ var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
 var SelectionCollection = require('es_client/models/selection_collection');
 
-var BROADCAST_CHANNEL = 'sheet';
+var BROADCAST_TYPE = 'sheet';
 var BROADCAST_EVENTS = [
   'add_cell',
   'update_cell',
@@ -60,13 +60,14 @@ return Backbone.Model.extend({
     var sheet = this;
     this.socket = sock;
 
-    this.socket.on(BROADCAST_CHANNEL,function(data){
-      if(data.id !== sheet.id) return;
+    this.socket.on(BROADCAST_TYPE,function(data){
+      console.log('sheet',data);
     });
     
     BROADCAST_EVENTS.forEach(function(event_name){
       sheet.on(event_name,function(data){
-        sheet.socket.emit(BROADCAST_CHANNEL,{
+        sheet.socket.trigger('data',{
+          type: BROADCAST_TYPE,
           action: event_name,
           params: data
         });
