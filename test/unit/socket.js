@@ -41,6 +41,18 @@ describe('Websockets', function(){
     });
     sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.equal(cell_val)
   });
+  
+  it('should not be able to call unauthorized method on sheet', function(){
+    sheet.badMethod = function(){
+      throw new Error("should not be called");
+    };
+    socket.trigger('sheet', {
+      id: sheet.id,
+      type: 'sheet',
+      action:'badMethod', 
+      params:[]
+    });
+  });
 });
 
 });

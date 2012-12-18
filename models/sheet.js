@@ -16,12 +16,12 @@ var SelectionCollection = require('es_client/models/selection_collection');
 
 var BROADCAST_TYPE = 'sheet';
 var BROADCAST_EVENTS = [
-  'add_cell',
-  'update_cell',
-  'insert_col',
-  'delete_col',
-  'insert_row',
-  'delete_row'
+  'addCell',
+  'updateCell',
+  'insertCol',
+  'deleteCol',
+  'insertRow',
+  'deleteRow'
 ];
 
 
@@ -64,7 +64,9 @@ return Backbone.Model.extend({
       if(data.id !== sheet.id) return;
       console.log('sheet',data);
       data.params.push(true);
-      sheet[data.action].apply(sheet,data.params);
+      if(BROADCAST_EVENTS.indexOf(data.action) !== -1){
+        sheet[data.action].apply(sheet,data.params);
+      }
     });
   },
   unsetSocket: function(){
