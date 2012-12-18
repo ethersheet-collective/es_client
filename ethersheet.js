@@ -13,7 +13,7 @@ Ethersheet = function(o) {
 
   var es = this;
   this.socket = new Socket(o.sheet_id);
-  this.sheet = new Sheet({socket:this.socket});
+  this.sheet = new Sheet({id:o.sheet_id, socket:this.socket});
   this.selections = new SelectionCollection({socket:this.socket});
 
   $(function(){
