@@ -1,7 +1,7 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define(function (require) {
 
-var Sheet = require('es_client/models/sheet');
+var SheetCollection = require('es_client/models/sheet_collection');
 var config = require('es_client/config');
 var expect = require('chai').expect;
 var should = require('chai').should();
@@ -10,11 +10,13 @@ var Socket = require('es_client/lib/socket');
 
 
 describe('Websockets', function(){
-  var socket, sheet;
+  var socket, sheets, sheet;
 
   beforeEach(function(){
-    sheet = new Sheet();
-    socket = new Socket('test_channel',{sheet:sheet});
+    sheets = new SheetCollection();
+    sheets.add({});
+    sheet = sheets.first();
+    socket = new Socket('test_channel',{sheet:sheets});
   });
 
   it('should trigger data event when cell is updated', function(){
@@ -33,11 +35,13 @@ describe('Websockets', function(){
   it('should call correct method on sheet when "sheet" event is emitted', function(){
     var cell_val = 'over 9000';
     sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.not.equal(cell_val)
-    socket.trigger('sheet', {
-      id: sheet.id,
-      type: 'sheet',
-      action:'updateCell', 
-      params:[sheet.rowAt(0),sheet.colAt(0),cell_val]
+    socket.onMessage({
+      data:JSON.stringify({
+        id: sheet.id,
+        type: 'sheet',
+        action:'updateCell', 
+        params:[sheet.rowAt(0),sheet.colAt(0),cell_val]
+      })
     });
     sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.equal(cell_val)
   });

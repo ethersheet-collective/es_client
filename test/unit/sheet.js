@@ -76,9 +76,12 @@ describe('Sheet', function(){
       sheet.getValue(row_id,col_id).should.equal(new_value.toString());
     });
 
-    it('should trigger an update_cell event',function(){
-      events.length.should.equal(1);
+    it('should trigger an update_cell and send event',function(){
+      events.length.should.equal(2);
       events[0].name.should.equal('update_cell');
+      events[1].name.should.equal('send');
+    });
+    it('update_cell event should contain correct data',function(){
       var cell = events[0].args[0];
       cell.row_id.should.equal(row_id);
       cell.col_id.should.equal(col_id);

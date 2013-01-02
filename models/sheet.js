@@ -14,6 +14,7 @@ var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
 var SelectionCollection = require('es_client/models/selection_collection');
 
+/*
 var BROADCAST_TYPE = 'sheet';
 var BROADCAST_EVENTS = [
   'addCell',
@@ -23,7 +24,7 @@ var BROADCAST_EVENTS = [
   'insertRow',
   'deleteRow'
 ];
-
+*/
 
 return Backbone.Model.extend({
   initialize: function(o){
