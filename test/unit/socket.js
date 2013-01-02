@@ -8,6 +8,9 @@ var should = require('chai').should();
 var sinon = require('sinon');
 var Socket = require('es_client/lib/socket');
 
+var fake_websocket = {
+  send: function()
+};
 
 describe('Websockets', function(){
   var socket, sheets, sheet;
@@ -16,7 +19,7 @@ describe('Websockets', function(){
     sheets = new SheetCollection();
     sheets.add({});
     sheet = sheets.first();
-    socket = new Socket('test_channel',{sheet:sheets});
+    socket = new Socket('test_channel',{sheet:sheets},fake_websocket);
   });
 
   it('should trigger data event when cell is updated', function(){
