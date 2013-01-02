@@ -30,11 +30,11 @@ return Backbone.Model.extend({
     o = o||{};
     var sheet_id = o.id||uid();
     this.selections = o.selections || new SelectionCollection();
+    this.send_enabled = true;
     this.set({id:sheet_id, silent:true});
     this.initializeRows();
     this.initializeCols();
     this.initializeCells();
-    this.setSocket(o.socket);
   },
   initializeRows: function(){
     this.row_count = config.DEFAULT_ROW_COUNT;
@@ -53,25 +53,20 @@ return Backbone.Model.extend({
   initializeCells: function(){
     this.cells = {};
   },
-  setSocket: function(sock){
-    this.unsetSocket();
-    if(!sock) return;
-
-    var sheet = this;
-    this.socket = sock;
-
-    this.socket.on(BROADCAST_TYPE,function(data){
-      if(data.id !== sheet.id) return;
-      console.log('sheet',data);
-      data.params.push(true);
-      if(BROADCAST_EVENTS.indexOf(data.action) !== -1){
-        sheet[data.action].apply(sheet,data.params);
-      }
-    });
+  sendEnabled: function(){
+    return this.send_enabled;
   },
-  unsetSocket: function(){
-    this.socket = undefined;
-  },  
+  enableSend: function(){
+    this.send_enabled = true;
+  },
+  disableSend: function(){
+    this.send_enabled = false;
+  },
+  send: function(msg){
+    if(this.sendEnabled()){
+      this.trigger('send',msg);
+    }
+  },
   rowCount: function(){
     return this.row_count;
   },
@@ -141,7 +136,7 @@ return Backbone.Model.extend({
     });
     return true;
   },
-  updateCell: function(row_id,col_id,value,silent){
+  updateCell: function(row_id,col_id,value){
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
@@ -152,14 +147,12 @@ return Backbone.Model.extend({
       col_id:col_id,
       value:value
     });
-    if(this.socket && !silent){
-      this.socket.send({
-        id: this.id,
-        type: 'sheet',
-        action: 'updateCell',
-        params:[row_id,col_id,value]
-      });
-    }
+    this.send({
+      id: this.id,
+      type: 'sheet',
+      action: 'updateCell',
+      params:[row_id,col_id,value]
+    });
     return true;
   },
   getCell: function(row_id,col_id){
