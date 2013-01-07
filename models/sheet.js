@@ -12,7 +12,6 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
-var SelectionCollection = require('es_client/models/selection_collection');
 
 /*
 var BROADCAST_TYPE = 'sheet';
@@ -30,7 +29,6 @@ return Backbone.Model.extend({
   initialize: function(o){
     o = o||{};
     var sheet_id = o.id||uid();
-    this.selections = o.selections || new SelectionCollection();
     this.send_enabled = true;
     this.set({id:sheet_id, silent:true});
     this.initializeRows();
@@ -175,9 +173,6 @@ return Backbone.Model.extend({
     return '#ffffff';
   },
   setColor: function(row_id, col_id, color){
-  },
-  getSelections: function(){
-    return this.selections
   },
   sync: function(method, model, options){
     // no sync for you

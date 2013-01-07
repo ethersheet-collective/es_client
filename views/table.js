@@ -29,6 +29,7 @@ return View.extend({
   initialize: function(o){
     this.models = new RefBinder(this);
     this.setSheet(o.sheet || null);
+    this.setSelections(o.selections || null);
   },
 
   setSheet: function(sheet){
@@ -39,7 +40,10 @@ return View.extend({
       'insert_row': 'render',
       'delete_row': 'render'
     });
-    this.models.set('selections',sheet.getSelections(),{
+  },
+
+  setSelections: function(selections){
+    this.models.set('selections',selections,{
       'add_cell': 'onAddCell',
       'clear': 'onClear'
     }); 

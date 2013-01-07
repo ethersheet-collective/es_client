@@ -15,8 +15,7 @@ Ethersheet = function(o) {
   this.data = {};
   this.data.selections = new SelectionCollection();
   this.data.sheet = new SheetCollection([{
-    id:o.sheet_id,
-    selections: this.data.selections
+    id:o.sheet_id
   }]);
 
   this.socket = new Socket(o.sheet_id,this.data);
