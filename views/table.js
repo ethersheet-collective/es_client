@@ -1,5 +1,5 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
-define( function(require){
+define( function(require,exports,module){
 
 /*
 
@@ -19,7 +19,7 @@ var RefBinder = require('ref-binder');
 var View = require('backbone').View;
 var _ = require('underscore');
 
-return View.extend({
+var Table = module.exports = View.extend({
 
   events: {
     'click .es-table-cell': 'cellClicked',

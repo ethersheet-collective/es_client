@@ -1,5 +1,5 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
-define( function(require){
+define( function(require,exports,module){
 
 /*
 
@@ -19,7 +19,7 @@ var _ = require('underscore');
 var Backbone = require('backbone');
 var config = require('es_client/config');
 
-return Backbone.Model.extend({
+var Selection = module.exports = Backbone.Model.extend({
   initialize: function(o){
     o = o || {};
     this.cells = [];

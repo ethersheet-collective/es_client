@@ -1,5 +1,5 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
-define(function (require) {
+define( function(require,exports,module) {
 
 var $ = require('jquery');
 
@@ -8,7 +8,7 @@ var SelectionCollection = require('es_client/models/selection_collection');
 var TableView = require('es_client/views/table');
 var Socket = require('es_client/lib/socket');
 
-Ethersheet = function(o) {
+var Ethersheet = module.exports = function(o) {
   if(!o.target) throw Error('el or target required');
   var es = this;
   
@@ -29,7 +29,5 @@ Ethersheet = function(o) {
     }).render();
   });
 };
-
-return Ethersheet;
 
 });

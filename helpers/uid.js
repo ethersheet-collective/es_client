@@ -1,11 +1,11 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
-define( function(require){
+define( function(require,exports,module){
 
 /*
 		function uid() - returns a unique id
 */
 
-return function uid() {
+module.exports = function uid() {
   var mime ='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_';
   var ua = [];
   var r32;

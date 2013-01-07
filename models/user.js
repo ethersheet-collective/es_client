@@ -1,5 +1,5 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
-define(function (require) {
+define(function (require,exports,module) {
 
 /*
 
@@ -14,7 +14,7 @@ var Backbone = require('backbone');
 var uid = require('es_client/helpers/uid');
 var Selection = require('es_client/models/selection');
 
-return Backbone.Model.extend({
+var User = module.exports = Backbone.Model.extend({
   initialize: function(o){
     this.set({id: o.id || uid()}, {silent:true});
     this.selecion = this.setSelection(o.selection || new Selection());

@@ -1,11 +1,11 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
-define( function(require){
+define( function(require,exports,module){
 
 /*
 function columnIndexToName() - returns the proper column name (uppercase letter, double letter after 26 columns)
 */
 
-return function columnIndexToName(index){
+module.exports = function columnIndexToName(index){
   var char_code = (index % 26) + 65;
   var num_letters = Math.ceil((index+1) / 26);
   var char_array = [];

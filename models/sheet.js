@@ -1,5 +1,5 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
-define( function(require){
+define(function (require,exports,module){
 /*
 
   # Sheet
@@ -25,7 +25,7 @@ var BROADCAST_EVENTS = [
 ];
 */
 
-return Backbone.Model.extend({
+var Sheet = module.exports = Backbone.Model.extend({
   initialize: function(o){
     o = o||{};
     var sheet_id = o.id||uid();

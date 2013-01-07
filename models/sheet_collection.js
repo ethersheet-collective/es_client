@@ -1,5 +1,5 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
-define(function (require) {
+define(function (require,exports,module) {
 
 /*
   # Selection Collection
@@ -8,7 +8,7 @@ define(function (require) {
 var Backbone = require('backbone');
 var Sheet= require('es_client/models/sheet');
 
-return Backbone.Collection.extend({
+var SheetCollection = module.exports = Backbone.Collection.extend({
 
   model: Sheet,
 
