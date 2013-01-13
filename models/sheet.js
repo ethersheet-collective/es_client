@@ -31,8 +31,6 @@ var Sheet = module.exports = Backbone.Model.extend({
 
   initialize: function(o){
     o = o||{};
-    debugger;
-    console.log('new sheet',o);
     var sheet_id = o.id||uid();
     this.send_enabled = true;
     this.set({id:sheet_id, silent:true});
