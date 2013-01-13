@@ -26,32 +26,48 @@ var BROADCAST_EVENTS = [
 */
 
 var Sheet = module.exports = Backbone.Model.extend({
+
+// # Initialization
+
   initialize: function(o){
     o = o||{};
+    debugger;
+    console.log('new sheet',o);
     var sheet_id = o.id||uid();
     this.send_enabled = true;
     this.set({id:sheet_id, silent:true});
-    this.initializeRows();
-    this.initializeCols();
-    this.initializeCells();
+    this.initializeRows(o.rows);
+    this.initializeCols(o.cols);
+    this.initializeCells(o.cells);
   },
-  initializeRows: function(){
-    this.row_count = config.DEFAULT_ROW_COUNT;
+  initializeRows: function(rows){
+    if(_.isArray(rows)){
+      this.rows = rows;
+      return;
+    }
+    // default initialization
     this.rows = [];
-    for(var i = 0; i<this.row_count; i++){
+    for(var i = 0; i<config.DEFAULT_ROW_COUNT; i++){
       this.rows.push(i);
     }
   },
-  initializeCols: function(){
-    this.col_count = config.DEFAULT_COL_COUNT;
+  initializeCols: function(cols){
+    if(_.isArray(cols)){
+      this.cols = cols;
+      return;
+    }
+    // default initialization
     this.cols = [];
-    for(var i = 0; i<this.col_count; i++){
+    for(var i = 0; i<config.DEFAULT_COL_COUNT; i++){
       this.cols.push(i);
     }
   },
-  initializeCells: function(){
-    this.cells = {};
+  initializeCells: function(cells){
+    this.cells = cells || {};
   },
+
+// # Send
+
   sendEnabled: function(){
     return this.send_enabled;
   },
@@ -63,32 +79,24 @@ var Sheet = module.exports = Backbone.Model.extend({
   },
   send: function(msg){
     if(this.sendEnabled()){
+      console.log('sheet#send',msg);
       this.trigger('send',msg);
     }
   },
+
+// # Rows
+  
   rowCount: function(){
-    return this.row_count;
-  },
-  colCount: function(){
-    return this.col_count;
+    return this.rows.length;
   },
   rowIds: function(){
     return this.rows;
   },
-  colIds: function(){
-    return this.cols;
-  },
   rowExists: function(row_id){
     return _.include(this.rows,row_id);
   },
-  colExists: function(col_id){
-    return _.include(this.cols,col_id);
-  },
   rowAt: function(index){
     return this.rows[index];
-  },
-  colAt: function(index){
-    return this.cols[index];
   },
   insertRow: function(position){
     var new_id = uid();
@@ -109,6 +117,21 @@ var Sheet = module.exports = Backbone.Model.extend({
       sheet_id:this.id
     });
     return true;
+  },
+
+// # Collumns
+
+  colCount: function(){
+    return this.cols.length;
+  },
+  colIds: function(){
+    return this.cols;
+  },
+  colExists: function(col_id){
+    return _.include(this.cols,col_id);
+  },
+  colAt: function(index){
+    return this.cols[index];
   },
   insertCol: function(position){
     var new_id = uid();
@@ -135,6 +158,9 @@ var Sheet = module.exports = Backbone.Model.extend({
     });
     return true;
   },
+
+// # Cells
+
   updateCell: function(row_id,col_id,value){
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
@@ -169,13 +195,22 @@ var Sheet = module.exports = Backbone.Model.extend({
     if(raw) return raw.toString();
     return '';
   },
+  getCells: function(){
+    return this.cells;
+  },
+
+// # Colors
+
   getColor: function(row_id, col_id){
     return '#ffffff';
   },
   setColor: function(row_id, col_id, color){
   },
+
+// # Unused
+
   sync: function(method, model, options){
-    // no sync for you
+    console.log('WARNING: sync is unused in ethersheet'); 
   }
 
 });

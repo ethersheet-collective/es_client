@@ -14,11 +14,9 @@ var Ethersheet = module.exports = function(o) {
   
   this.data = {};
   this.data.selections = new SelectionCollection();
-  this.data.sheet = new SheetCollection([{
-    id:o.sheet_id
-  }]);
+  this.data.sheet = new SheetCollection([o.sheet]);
 
-  this.socket = new Socket(o.sheet_id,this.data);
+  this.socket = new Socket(o.channel,this.data);
 
   $(function(){
     es.$el = $(o.target);

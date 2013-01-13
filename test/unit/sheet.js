@@ -25,7 +25,7 @@ describe('Sheet', function(){
     events = [];
   };
 
-  describe('getters', function(){
+  describe('default initialization', function(){
     before(function(){
       initializeSheet();
     });
@@ -54,6 +54,57 @@ describe('Sheet', function(){
     it('rowAt should return the id of the row at index', function(){
       var row_id = sheet.rowIds()[0];
       sheet.rowAt(0).should.equal(row_id);
+    });
+  });
+
+
+  describe('initialization with data', function(){
+    var data;
+
+    before(function(){
+      data = {
+        cols: ['a','b','c'],
+        rows: ['1','2','3','4'],
+        cells:{
+          '1':{a:'a1',b:'b1',c:'c1'},
+          '2':{a:'a2',b:'b2',c:'c2'},
+          '3':{a:'a3',b:'b3',c:'c3'},
+          '4':{a:'a4',b:'b4',c:'c4'}
+        }
+      };
+      initializeSheet(data);
+    });
+
+    it('rowCount should get row count', function(){
+      sheet.rowCount().should.equal(data.rows.length);
+    });
+
+    it('colCount should get column count', function(){
+      sheet.colCount().should.equal(data.cols.length);
+    });
+
+    it('rowIds should return an array of ids', function(){
+      var row_ids = sheet.rowIds();
+      row_ids.should.equal(data.rows);
+    });
+
+    it('colIds should return an array of ids', function(){
+      var col_ids = sheet.colIds();
+      col_ids.should.equal(data.cols);
+    });
+
+    it('colAt should return the id of the column at index', function(){
+      sheet.colAt(0).should.equal('a');
+    });
+
+    it('rowAt should return the id of the row at index', function(){
+      sheet.rowAt(0).should.equal('1');
+    });
+    it('getCell should return the correct value', function(){
+      sheet.getValue('1','a').should.equal('a1');
+    });
+    it('getCells should return the correct data', function(){
+      sheet.getCells().should.equal(data.cells);
     });
   });
 

@@ -9,7 +9,7 @@ var sinon = require('sinon');
 var Socket = require('es_client/lib/socket');
 
 var fake_websocket = {
-  send: function()
+  send: function(){}
 };
 
 describe('Websockets', function(){
