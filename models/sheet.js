@@ -9,23 +9,11 @@ define(function (require,exports,module){
 */
 
 var _ = require('underscore');
-var Backbone = require('backbone');
+var ESModel = require('./es_model');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
 
-/*
-var BROADCAST_TYPE = 'sheet';
-var BROADCAST_EVENTS = [
-  'addCell',
-  'updateCell',
-  'insertCol',
-  'deleteCol',
-  'insertRow',
-  'deleteRow'
-];
-*/
-
-var Sheet = module.exports = Backbone.Model.extend({
+var Sheet = module.exports = ESModel.extend({
 
 // # Initialization
 
@@ -62,24 +50,6 @@ var Sheet = module.exports = Backbone.Model.extend({
   },
   initializeCells: function(cells){
     this.cells = cells || {};
-  },
-
-// # Send
-
-  sendEnabled: function(){
-    return this.send_enabled;
-  },
-  enableSend: function(){
-    this.send_enabled = true;
-  },
-  disableSend: function(){
-    this.send_enabled = false;
-  },
-  send: function(msg){
-    if(this.sendEnabled()){
-      console.log('sheet#send',msg);
-      this.trigger('send',msg);
-    }
   },
 
 // # Rows
@@ -203,12 +173,6 @@ var Sheet = module.exports = Backbone.Model.extend({
     return '#ffffff';
   },
   setColor: function(row_id, col_id, color){
-  },
-
-// # Unused
-
-  sync: function(method, model, options){
-    console.log('WARNING: sync is unused in ethersheet'); 
   }
 
 });

@@ -13,7 +13,7 @@ var Ethersheet = module.exports = function(o) {
   var es = this;
   
   this.data = {};
-  this.data.selections = new SelectionCollection();
+  this.data.selection = new SelectionCollection();
   this.data.sheet = new SheetCollection([o.sheet]);
 
   this.socket = new Socket(o.channel,this.data);
@@ -23,7 +23,7 @@ var Ethersheet = module.exports = function(o) {
     es.table = new TableView({
       el: es.$el,
       sheet: es.data.sheet.first(),
-      selections: es.data.selections
+      selections: es.data.selection
     }).render();
   });
 };

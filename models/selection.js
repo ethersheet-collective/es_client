@@ -16,10 +16,10 @@ define( function(require,exports,module){
 */
 
 var _ = require('underscore');
-var Backbone = require('backbone');
+var ESModel = require('./es_model');
 var config = require('es_client/config');
 
-var Selection = module.exports = Backbone.Model.extend({
+var Selection = module.exports = ESModel.extend({
   initialize: function(o){
     o = o || {};
     this.cells = [];
@@ -60,6 +60,12 @@ var Selection = module.exports = Backbone.Model.extend({
     this.cells.push(cell);
     this.addSheet(sheet);
     this.trigger('add_cell',cell);
+    this.send({
+      id: this.id,
+      type: 'selection',
+      action: 'addCell',
+      params:[sheet,row_id,col_id]
+    });
   },
 
   updateCell: function(){
