@@ -17,6 +17,9 @@ require.config({
     },
     'sinon':{
       exports: 'sinon'
+    },
+    'validator':{
+      exports: 'sanitize'
     }
   }
 });
