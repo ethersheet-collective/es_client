@@ -24,6 +24,7 @@ var Selection = module.exports = ESModel.extend({
     o = o || {};
     this.cells = [];
     this.sheets = {};
+    /*this.send_enabled  = true;*/
     this.color = o.color || config.DEFAULT_SELECTION_COLOR;
   },
 
@@ -44,6 +45,15 @@ var Selection = module.exports = ESModel.extend({
       s.sheets[cell.sheet_id].setColor(config.DEFAULT_COLOR);
     });
   },
+  
+  getData: function(){
+    return {
+      id: this.id,
+      sheet: this.sheet,
+      cells: this.cells,
+      color: this.color
+    }
+  },
 
   getCells: function(){
     return this.cells;
@@ -56,6 +66,7 @@ var Selection = module.exports = ESModel.extend({
       row_id: row_id,
       color: this.color
     };
+    console.log('add cell', cell);
     sheet.setColor(row_id, col_id, this.color);
     this.cells.push(cell);
     this.addSheet(sheet);

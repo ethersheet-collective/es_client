@@ -5,10 +5,10 @@ define(function (require,exports,module) {
   # Selection Collection
 */
 
-var Backbone = require('backbone');
-var Selection = require('es_client/models/selection');
+var ESCollection= require('./es_collection');
+var Selection = require('./selection');
 
-var SelectionCollection = module.exports = Backbone.Collection.extend({
+var SelectionCollection = module.exports = ESCollection.extend({
 
   model: Selection,
 
@@ -18,6 +18,17 @@ var SelectionCollection = module.exports = Backbone.Collection.extend({
     var local =  o.local || new Selection();
     this.add(local);
     this.setLocal(local);
+    this.send_enabled = true;
+  },
+
+  replicateRequested: function(){
+    var s = this.getLocal();
+    this.send({
+      type:'selection',
+      action:'replicate_selection',
+      id: s.id,
+      params:[s.getData()]
+    });
   },
 
   setLocal: function(selection){

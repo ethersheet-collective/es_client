@@ -1,7 +1,7 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define(function (require) {
 
-var Selection = require('es_client/models/selection');
+var SelectionCollection = require('es_client/models/selection_collection');
 var Sheet = require('es_client/models/sheet');
 var config = require('es_client/config');
 var expect = require('chai').expect;
@@ -16,7 +16,8 @@ describe('Selection', function(){
 
   var initializeSelection = function(){
     events = [];
-    selection = new Selection();
+    selections = new SelectionCollection();
+    selection = selections.getLocal();
     sheet = new Sheet();
     col_id = sheet.colAt(0),
     row_id = sheet.rowAt(0)
@@ -108,6 +109,26 @@ describe('Selection', function(){
       events.length.should.equal(1);
       events[0].name.should.equal('change');
     });
+  });
+
+  describe('Replication',function(){
+    describe('replicateRequested',function(){
+      it('should send a copy of the local selection',function(done){
+        selection.addCell(sheet,'123','abc');
+        var test_msg = {
+          type: 'selection',
+          action: 'replicate_selection',
+          id:selection.id,
+          params:[selection.getData()]
+        }
+        selections.on('send',function(msg){
+          expect(msg).to.deep.equal(test_msg);
+          done();
+        });
+        selections.replicateRequested();
+
+      });
+    })
   });
 });
 
