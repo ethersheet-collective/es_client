@@ -32,19 +32,21 @@ describe('Selection', function(){
   var clearEvents = function(){
     events = [];
   };
+
   describe('clear selection', function(){
     before(function(){
       initializeSelection();
       selection.addCell(sheet,row_id,col_id);
       selection.clear();
     });
+
     it('should be empty', function(){
       selection.getCells().length.should.equal(0);
       selection.getSheets().should.be.empty;
     });
   });
-  describe('add cell',function(){
 
+  describe('add cell',function(){
     before(function(){
       initializeSelection();
       selection.addCell(sheet,row_id,col_id);
@@ -112,13 +114,13 @@ describe('Selection', function(){
   });
 
   describe('Replication',function(){
+
     describe('replicateRequested',function(){
       it('should send a copy of the local selection',function(done){
         selection.addCell(sheet,'123','abc');
         var test_msg = {
           type: 'selection',
-          action: 'replicate_selection',
-          id:selection.id,
+          action: 'replicateSelection',
           params:[selection.getData()]
         }
         selections.on('send',function(msg){
@@ -129,6 +131,25 @@ describe('Selection', function(){
 
       });
     })
+
+    describe('replicateSelection',function(){
+      var rep_data, rep_selection;
+
+      beforeEach(function(){
+        rep_data = {id:'test_selection',color:'000000'};
+        selections.replicateSelection(rep_data);
+        rep_selection = selections.get('test_selection')
+      });
+
+      it('should create a copy of the selection',function(){
+        expect(rep_selection.id).to.equal(rep_data.id);
+      });
+
+      it('replicated data should be correct',function(){
+        rep_selection.getColor().should.equal('000000');
+      });
+
+    });
   });
 });
 

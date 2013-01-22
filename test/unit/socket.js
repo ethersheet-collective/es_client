@@ -2,6 +2,7 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define(function (require) {
 
 var SheetCollection = require('es_client/models/sheet_collection');
+var SelectionCollection = require('es_client/models/selection_collection');
 var config = require('es_client/config');
 var expect = require('chai').expect;
 var should = require('chai').should();
@@ -13,13 +14,14 @@ var fake_websocket = {
 };
 
 describe('Websockets', function(){
-  var socket, sheets, sheet;
+  var socket, selections, sheets, sheet;
 
   beforeEach(function(){
+    selections = new SelectionCollection();
     sheets = new SheetCollection();
     sheets.add({});
     sheet = sheets.first();
-    socket = new Socket('test_channel',{sheet:sheets},fake_websocket);
+    socket = new Socket('test_channel',{sheet:sheets,selection:selections},fake_websocket);
   });
 
   it('should trigger data event when cell is updated', function(){
@@ -37,14 +39,16 @@ describe('Websockets', function(){
 
   it('should call correct method on sheet when "sheet" event is emitted', function(){
     var cell_val = 'over 9000';
+    var msg ={
+      id: sheet.id,
+      type: 'sheet',
+      action:'updateCell', 
+      params:[sheet.rowAt(0),sheet.colAt(0),cell_val]
+    };
+    console.log(msg);
     sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.not.equal(cell_val)
     socket.onMessage({
-      data:JSON.stringify({
-        id: sheet.id,
-        type: 'sheet',
-        action:'updateCell', 
-        params:[sheet.rowAt(0),sheet.colAt(0),cell_val]
-      })
+      data:JSON.stringify(msg)
     });
     sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.equal(cell_val)
   });
@@ -60,6 +64,22 @@ describe('Websockets', function(){
       params:[]
     });
   });
+
+  it('should call method on collection when no id attribute is present', function(){
+    var msg ={
+      type: 'selection',
+      action:'replicateSelection', 
+      params:[{id:'test_selection',color:'000000'}]
+    };
+    socket.onMessage({
+      data:JSON.stringify(msg)
+    });
+    selections
+      .get('test_selection')
+      .getColor().should.equal('000000')
+  });
+  
+
 });
 
 });

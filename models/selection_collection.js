@@ -25,10 +25,13 @@ var SelectionCollection = module.exports = ESCollection.extend({
     var s = this.getLocal();
     this.send({
       type:'selection',
-      action:'replicate_selection',
-      id: s.id,
+      action:'replicateSelection',
       params:[s.getData()]
     });
+  },
+
+  replicateSelection: function(data){
+    this.add(data);
   },
 
   setLocal: function(selection){

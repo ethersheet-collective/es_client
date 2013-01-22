@@ -18,10 +18,12 @@ define( function(require,exports,module){
 var _ = require('underscore');
 var ESModel = require('./es_model');
 var config = require('es_client/config');
+var uid = require('es_client/helpers/uid');
 
 var Selection = module.exports = ESModel.extend({
   initialize: function(o){
     o = o || {};
+    this.id = o.id||uid();
     this.cells = [];
     this.sheets = {};
     /*this.send_enabled  = true;*/
@@ -38,6 +40,14 @@ var Selection = module.exports = ESModel.extend({
     this.trigger('clear', cleared_cells);
   },
 
+  getColor: function(){
+    return this.color; 
+  },
+
+  setColor: function(color){
+    this.color = color; 
+  },
+
   clearCellColors: function(){
     var s = this;
     _.each(this.cells, function(cell){
@@ -49,7 +59,7 @@ var Selection = module.exports = ESModel.extend({
   getData: function(){
     return {
       id: this.id,
-      sheet: this.sheet,
+      sheet: this.sheets,
       cells: this.cells,
       color: this.color
     }

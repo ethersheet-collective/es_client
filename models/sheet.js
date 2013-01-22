@@ -19,9 +19,8 @@ var Sheet = module.exports = ESModel.extend({
 
   initialize: function(o){
     o = o||{};
-    var sheet_id = o.id||uid();
+    this.id = o.id||uid();
     this.send_enabled = true;
-    this.set({id:sheet_id, silent:true});
     this.initializeRows(o.rows);
     this.initializeCols(o.cols);
     this.initializeCells(o.cells);
