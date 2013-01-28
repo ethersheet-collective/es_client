@@ -21,7 +21,7 @@ var SelectionCollection = module.exports = ESCollection.extend({
     this.send_enabled = true;
   },
 
-  replicateRequested: function(){
+  requestReplication: function(){
     var s = this.getLocal();
     this.send({
       type:'selection',
@@ -31,6 +31,15 @@ var SelectionCollection = module.exports = ESCollection.extend({
   },
 
   replicateSelection: function(data){
+    /*if we don't already have the selection in our stores, this must be a new 
+    * client in which case we should send them our selection object.  
+    * The better way to do this would be to send the client our selection 
+    * directly when a new client connects */
+    if(!this.get(data.id)){
+      this.enableSend();
+      this.requestReplication();
+      this.disableSend();
+    }
     this.add(data);
   },
 
