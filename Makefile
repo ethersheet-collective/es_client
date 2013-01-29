@@ -4,5 +4,7 @@ test-node: templates
 	./node_modules/.bin/mocha -R spec -r chai test/unit/*.js 
 templates:
 	./bin/build_templates.js
+todo:
+	grep -r 'TODO' *.js helpers lib models styles test views templates
 
-.PHONY: test-webkit test-node templates
+.PHONY: test-webkit test-node templates todo
