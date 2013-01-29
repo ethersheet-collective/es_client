@@ -19,7 +19,6 @@ var _ = require('underscore');
 var ESModel = require('./es_model');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
-var SelectionCollection = require('es_client/models/selection_collection');
 
 var Selection = module.exports = ESModel.extend({
   initialize: function(o){
@@ -76,24 +75,24 @@ var Selection = module.exports = ESModel.extend({
     return this.cells;
   },
 
-  addCell: function(sheet,row_id,col_id){
+  addCell: function(sheet_id,row_id,col_id){
     var selection = this;
+    var sheet = selection.collection.getSheet(sheet_id);
     var cell = {
-      sheet_id: sheet.id,
+      sheet_id: sheet_id,
       col_id: col_id,
       row_id: row_id,
       color: this.color
     };
-    console.log('sheet',sheet);
-    //sheet.setColor(row_id, col_id, this.color);
+    sheet.setColor(row_id, col_id, this.color);
     this.cells.push(cell);
-    //this.addSheet(sheet);
+    this.addSheet(sheet);
     this.trigger('add_cell',cell);
     this.send({
       id: this.id,
       type: 'selection',
       action: 'addCell',
-      params: [sheet,row_id,col_id]
+      params: [sheet_id,row_id,col_id]
     });
   },
 

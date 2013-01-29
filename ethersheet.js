@@ -13,8 +13,8 @@ var Ethersheet = module.exports = function(o) {
   var es = this;
   
   this.data = {};
-  this.data.selection = new SelectionCollection();
   this.data.sheet = new SheetCollection([o.sheet]);
+  this.data.selection = new SelectionCollection({sheet_collection: this.data.sheet});
 
   this.socket = new Socket(o.channel,this.data);
 

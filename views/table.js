@@ -120,7 +120,7 @@ var Table = module.exports = View.extend({
     var s = this.getSelections().getLocal();
     var data = $(e.currentTarget).data();
     s.clear();
-    s.addCell(this.getSheet(),data.row_id,data.col_id);
+    s.addCell(this.getSheet().id,data.row_id,data.col_id);
   },
 
   createCellInput: function(e){

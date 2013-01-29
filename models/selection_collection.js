@@ -7,6 +7,7 @@ define(function (require,exports,module) {
 
 var ESCollection= require('./es_collection');
 var Selection = require('./selection');
+var SheetCollection = require('./sheet_collection');
 
 var SelectionCollection = module.exports = ESCollection.extend({
 
@@ -16,6 +17,7 @@ var SelectionCollection = module.exports = ESCollection.extend({
     o = o || {};
     
     var local =  o.local || new Selection();
+    this.sheet_collection = o.sheet_collection || new SheetCollection();
     this.add(local);
     this.setLocal(local);
     this.send_enabled = true;
@@ -55,7 +57,13 @@ var SelectionCollection = module.exports = ESCollection.extend({
   },
 
   getLocal: function(){
+    //TODO: why is this a copy, not a refernce, such that I have to re add it?
+    //TODO: why is there an extra model that is not propegated
+    this.add(this.local);
     return this.local;
+  },
+  getSheet: function(sheet_id){
+    return this.sheet_collection.get(sheet_id);
   }
 });
 

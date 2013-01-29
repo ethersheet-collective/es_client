@@ -6,6 +6,7 @@ var should = require('chai').should();
 var $ = require('jquery');
 
 var Sheet = require('es_client/models/sheet');
+var SheetCollection = require('es_client/models/sheet_collection');
 var SelectionCollection = require('es_client/models/selection_collection');
 var TableView = require('es_client/views/table');
 var ES = require('es_client/config');
@@ -20,8 +21,12 @@ describe('TableView', function(){
   var initializeTable = function(){
     $container.empty()
     $el = $('<div id="ethersheet"></div>').appendTo($container);
+    sheets = new SheetCollection();
+    selections = new SelectionCollection({sheet_collection:sheets});
     sheet = new Sheet();
-    selections = new SelectionCollection();
+    selection = selections.getLocal();
+    sheets.add(sheet);
+    selections.add(selection);
     table = new TableView({
       el: $el,
       sheet: sheet,
