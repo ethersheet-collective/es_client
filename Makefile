@@ -5,6 +5,6 @@ test-node: templates
 templates:
 	./bin/build_templates.js
 todo:
-	grep -r 'TODO' *.js helpers lib models styles test views templates
+	grep -rn 'TODO' *.js helpers lib models styles test views templates
 
 .PHONY: test-webkit test-node templates todo
