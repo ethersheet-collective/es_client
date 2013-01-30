@@ -97,6 +97,13 @@ var Selection = module.exports = ESModel.extend({
     });
   },
 
+  addCells: function(cells){
+    var selection = this;
+    _.each(cells,function(cell){
+      selection.addCell(cell.sheet_id, cell.row_id, cell.col_id); 
+    });
+  },
+
   updateCell: function(){
     this.trigger('change');
   },

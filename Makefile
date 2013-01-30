@@ -5,6 +5,8 @@ test-node: templates
 templates:
 	./bin/build_templates.js
 todo:
-	grep -rn 'TODO' *.js helpers lib models styles test views templates
+	grep -rn 'TODO' *.js helpers lib models styles test/unit views templates
+logging:
+	grep -rn 'console.log' *.js helpers lib models styles test/unit views templates
 
-.PHONY: test-webkit test-node templates todo
+.PHONY: test-webkit test-node templates todo logging

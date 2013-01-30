@@ -98,7 +98,6 @@ var Table = module.exports = View.extend({
       .html(t.table_row_headers({num_row:this.getSheet().rowCount()}));
 
     this.swapElement();
-
     return this;
   },
 

@@ -46,6 +46,7 @@ var SelectionCollection = module.exports = ESCollection.extend({
       this.disableSend();
     }
     this.add(data);
+    this.get(data.id).addCells(data.cells);
   },
 
   setLocal: function(selection){
