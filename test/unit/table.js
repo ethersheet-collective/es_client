@@ -21,12 +21,16 @@ describe('TableView', function(){
   var initializeTable = function(){
     $container.empty()
     $el = $('<div id="ethersheet"></div>').appendTo($container);
+
     sheets = new SheetCollection();
-    selections = new SelectionCollection({sheet_collection:sheets});
     sheet = new Sheet();
-    selection = selections.getLocal();
     sheets.add(sheet);
+
+    selections = new SelectionCollection([],{sheet_collection:sheets});
+    selections.createLocal();
+    selection = selections.getLocal();
     selections.add(selection);
+
     table = new TableView({
       el: $el,
       sheet: sheet,

@@ -17,10 +17,11 @@ describe('Websockets', function(){
   var socket, selections, sheets, sheet;
 
   beforeEach(function(){
-    selections = new SelectionCollection();
     sheets = new SheetCollection();
     sheets.add({});
     sheet = sheets.first();
+    selections = new SelectionCollection([],{sheet_collection:sheets});
+    selections.createLocal();
     socket = new Socket('test_channel',{sheet:sheets,selection:selections},fake_websocket);
   });
 
@@ -45,7 +46,6 @@ describe('Websockets', function(){
       action:'updateCell', 
       params:[sheet.rowAt(0),sheet.colAt(0),cell_val]
     };
-    console.log(msg);
     sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.not.equal(cell_val)
     socket.onMessage({
       data:JSON.stringify(msg)

@@ -17,12 +17,15 @@ describe('Selection', function(){
 
   var initializeSelection = function(){
     events = [];
+    
     sheets = new SheetCollection();
-    selections = new SelectionCollection({sheet_collection:sheets});
     sheet = new Sheet();
-    selection = selections.getLocal();
     sheets.add(sheet);
-    selections.add(selection);
+    
+    selections = new SelectionCollection([],{sheet_collection:sheets});
+    selections.createLocal();
+    selection = selections.getLocal();
+    
     col_id = sheet.colAt(0);
     row_id = sheet.rowAt(0);
     selection.on('all',function(){
@@ -46,7 +49,6 @@ describe('Selection', function(){
 
     it('should be empty', function(){
       selection.getCells().length.should.equal(0);
-      selection.getSheets().should.be.empty;
     });
   });
 
@@ -112,7 +114,7 @@ describe('Selection', function(){
 
     it('should emit change when it\'s sheet is removed',function(){
       sheet.destroy();
-      events.length.should.equal(1);
+      events.length.should.equal(3);
       events[0].name.should.equal('change');
     });
   });

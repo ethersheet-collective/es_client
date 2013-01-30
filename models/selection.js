@@ -25,16 +25,17 @@ var Selection = module.exports = ESModel.extend({
     o = o || {};
     this.id = o.id||uid();
     this.cells = [];
-    this.sheets = {};
     this.send_enabled  = true;
+    this.sheet_id = null;
     this.color = o.color || config.DEFAULT_SELECTION_COLOR;
+
+    if(o.sheet_id) this.setSheet(o.sheet_id);
   },
 
   clear: function(silent){
     this.clearCellColors();
     var cleared_cells = this.cells;
     this.cells = [];
-    this.removeSheets();
     if(silent) return;
     this.trigger('change');
     this.trigger('clear', cleared_cells);
@@ -56,16 +57,17 @@ var Selection = module.exports = ESModel.extend({
 
   clearCellColors: function(){
     var s = this;
+    var sheet = this.collection.getSheet(this.sheet_id);
     _.each(this.cells, function(cell){
-      if(!s.sheets[cell.sheet_id]) return;
-      s.sheets[cell.sheet_id].setColor(config.DEFAULT_COLOR);
+      if(!this.sheet_id == cell.sheet_id) return;
+      sheet.setColor(config.DEFAULT_COLOR);
     });
   },
   
   getData: function(){
     return {
       id: this.id,
-      sheet: this.sheets,
+      sheet_id: this.sheet_id,
       cells: this.cells,
       color: this.color
     }
@@ -76,8 +78,8 @@ var Selection = module.exports = ESModel.extend({
   },
 
   addCell: function(sheet_id,row_id,col_id){
-    var selection = this;
-    var sheet = selection.collection.getSheet(sheet_id);
+    this.setSheet(sheet_id);
+    var sheet = this.collection.getSheet(sheet_id);
     var cell = {
       sheet_id: sheet_id,
       col_id: col_id,
@@ -86,7 +88,6 @@ var Selection = module.exports = ESModel.extend({
     };
     sheet.setColor(row_id, col_id, this.color);
     this.cells.push(cell);
-    this.addSheet(sheet);
     this.trigger('add_cell',cell);
     this.send({
       id: this.id,
@@ -100,47 +101,28 @@ var Selection = module.exports = ESModel.extend({
     this.trigger('change');
   },
 
-  getSheets: function(){
-    return this.sheets;
-  },
-
-  addSheet: function(sheet){
-    if(this.sheets[sheet.id]) return false;
+  setSheet: function(sheet_id){
+    if(this.sheet_id == sheet_id) return;
+    
+    this.unsetSheet();
+    
+    var sheet = this.collection.getSheet(sheet_id);
     sheet.on('update_cell',this.updateCell,this);
     sheet.on('delete_col',this.removeCol,this);
     sheet.on('delete_row',this.removeRow,this);
-    sheet.on('destroy',this.removeSheet,this);
-    this.sheets[sheet.id] = sheet;
-    return true;
-  },
-
-  removeSheets: function(){
-    var s = this;
-    for(var id in this.sheets){
-      s.removeSheet(id);
-    }
-  },
-  removeSheet: function(sheet_id){
-    /*polymorph incase we got an object instead of an id from backbone by calling sheet.destroy()*/
-    if(sheet_id.id) sheet_id = sheet_id.id
+    sheet.on('destroy',this.unsetSheet,this);
     
-    if(!this.sheets[sheet_id]) return;
+    this.sheet_id = sheet_id;
+  },
 
-    var sel = this;
-    var changed = false;
+  unsetSheet: function(){
+    if(!this.sheet_id) return;
+    this.clear();
+    
+    var sheet = this.collection.getSheet(this.sheet_id);
+    sheet.off(null,null,this);
 
-    this.cells = _.filter(this.cells,function(cell,index){
-      if(cell.sheet_id == sheet_id){
-        changed = true;
-        return false;
-      }
-      return true;
-    });
-
-    this.sheets[sheet_id].off(null,null,this);
-    delete this.sheets[sheet_id];
-
-    if(changed) this.trigger('change');
+    this.sheet_id = null;
   },
 
   removeCol: function(o){
