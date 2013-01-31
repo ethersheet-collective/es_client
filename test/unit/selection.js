@@ -44,11 +44,17 @@ describe('Selection', function(){
     before(function(){
       initializeSelection();
       selection.addCell(sheet.id,row_id,col_id);
+      clearEvents();
       selection.clear();
     });
 
     it('should be empty', function(){
       selection.getCells().length.should.equal(0);
+    });
+    
+    it('should trigger a send event', function(){
+      events[2].name.should.equal('send');
+      events[2].args[0].action.should.equal('clear');
     });
   });
 
@@ -77,6 +83,14 @@ describe('Selection', function(){
       cell.col_id.should.equal(col_id);
       cell.row_id.should.equal(row_id);
     });
+
+    it('should trigger a send event', function(){
+      events[1].name.should.equal('send');
+      events[1].args[0].params[0].should.equal(sheet.id);
+      events[1].args[0].params[1].should.equal(row_id);
+      events[1].args[0].params[2].should.equal(col_id);
+    });
+
   });
   
   describe('update cell', function(){
@@ -143,7 +157,7 @@ describe('Selection', function(){
 
       beforeEach(function(){
         initializeSelection();
-        rep_data = {id:'test_selection',color:'000000'};
+        rep_data = {id:'test_selection',color:'000000', cells:[{sheet_id:sheet.id,row_id:'foo',col_id:'foo'}]};
         selections.replicateSelection(rep_data);
         rep_selection = selections.get('test_selection')
       });
@@ -155,7 +169,10 @@ describe('Selection', function(){
       it('replicated data should be correct',function(){
         rep_selection.getColor().should.equal('000000');
       });
-
+      
+      it('should call add cell for for each cell in the replication', function(){
+        rep_selection.getCells().should.not.be.empty
+      });
     });
   });
 });
