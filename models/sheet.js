@@ -129,9 +129,9 @@ var Sheet = module.exports = ESModel.extend({
 // # Cells
 
   updateCell: function(row_id,col_id,value){
-    console.log('update cell');
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
+    console.log('sheet update cell');
     if(!this.cells[row_id]) this.cells[row_id] = {};
     this.cells[row_id][col_id] = value;
     this.trigger('update_cell',{
