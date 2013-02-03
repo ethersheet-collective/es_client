@@ -129,6 +129,7 @@ var Sheet = module.exports = ESModel.extend({
 // # Cells
 
   updateCell: function(row_id,col_id,value){
+    console.log('update cell');
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
@@ -146,6 +147,23 @@ var Sheet = module.exports = ESModel.extend({
       params:[row_id,col_id,value]
     });
     return true;
+  },
+  commitCell: function(row_id,col_id,value){
+    console.log('commit cell');
+    var cell_updated = this.updateCell(row_id,col_id,value);
+    if(!cell_updated) return false;
+    this.trigger('commit_cell',{
+      id:this.id,
+      row_id:row_id,
+      col_id:col_id,
+      value:value
+    });
+    this.send({
+      id: this.id,
+      type: 'sheet',
+      action: 'commitCell',
+      params:[row_id,col_id,value]
+    });
   },
   getCell: function(row_id,col_id){
     if(!this.rowExists(row_id)) return undefined;

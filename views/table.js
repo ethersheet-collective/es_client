@@ -136,12 +136,22 @@ var Table = module.exports = View.extend({
     
     this.$el.append($input);
     $input.focus();
+    var self = this;
+    $input.on('keyup', function(){
+      if (timer) {
+        clearTimeout(timer);
+      }
+      var timer = setTimeout(function(){
+        var data = $el.data
+        self.getSheet().updateCell(data.row_id, data.col_id, $input.val()); 
+      }, 500);
+    });
   },
 
   changeCell: function(e){
     var $el = $(e.currentTarget);
     var data = $el.data();
-    this.getSheet().updateCell(data.row_id, data.col_id, $el.val());
+    this.getSheet().commitCell(data.row_id, data.col_id, $el.val());
   },
 
   onUpdateCell: function(cell){
