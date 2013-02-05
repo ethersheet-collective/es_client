@@ -12,6 +12,8 @@ var _ = require('underscore');
 var ESModel = require('./es_model');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
+var expression = require('es_client/vendor/expression');
+console.log(expression);
 
 var Sheet = module.exports = ESModel.extend({
 
@@ -131,7 +133,6 @@ var Sheet = module.exports = ESModel.extend({
   updateCell: function(row_id,col_id,value){
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
-    console.log('sheet update cell');
     if(!this.cells[row_id]) this.cells[row_id] = {};
     this.cells[row_id][col_id] = value;
     this.trigger('update_cell',{
@@ -149,14 +150,15 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
   commitCell: function(row_id,col_id,value){
-    console.log('commit cell');
-    var cell_updated = this.updateCell(row_id,col_id,value);
+    var display_value = this.parseValue(value)
+    var cell_updated = this.updateCell(row_id,col_id,display_value);
     if(!cell_updated) return false;
     this.trigger('commit_cell',{
       id:this.id,
       row_id:row_id,
       col_id:col_id,
-      value:value
+      value:value,
+      display_value:display_value
     });
     this.send({
       id: this.id,
@@ -164,6 +166,12 @@ var Sheet = module.exports = ESModel.extend({
       action: 'commitCell',
       params:[row_id,col_id,value]
     });
+  },
+  parseValue: function(value){
+    if(value.charAt(0) != '=') return value;
+    var parsed = expression.parser.parse(value);
+    console.log('parsed', parsed);
+    return parsed;
   },
   getCell: function(row_id,col_id){
     if(!this.rowExists(row_id)) return undefined;

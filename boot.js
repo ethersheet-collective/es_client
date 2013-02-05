@@ -20,6 +20,9 @@ require.config({
     },
     'validator':{
       exports: 'sanitize'
+    },
+    'expression':{
+      exports: 'expression'
     }
   }
 });
