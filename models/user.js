@@ -5,31 +5,15 @@ define(function (require,exports,module) {
 
   # User
 
-  ## References
-  * Selection
-
 */
 
-var Backbone = require('backbone');
+var ESModel = require('./es_model');
 var uid = require('es_client/helpers/uid');
-var Selection = require('es_client/models/selection');
 
-var User = module.exports = Backbone.Model.extend({
+var User = module.exports = ESModel.extend({
   initialize: function(o){
-    this.set({id: o.id || uid()}, {silent:true});
-    this.selecion = this.setSelection(o.selection || new Selection());
-  },
-  setSelection: function(selection){
-    this.unsetSelection();
-    this.selection = selection;
-  },
-  unsetSelection: function(){
-    if(!this.selection) return;
-    this.selection.off(null,null,this);
-    this.selection = null;
-  },
-  getSelection: function(){
-    return this.selection;
+    o = o || {};
+    this.id = o.id||uid();
   }
 });
 
