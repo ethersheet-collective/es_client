@@ -13,7 +13,7 @@ var SheetCollection = require('es_client/models/sheet_collection');
 Backbone.sync = function(){};
 
 describe('Selection', function(){
-  var selection, sheet, col_id,row_id, events;
+  var selections, selection, sheet, col_id,row_id, events;
 
   var initializeSelection = function(){
     events = [];

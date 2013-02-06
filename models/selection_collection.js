@@ -20,11 +20,30 @@ var SelectionCollection = module.exports = ESCollection.extend({
     this.local = null;
   },
 
+// ## Local Selection
+
   createLocal: function(){
     var local =  this.getLocal() || new Selection();
-    this.add(local);
     this.setLocal(local);
   },
+
+  setLocal: function(selection){
+    this.unsetLocal();
+    if(!this.get(selection.id)) this.add(selection);
+    this.local = selection;
+  },
+
+  unsetLocal: function(){
+    if(!this.local) return;
+    this.local.off(null,null,this);
+    this.local = null;
+  },
+
+  getLocal: function(){
+    return this.local;
+  },
+
+// ## Replication
 
   requestReplication: function(){
     var s = this.getLocal();
@@ -49,20 +68,7 @@ var SelectionCollection = module.exports = ESCollection.extend({
     this.get(data.id).addCells(data.cells);
   },
 
-  setLocal: function(selection){
-    this.unsetLocal();
-    this.local = selection;
-  },
-
-  unsetLocal: function(){
-    if(!this.local) return;
-    this.local.off(null,null,this);
-    this.local = null;
-  },
-
-  getLocal: function(){
-    return this.local;
-  },
+// ## Sheet Collection
 
   getSheet: function(sheet_id){
     return this.sheet_collection.get(sheet_id);
