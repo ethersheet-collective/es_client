@@ -152,7 +152,7 @@ var Sheet = module.exports = ESModel.extend({
   commitCell: function(row_id,col_id,cell){
     if(!cell.value){
       var cell = {
-        value:cell,
+        value:cell.toString(),
         display_value: undefined
       };
     }

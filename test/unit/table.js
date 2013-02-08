@@ -88,6 +88,18 @@ describe('TableView', function(){
         $('.es-table-cell',$el).first().text().should.equal(value.toString()); 
       });
     }); 
+    describe('on commit cell', function(){
+      it('should draw a cell when we update the sheet\'s cell value',function(){
+        sheet.commitCell(row_id,col_id,value);
+        $('.es-table-cell',$el).first().attr('data-value').should.equal(value.toString()); 
+      });
+      it('should parse when we commit a value',function(){
+        sheet.commitCell(row_id,col_id,value);
+        $('.es-table-cell',$el).first().text().should.equal(value.toString()); 
+        sheet.commitCell(row_id,col_id,'=1+1');
+        $('.es-table-cell',$el).first().text().should.equal('2'); 
+      });
+    });
     describe('on insert_col', function(){
       it('should draw a new column', function(){
         var original_col_count = $('.es-table-row',$el)
@@ -103,7 +115,7 @@ describe('TableView', function(){
       });
 
       it('should draw values in correct location', function(){
-        sheet.updateCell(row_id,col_id,value);
+        sheet.commitCell(row_id,col_id,value);
         sheet.insertCol(0);
         
         $('.es-table-cell',$el)
@@ -134,7 +146,7 @@ describe('TableView', function(){
       it('should draw values in correct location', function(){
         row_id = sheet.rowAt(0);
         col_id = sheet.colAt(1);
-        sheet.updateCell(row_id,col_id,value);
+        sheet.commitCell(row_id,col_id,value);
         sheet.deleteCol(sheet.colAt(0));
         
         $('.es-table-cell',$el)
@@ -159,7 +171,7 @@ describe('TableView', function(){
       });
 
       it('should draw values in correct location', function(){
-        sheet.updateCell(row_id,col_id,value);
+        sheet.commitCell(row_id,col_id,value);
         sheet.insertRow(0);
         
         $('.es-table-cell',$el)
@@ -189,7 +201,7 @@ describe('TableView', function(){
       it('should draw values in correct location', function(){
         row_id = sheet.rowAt(1);
         col_id = sheet.colAt(0);
-        sheet.updateCell(row_id,col_id,value);
+        sheet.commitCell(row_id,col_id,value);
         sheet.deleteRow(sheet.rowAt(0));
         
         $('.es-table-cell',$el)
@@ -213,6 +225,10 @@ describe('TableView', function(){
     var initial_bgcolor, $clicked_cell, $input;
     beforeEach(function(){
       initializeTable();
+      row_id = sheet.rowAt(0);
+      col_id = sheet.colAt(0);
+      value = '=1+1';
+      sheet.commitCell(row_id,col_id,value);
       $clicked_cell = $('.es-table-cell').first()
       initial_bgcolor = $clicked_cell.css('background-color');
       $clicked_cell.click()
@@ -234,6 +250,7 @@ describe('TableView', function(){
 
     it("should create an input for selected cell", function(){
       $input[0].should.not.equal(undefined);
+      $input.val().should.equal(value);
     });
 
     describe("and then a new cell is clicked", function(){
@@ -251,6 +268,9 @@ describe('TableView', function(){
       it("should remove the old input", function(){
         $input = $('#'+$clicked_cell.attr('id')+'-input');
         $input.length.should.equal(0);
+      });
+      it("should have the parsed value", function(){
+        $clicked_cell.text().should.equal('2');
       });
     });
 

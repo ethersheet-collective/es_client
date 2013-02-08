@@ -62,14 +62,15 @@ describe('Sheet', function(){
     var data;
 
     before(function(){
+      default_cell = function(rowcol){ return {value:rowcol, display_value:rowcol} } ;
       data = {
         cols: ['a','b','c'],
         rows: ['1','2','3','4'],
         cells:{
-          '1':{a:'a1',b:'b1',c:'c1'},
-          '2':{a:'a2',b:'b2',c:'c2'},
-          '3':{a:'a3',b:'b3',c:'c3'},
-          '4':{a:'a4',b:'b4',c:'c4'}
+          '1':{a:default_cell('a1'),b:default_cell('b1'),c:default_cell('c1')},
+          '2':{a:default_cell('a2'),b:default_cell('b2'),c:default_cell('c2')},
+          '3':{a:default_cell('a3'),b:default_cell('b3'),c:default_cell('c3')},
+          '4':{a:default_cell('a4'),b:default_cell('b4'),c:default_cell('c4')}
         }
       };
       initializeSheet(data);
@@ -108,6 +109,42 @@ describe('Sheet', function(){
     });
   });
 
+  describe('commit cell', function(){
+    var new_value,row_id, col_id, success;
+    before(function(){
+      initializeSheet();
+      new_value = "=1+1";
+      row_id = sheet.rowIds()[0];
+      col_id = sheet.colIds()[0];
+      sheet.commitCell(row_id,col_id,{value: new_value, display_value:null});
+    });
+
+    it('should change the cell value', function(){
+      sheet.getValue(row_id,col_id).should.equal(new_value.toString());
+    });
+    it('should parse the display value', function(){
+      sheet.getDisplayValue(row_id,col_id).should.equal('2');
+    });
+    it('should emit a commit_cell event', function(){
+      events.length.should.equal(4);
+      events[2].name.should.equal('commit_cell');
+      events[1].name.should.equal('send');
+    });
+    it('should emit an update cell event', function(){
+       events[0].name.should.equal('update_cell');
+    });
+    it('should return same display value for non expressions', function(){
+      sheet.commitCell(row_id,col_id,{value: 'foo', display_value:null});
+      sheet.getDisplayValue(row_id,col_id).should.equal('foo');
+    });
+    it('should take a value instead of an object', function(){
+      sheet.commitCell(row_id,col_id,'asdf');
+      sheet.getDisplayValue(row_id,col_id).should.equal('asdf');
+      sheet.getValue(row_id,col_id).should.equal('asdf');
+    });
+
+  });
+
   describe('update cell', function(){
     var new_value,row_id, col_id, success;
 
@@ -116,15 +153,11 @@ describe('Sheet', function(){
       new_value = 5;
       row_id = sheet.rowIds()[0];
       col_id = sheet.colIds()[0];
-      success = sheet.updateCell(row_id,col_id,new_value);
+      success = sheet.updateCell(row_id,col_id,new_value, new_value);
     });
 
     it('should return true', function(){
       success.should.equal(true);
-    });
-
-    it('should change the cell value', function(){
-      sheet.getValue(row_id,col_id).should.equal(new_value.toString());
     });
 
     it('should trigger an update_cell and send event',function(){

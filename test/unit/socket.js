@@ -23,6 +23,7 @@ describe('Websockets', function(){
     selections = new SelectionCollection([],{sheet_collection:sheets});
     selections.createLocal();
     socket = new Socket('test_channel',{sheet:sheets,selection:selections},fake_websocket);
+    cell = {value:1,display_value:1};
   });
 
   it('should trigger data event when cell is updated', function(){
@@ -31,26 +32,36 @@ describe('Websockets', function(){
       id: sheet.id,
       type: 'sheet',
       action:'updateCell', 
-      params:[sheet.rowAt(0),sheet.colAt(0),1]
+      params:[sheet.rowAt(0),sheet.colAt(0),1,1]
     });
 
-    sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),1);
+    sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),1,1);
     mock.verify();
   });
 
+  it('should trigger data event when cell is committed', function(){
+    var mock = sinon.mock(socket);
+    mock.expects('send').twice();
+
+    sheet.commitCell(sheet.rowAt(0),sheet.colAt(0),1);
+    mock.verify();
+  });
+
+
   it('should call correct method on sheet when "sheet" event is emitted', function(){
-    var cell_val = 'over 9000';
+    cell.value = '=9000';
     var msg ={
       id: sheet.id,
       type: 'sheet',
-      action:'updateCell', 
-      params:[sheet.rowAt(0),sheet.colAt(0),cell_val]
+      action:'commitCell', 
+      params:[sheet.rowAt(0),sheet.colAt(0),cell]
     };
-    sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.not.equal(cell_val)
+    sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.not.equal(cell.value)
     socket.onMessage({
       data:JSON.stringify(msg)
     });
-    sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.equal(cell_val)
+    sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.equal(cell.value)
+    sheet.getDisplayValue(sheet.rowAt(0),sheet.colAt(0)).should.equal('9000')
   });
   
   it('should not be able to call unauthorized method on sheet', function(){
