@@ -12,8 +12,7 @@ var _ = require('underscore');
 var ESModel = require('./es_model');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
-var expression = require('es_client/vendor/expression');
-console.log(expression);
+require('es_client/vendor/expression'); //sets a global variable called expression
 
 var Sheet = module.exports = ESModel.extend({
 
@@ -130,46 +129,54 @@ var Sheet = module.exports = ESModel.extend({
 
 // # Cells
 
-  updateCell: function(row_id,col_id,value){
+  updateCell: function(row_id,col_id,value,display_value){
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
-    this.cells[row_id][col_id] = value;
+    console.log('display_value', display_value);
+    var display_value =  display_value || value;
     this.trigger('update_cell',{
       id:this.id,
       row_id:row_id,
       col_id:col_id,
-      value:value
+      value:value,
+      display_value: display_value
     });
     this.send({
       id: this.id,
       type: 'sheet',
       action: 'updateCell',
-      params:[row_id,col_id,value]
+      params:[row_id,col_id,value, display_value]
     });
     return true;
   },
-  commitCell: function(row_id,col_id,value){
-    var display_value = this.parseValue(value)
-    var cell_updated = this.updateCell(row_id,col_id,display_value);
+  commitCell: function(row_id,col_id,cell){
+    console.log('cell',cell);
+    if(!cell.value){
+      var cell = {
+        value:cell,
+        display_value: undefined
+      };
+    }
+    cell.display_value = this.parseValue(cell.value);
+    var cell_updated = this.updateCell(row_id,col_id,cell.value,cell.display_value);
     if(!cell_updated) return false;
-    this.trigger('commit_cell',{
+    this.cells[row_id][col_id] = cell;
+    this.trigger('commit_cell', _.extend(_.clone(cell),{
       id:this.id,
       row_id:row_id,
-      col_id:col_id,
-      value:value,
-      display_value:display_value
-    });
+      col_id:col_id
+    }));
     this.send({
       id: this.id,
       type: 'sheet',
       action: 'commitCell',
-      params:[row_id,col_id,value]
+      params:[row_id,col_id,cell]
     });
   },
   parseValue: function(value){
     if(value.charAt(0) != '=') return value;
-    var parsed = expression.parser.parse(value);
+    var parsed = expression.parse(value.slice(1));
     console.log('parsed', parsed);
     return parsed;
   },
@@ -184,8 +191,18 @@ var Sheet = module.exports = ESModel.extend({
     return cell;
   },
   getValue: function(row_id, col_id){
-    var raw = this.getRawValue(row_id, col_id);
-    if(raw) return raw.toString();
+    var cell = this.getRawValue(row_id, col_id);
+    if(cell) return cell.value.toString();
+    return '';
+  },
+  getDisplayValue: function(row_id, col_id){
+    var cell = this.getRawValue(row_id, col_id);
+    if(cell) {
+      if(cell.display_value){
+        return cell.display_value.toString();
+      }
+      return cell.value.toString(); 
+    }
     return '';
   },
   getCells: function(){

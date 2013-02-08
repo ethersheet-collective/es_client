@@ -132,7 +132,7 @@ var Table = module.exports = View.extend({
     var row_id = $el.data().row_id;
     var col_id = $el.data().col_id;
 
-    var $input = $("<input id='"+$el.attr('id')+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' class='es-table-cell-input' value='"+$el.text()+"' style='left: "+x+"px; top: "+y+"px; width: "+width+"px; height: "+height+"px; background-color: "+color+";' />");
+    var $input = $("<input id='"+$el.attr('id')+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' class='es-table-cell-input' value='"+$el.attr('data-value')+"' style='left: "+x+"px; top: "+y+"px; width: "+width+"px; height: "+height+"px; background-color: "+color+";' />");
     
     this.$el.append($input);
     $input.focus();
@@ -155,7 +155,8 @@ var Table = module.exports = View.extend({
 
   onUpdateCell: function(cell){
     var $el = $('#'+cell.row_id+'-'+cell.col_id);
-    $el.text(cell.value);
+    $el.text(cell.display_value);
+    $el.attr('data-value', cell.value);
   },  
 
   destroy: function(){
