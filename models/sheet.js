@@ -133,7 +133,6 @@ var Sheet = module.exports = ESModel.extend({
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
-    console.log('display_value', display_value);
     var display_value =  display_value || value;
     this.trigger('update_cell',{
       id:this.id,
@@ -151,7 +150,6 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
   commitCell: function(row_id,col_id,cell){
-    console.log('cell',cell);
     if(!cell.value){
       var cell = {
         value:cell,
@@ -177,7 +175,6 @@ var Sheet = module.exports = ESModel.extend({
   parseValue: function(value){
     if(value.charAt(0) != '=') return value;
     var parsed = expression.parse(value.slice(1));
-    console.log('parsed', parsed);
     return parsed;
   },
   getCell: function(row_id,col_id){
