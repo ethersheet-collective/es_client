@@ -12,7 +12,8 @@ var _ = require('underscore');
 var ESModel = require('./es_model');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
-require('es_client/vendor/expression'); //sets a global variable called expression
+var ex = require('es_client/vendor/es_expression'); //sets a global variable called expression
+var exp = ex || expression //setting things up incase we are running in node mode
 
 var Sheet = module.exports = ESModel.extend({
 
@@ -174,7 +175,7 @@ var Sheet = module.exports = ESModel.extend({
   },
   parseValue: function(value){
     if(value.charAt(0) != '=') return value;
-    var parsed = expression.parse(value.slice(1));
+    var parsed = exp.parse(value.slice(1));
     return parsed;
   },
   getCell: function(row_id,col_id){

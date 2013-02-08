@@ -26,7 +26,6 @@ var ESCollection = module.exports = Backbone.Collection.extend({
   },
   send: function(msg){
     if(this.sendEnabled()){
-      console.log('send',msg);
       this.trigger('send',msg);
     }
   }

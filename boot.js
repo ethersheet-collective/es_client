@@ -21,7 +21,7 @@ require.config({
     'validator':{
       exports: 'sanitize'
     },
-    'expression':{
+    'es_expression':{
       exports: 'expression'
     }
   }

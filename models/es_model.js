@@ -27,7 +27,6 @@ var ESModel = module.exports = Backbone.Model.extend({
   },
   send: function(msg){
     if(this.sendEnabled()){
-      console.log('send',msg);
       this.trigger('send',msg);
     }
   },
