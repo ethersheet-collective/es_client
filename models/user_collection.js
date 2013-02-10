@@ -6,7 +6,7 @@ define(function (require,exports,module) {
 */
 
 var ESCollection= require('./es_collection');
-var User = require('./selection');
+var User = require('./user');
 
 var UserCollection = module.exports = ESCollection.extend({
 
@@ -16,6 +16,30 @@ var UserCollection = module.exports = ESCollection.extend({
     o = o || {};
     this.send_enabled = true;
     this.current_user = null;
+  },
+
+// ## CRUD
+
+addUser: function(user_data){
+  var user = new User(user_data);
+  this.add(user);
+  this.send({
+    type:'user',
+    action:'addUser',
+    params:[user.getData()]
+  });
+},
+
+// ## Replication
+
+  replicateUser: function(id){
+    var user = this.get(id);
+    if(!user) return;
+    this.send({
+      type:'user',
+      action:'addUser',
+      params:[user.getData()]
+    });
   },
 
 // ## Current User

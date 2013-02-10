@@ -14,7 +14,14 @@ var User = module.exports = ESModel.extend({
   initialize: function(o){
     o = o || {};
     this.id = o.id||uid();
+  },
+
+  getData:function(){
+    return {
+      id: this.id
+    }
   }
+
 });
 
 });
