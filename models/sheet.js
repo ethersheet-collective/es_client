@@ -13,7 +13,7 @@ var ESModel = require('./es_model');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
 var ex = require('es_client/vendor/es_expression'); //sets a global variable called expression
-var exp = ex || expression //setting things up incase we are running in node mode
+var exp = ex || es_expression //setting things up incase we are running in node mode
 
 var Sheet = module.exports = ESModel.extend({
 
