@@ -3,6 +3,7 @@ define( function(require,exports,module) {
 
 var $ = require('jquery');
 
+var UserCollection = require('es_client/models/user_collection');
 var SheetCollection = require('es_client/models/sheet_collection');
 var SelectionCollection = require('es_client/models/selection_collection');
 var TableView = require('es_client/views/table');
@@ -17,7 +18,7 @@ var Ethersheet = module.exports = function(o) {
 
   this.data.sheet = new SheetCollection([o.sheet]);
   this.data.selection = new SelectionCollection([],{sheet_collection: this.data.sheet});
-  this.data.selection.createLocal();
+  this.data.user = new UserCollection();
 
   $(function(){
     es.$el = $(o.target);
@@ -28,6 +29,8 @@ var Ethersheet = module.exports = function(o) {
     }).render();
     es.socket = new Socket(o.channel,es.data);
     es.socket.onOpen(function(){
+      es.data.user.createCurrentUser(o.user);
+      es.data.selection.createLocal();
       es.data.selection.requestReplication();
       es.connect();
     });
