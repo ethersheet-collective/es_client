@@ -28,6 +28,12 @@ var ESCollection = module.exports = Backbone.Collection.extend({
     if(this.sendEnabled()){
       this.trigger('send',msg);
     }
+  },
+  alwaysSend: function(msg){
+    var send_enabled = this.send_enabled;
+    this.enableSend();
+    this.send(msg);
+    if(!send_enabled) this.disableSend();
   }
 });
 
