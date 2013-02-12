@@ -11,8 +11,10 @@ var Socket = require('es_client/lib/socket');
 var Ethersheet = module.exports = function(o) {
   if(!o.target) throw Error('el or target required');
   var es = this;
-  
+ 
+  this.connection_handler = function(){};
   this.data = {};
+
   this.data.sheet = new SheetCollection([o.sheet]);
   this.data.selection = new SelectionCollection([],{sheet_collection: this.data.sheet});
   this.data.selection.createLocal();
@@ -25,7 +27,20 @@ var Ethersheet = module.exports = function(o) {
       selections: es.data.selection
     }).render();
     es.socket = new Socket(o.channel,es.data);
+    es.socket.onOpen(function(){
+      es.data.selection.requestReplication();
+      es.connect();
+    });
   });
+};
+
+
+Ethersheet.prototype.onConnect = function(handler){
+  this.connection_handler = handler;
+};
+
+Ethersheet.prototype.connect = function(){
+  this.connection_handler();
 };
 
 });
