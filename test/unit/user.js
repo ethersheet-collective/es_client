@@ -22,7 +22,7 @@ describe('User', function(){
   describe('createCurrentUser',function(){
     
     beforeEach(function(){
-      users.createCurrentUser();
+      users.createCurrentUser({id:'test_user'});
     });
 
     it('should create a current user',function(){    
@@ -74,7 +74,7 @@ describe('User', function(){
                        {id:'test_user'});
     });
 
-    it('should emit an addUser event',function(){
+    it('should send an addUser event',function(){
       var expected_event = {
         name:'send',
         args:[{
@@ -89,6 +89,55 @@ describe('User', function(){
       assert.deepEqual(trap.events[1],expected_event);
     });
   });
+
+
+  describe('replicateUser',function(){
+
+    beforeEach(function(){
+      users.addUser({id:'test_user'});
+      trap.clearEvents();
+    });
+
+    it('should send an addUser event, even with send_enabled set to false',function(){
+      var expected_event = {
+        name:'send',
+        args:[{
+          type:'user',
+          action:'addUser',
+          params:[{
+            id:'test_user' 
+          }]
+        }]
+      };
+      users.disableSend();
+      users.replicateUser('test_user');
+      assert.equal(trap.events.length,1);
+      assert.deepEqual(trap.events[0],expected_event);
+    });
+  });
+
+  describe('requestReplicateUser',function(){
+
+    beforeEach(function(){
+      users.createCurrentUser({id:'test_user'});
+      trap.clearEvents();
+    });
+
+    it('should send a replicateCurrentUser event',function(){
+      var expected_event = {
+        name:'send',
+        args:[{
+          type:'user',
+          action:'replicateCurrentUser',
+          params:[]
+        }]
+      };
+      users.requestReplicateCurrentUser();
+      assert.equal(trap.events.length,1);
+      assert.deepEqual(trap.events[0],expected_event);
+    });
+  });
+
 
 });
 

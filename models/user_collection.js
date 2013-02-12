@@ -31,22 +31,31 @@ addUser: function(user_data){
 },
 
 // ## Replication
-
   replicateUser: function(id){
     var user = this.get(id);
     if(!user) return;
-    this.send({
+    this.alwaysSend({
       type:'user',
       action:'addUser',
       params:[user.getData()]
     });
   },
 
+  requestReplicateCurrentUser: function(){
+    this.alwaysSend({
+      type:'user',
+      action:'replicateCurrentUser',
+      params:[]
+    });
+  },
+
 // ## Current User
 
-  createCurrentUser: function(){
-    var current_user = this.getCurrentUser() || new User();
-    this.setCurrentUser(current_user);
+  createCurrentUser: function(user_data){
+    var user = new User(user_data);
+    this.add(user);
+    this.setCurrentUser(this.get(user.id));
+    this.replicateUser(user.id);
   },
 
   getCurrentUser: function(){
