@@ -23,6 +23,9 @@ require.config({
     },
     'es_expression':{
       exports: 'expression'
+    },
+    'sockjs-client':{
+      exports: 'SockJS'
     }
   }
 });
