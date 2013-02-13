@@ -12,8 +12,6 @@ var _ = require('underscore');
 var ESModel = require('./es_model');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
-var ex = require('es_client/vendor/es_expression'); //sets a global variable called expression
-var exp = ex || es_expression //setting things up incase we are running in node mode
 
 var Sheet = module.exports = ESModel.extend({
 
@@ -26,6 +24,7 @@ var Sheet = module.exports = ESModel.extend({
     this.initializeRows(o.rows);
     this.initializeCols(o.cols);
     this.initializeCells(o.cells);
+    
   },
   initializeRows: function(rows){
     if(_.isArray(rows)){
@@ -66,6 +65,19 @@ var Sheet = module.exports = ESModel.extend({
   },
   rowAt: function(index){
     return this.rows[index];
+  },
+  identifierToIndex: function(letters){
+    var scale = 1;
+    var pieces = letters.toLowerCase().split('');
+    var idx = _.reduceRight(pieces, function(memo,letter){
+      console.log(scale);
+      var pos = (letter.charCodeAt(0) - 96) * scale;
+      console.log(pos);
+      scale = scale * 26;
+      return memo + pos; 
+    }, -1);
+    return idx;
+       
   },
   insertRow: function(position){
     var new_id = uid();
@@ -175,7 +187,8 @@ var Sheet = module.exports = ESModel.extend({
   },
   parseValue: function(value){
     if(value.charAt(0) != '=') return value;
-    var parsed = exp.parse(value.slice(1));
+    this.collection.setParserSheet(this);
+    var parsed = this.collection.parser.parse(value.slice(1));
     return parsed;
   },
   getCell: function(row_id,col_id){
@@ -194,7 +207,11 @@ var Sheet = module.exports = ESModel.extend({
     return '';
   },
   getDisplayValue: function(row_id, col_id){
+    return this.getParsedValue(row_id,col_id);
+  },
+  getParsedValue: function(row_id,col_id){
     var cell = this.getRawValue(row_id, col_id);
+    console.log(cell);
     if(cell) {
       if(cell.display_value){
         return cell.display_value.toString();

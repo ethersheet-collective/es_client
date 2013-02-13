@@ -2,6 +2,7 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define(function (require) {
 
 var Sheet = require('es_client/models/sheet');
+var SheetCollection = require('es_client/models/sheet_collection');
 var config = require('es_client/config');
 var expect = require('chai').expect;
 var should = require('chai').should();
@@ -12,7 +13,9 @@ describe('Sheet', function(){
 
   var initializeSheet = function(o){
     events = [];
+    sheet_collection = new SheetCollection(o);
     sheet = new Sheet(o);
+    sheet_collection.add(sheet);
     sheet.on('all',function(){
       events.push({
         name: arguments[0],
@@ -54,6 +57,15 @@ describe('Sheet', function(){
     it('rowAt should return the id of the row at index', function(){
       var row_id = sheet.rowIds()[0];
       sheet.rowAt(0).should.equal(row_id);
+    });
+    it('letterToIndex should return an index of a given letter in the alphabet', function(){
+      sheet.identifierToIndex('A').should.equal(0);
+      sheet.identifierToIndex('a').should.equal(0);
+      sheet.identifierToIndex('Z').should.equal(25);
+      sheet.identifierToIndex('AA').should.equal(26);
+      sheet.identifierToIndex('BA').should.equal(52);
+      sheet.identifierToIndex('ZZ').should.equal(701);
+      sheet.identifierToIndex('ZZZ').should.equal(18277);
     });
   });
 
