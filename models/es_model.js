@@ -30,6 +30,12 @@ var ESModel = module.exports = Backbone.Model.extend({
       this.trigger('send',msg);
     }
   },
+  alwaysSend: function(msg){
+    var send_enabled = this.send_enabled;
+    this.enableSend();
+    this.send(msg);
+    if(!send_enabled) this.disableSend();
+  },
 
 // # Unused
 
