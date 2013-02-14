@@ -229,7 +229,7 @@ describe('Sheet', function(){
 
     it('should remove the deleted row\'s cells', function(){
       expect(sheet.getValue(row_id,col_id)).to.equal('')
-      expect(sheet.getRawValue(row_id,col_id)).to.be.undefined;
+      expect(sheet.get(row_id,col_id)).to.be.undefined;
     });
     
     it('should trigger a delete row event',function(){
@@ -283,7 +283,7 @@ describe('Sheet', function(){
 
     it('should remove the deleted column\'s cells', function(){
       expect(sheet.getValue(row_id,col_id)).to.equal('');
-      expect(sheet.getRawValue(row_id,col_id)).to.be.undefined;
+      expect(sheet.getCell(row_id,col_id)).to.be.undefined;
     });
     
     it('should trigger a delete column event',function(){
@@ -291,6 +291,29 @@ describe('Sheet', function(){
       events[0].name.should.equal('delete_col');
       events[0].args[0].col_id.should.equal(col_id);
       events[0].args[0].sheet_id.should.equal(sheet.id);
+    });
+  });
+
+  describe('formula parsing', function(){
+    before(function(){
+      initializeSheet();
+      row_id = sheet.rowAt(0);
+      col_id = sheet.colAt(0);
+      a1_value = '3';
+      sheet.commitCell(row_id, col_id, a1_value);
+      new_row = sheet.rowAt(0); 
+      new_col = sheet.colAt(1); 
+      sheet.commitCell(new_row, new_col, '=A1');
+    });
+
+    it('should reference a cell', function(done){
+      sheet.getCell(new_row, new_col).display_value.should.equal(a1_value);
+      done();
+    });
+    it('should update cell when referenced cell changes', function(done){
+      sheet.commitCell(row_id, col_id, '4');
+      sheet.getCell(new_row, new_col).display_value.should.equal('4');
+      done();
     });
   });
 });

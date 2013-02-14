@@ -22,7 +22,7 @@ require.config({
       exports: 'sanitize'
     },
     'es_expression':{
-      exports: 'expression'
+      exports: 'es_expression'
     },
     'sockjs-client':{
       exports: 'SockJS'

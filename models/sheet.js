@@ -66,13 +66,12 @@ var Sheet = module.exports = ESModel.extend({
   rowAt: function(index){
     return this.rows[index];
   },
+  /* takes a column identifier ('A') and converts it to an array index */
   identifierToIndex: function(letters){
     var scale = 1;
     var pieces = letters.toLowerCase().split('');
     var idx = _.reduceRight(pieces, function(memo,letter){
-      console.log(scale);
       var pos = (letter.charCodeAt(0) - 96) * scale;
-      console.log(pos);
       scale = scale * 26;
       return memo + pos; 
     }, -1);
@@ -197,12 +196,8 @@ var Sheet = module.exports = ESModel.extend({
     if(_.isUndefined(this.cells[row_id])) return null;
     return this.cells[row_id][col_id] || null;
   },
-  getRawValue: function(row_id,col_id){
-    var cell = this.getCell(row_id,col_id);
-    return cell;
-  },
   getValue: function(row_id, col_id){
-    var cell = this.getRawValue(row_id, col_id);
+    var cell = this.getCell(row_id, col_id);
     if(cell) return cell.value.toString();
     return '';
   },
@@ -210,8 +205,7 @@ var Sheet = module.exports = ESModel.extend({
     return this.getParsedValue(row_id,col_id);
   },
   getParsedValue: function(row_id,col_id){
-    var cell = this.getRawValue(row_id, col_id);
-    console.log(cell);
+    var cell = this.getCell(row_id, col_id);
     if(cell) {
       if(cell.display_value){
         return cell.display_value.toString();
