@@ -179,7 +179,6 @@ var Sheet = module.exports = ESModel.extend({
       cell.display_value = this.parseValue(cell.value);
     } catch (e) {
       cell.display_value = e.message;
-      cell.value = '';
     }
     this.cells[row_id][col_id] = cell;
     var cell_updated = this.updateCell(row_id,col_id,cell.value,cell.display_value);
