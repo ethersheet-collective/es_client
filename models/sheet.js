@@ -162,13 +162,19 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
   commitCell: function(row_id,col_id,cell){
+    console.log('commitCell');
     if(!cell.value){
       var cell = {
         value:cell.toString(),
         display_value: undefined
       };
     }
-    cell.display_value = this.parseValue(cell.value);
+    try{
+      cell.display_value = this.parseValue(cell.value);
+    } catch (e) {
+      cell.display_value = e.message;
+      cell.value = '';
+    }
     var cell_updated = this.updateCell(row_id,col_id,cell.value,cell.display_value);
     if(!cell_updated) return false;
     this.cells[row_id][col_id] = cell;

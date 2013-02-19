@@ -137,23 +137,26 @@ var Table = module.exports = View.extend({
     this.$el.append($input);
     $input.focus();
     var self = this;
+    var timer = null;
     $input.on('keyup', function(){
       if (timer) {
         clearTimeout(timer);
       }
-      var timer = setTimeout(function(){
+      timer = setTimeout(function(){
         self.getSheet().updateCell(row_id, col_id, $input.val()); 
       }, 500);
     });
   },
 
   changeCell: function(e){
+    console.log('changeCell');
     var $el = $(e.currentTarget);
     var data = $el.data();
     this.getSheet().commitCell(data.row_id, data.col_id, $el.val());
   },
 
   onUpdateCell: function(cell){
+    console.log('updateCell', cell.display_value, cell.value);
     var $el = $('#'+cell.row_id+'-'+cell.col_id);
     $el.text(cell.display_value);
     $el.attr('data-value', cell.value);
