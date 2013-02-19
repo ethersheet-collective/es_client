@@ -145,7 +145,14 @@ var Sheet = module.exports = ESModel.extend({
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
-    var display_value =  display_value || value;
+
+    var cell = this.cells[row_id][col_id]
+    if(cell){
+      var display_value = cell.display_value; 
+    } else {
+      var display_value =  display_value || value;
+    }
+
     this.trigger('update_cell',{
       id:this.id,
       row_id:row_id,
@@ -162,7 +169,6 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
   commitCell: function(row_id,col_id,cell){
-    console.log('commitCell');
     if(!cell.value){
       var cell = {
         value:cell.toString(),
@@ -175,9 +181,8 @@ var Sheet = module.exports = ESModel.extend({
       cell.display_value = e.message;
       cell.value = '';
     }
-    var cell_updated = this.updateCell(row_id,col_id,cell.value,cell.display_value);
-    if(!cell_updated) return false;
     this.cells[row_id][col_id] = cell;
+    var cell_updated = this.updateCell(row_id,col_id,cell.value,cell.display_value);
     this.trigger('commit_cell', _.extend(_.clone(cell),{
       id:this.id,
       row_id:row_id,

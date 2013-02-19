@@ -149,14 +149,12 @@ var Table = module.exports = View.extend({
   },
 
   changeCell: function(e){
-    console.log('changeCell');
     var $el = $(e.currentTarget);
     var data = $el.data();
     this.getSheet().commitCell(data.row_id, data.col_id, $el.val());
   },
 
   onUpdateCell: function(cell){
-    console.log('updateCell', cell.display_value, cell.value);
     var $el = $('#'+cell.row_id+'-'+cell.col_id);
     $el.text(cell.display_value);
     $el.attr('data-value', cell.value);
