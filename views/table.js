@@ -143,7 +143,8 @@ var Table = module.exports = View.extend({
         clearTimeout(timer);
       }
       timer = setTimeout(function(){
-        self.getSheet().updateCell(row_id, col_id, $input.val()); 
+        self.getSheet().updateCell(row_id, col_id, $input.val(), $el.text()); 
+        clearTimeout(timer);
       }, 500);
     });
   },

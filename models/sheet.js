@@ -142,15 +142,16 @@ var Sheet = module.exports = ESModel.extend({
 // # Cells
 
   updateCell: function(row_id,col_id,value,display_value){
+    console.log('UPDATE CELL', value, display_value);
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
 
-    var cell = this.cells[row_id][col_id]
-    if(cell){
-      var display_value = cell.display_value; 
+    var cell = this.cells[row_id][col_id] || {};
+    if(display_value){
+      cell.display_value = display_value; 
     } else {
-      var display_value =  display_value || value;
+      cell.display_value =  value;
     }
 
     this.trigger('update_cell',{
@@ -158,7 +159,7 @@ var Sheet = module.exports = ESModel.extend({
       row_id:row_id,
       col_id:col_id,
       value:value,
-      display_value: display_value
+      display_value: cell.display_value
     });
     this.send({
       id: this.id,
@@ -169,7 +170,7 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
   commitCell: function(row_id,col_id,cell){
-    if(!cell.value){
+    if(!_.isObject(cell)){
       var cell = {
         value:cell.toString(),
         display_value: undefined
@@ -180,8 +181,8 @@ var Sheet = module.exports = ESModel.extend({
     } catch (e) {
       cell.display_value = e.message;
     }
-    this.cells[row_id][col_id] = cell;
     var cell_updated = this.updateCell(row_id,col_id,cell.value,cell.display_value);
+    this.cells[row_id][col_id] = cell;
     this.trigger('commit_cell', _.extend(_.clone(cell),{
       id:this.id,
       row_id:row_id,
