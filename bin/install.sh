@@ -1,2 +1,6 @@
-cp ./node_modules/es_command/es_command.js ./vendor
-cp ./node_modules/es_expression/es_expression.js ./vendor
+rm ./vendor/es_command.js
+ln -s ./node_modules/es_command/es_command.js ./vendor/es_command.js
+rm ./vendor/es_expression.js
+ln -s ./node_modules/es_expression/es_expression.js ./vendor/es_expression.js
+rm ./vendor/ref-binder.js
+ln -s ./node_modules/es_command/es_command.js ./vendor/ref-binder.js
