@@ -137,12 +137,14 @@ var Table = module.exports = View.extend({
     this.$el.append($input);
     $input.focus();
     var self = this;
+    var timer = null;
     $input.on('keyup', function(){
       if (timer) {
         clearTimeout(timer);
       }
-      var timer = setTimeout(function(){
-        self.getSheet().updateCell(row_id, col_id, $input.val()); 
+      timer = setTimeout(function(){
+        self.getSheet().updateCell(row_id, col_id, $input.val(), $el.text()); 
+        clearTimeout(timer);
       }, 500);
     });
   },

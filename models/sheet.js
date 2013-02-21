@@ -140,18 +140,53 @@ var Sheet = module.exports = ESModel.extend({
   },
 
 // # Cells
-
+  //TODO: refactor cell model and how updateCell and commitCell work
+  /****************************************************
+   * Thoughts on refactoring cells
+   * Cells could be an object like this:
+   * {
+   *    formula: "=CELL(0,1,1)", // internal formula representation
+   *    display_formula: "=A1", // formula displayed to user
+   *    value: "3", //parsed value used in calculating other formulae
+   *    styles: ["bg-red","fg-white"] //list of styles used for formatting cell
+   * }
+   *
+   * Workflow should go like this:
+   * when a user edits a cell:
+   *   if the user has changed the value:
+   *    updateCell will be called at intervals
+   *    updateCell checks if a cell object already exists and creates one if not
+   *    update the display formula and value
+   *    this triggers a callback which updates the text of the cell element
+   *
+   * when a user commits a cell:
+   *   commitCell is called and parses the display_formula and then parses the formula, it then updates the value
+   *   triggers a callback which updates the cell text
+   *
+   * when a user styles a cell:
+   *  styleCell is called and passed a cell and a class
+   *  triggers a callback which updates the css for that cell.
+   *
+   * ***********************************************/
   updateCell: function(row_id,col_id,value,display_value){
+    console.log('UPDATE CELL', value, display_value);
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
-    var display_value =  display_value || value;
+
+    var cell = this.cells[row_id][col_id] || {};
+    if(display_value){
+      cell.display_value = display_value; 
+    } else {
+      cell.display_value =  value;
+    }
+
     this.trigger('update_cell',{
       id:this.id,
       row_id:row_id,
       col_id:col_id,
       value:value,
-      display_value: display_value
+      display_value: cell.display_value
     });
     this.send({
       id: this.id,
@@ -162,15 +197,18 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
   commitCell: function(row_id,col_id,cell){
-    if(!cell.value){
+    if(!_.isObject(cell)){
       var cell = {
         value:cell.toString(),
         display_value: undefined
       };
     }
-    cell.display_value = this.parseValue(cell.value);
+    try{
+      cell.display_value = this.parseValue(cell.value);
+    } catch (e) {
+      cell.display_value = e.message;
+    }
     var cell_updated = this.updateCell(row_id,col_id,cell.value,cell.display_value);
-    if(!cell_updated) return false;
     this.cells[row_id][col_id] = cell;
     this.trigger('commit_cell', _.extend(_.clone(cell),{
       id:this.id,

@@ -79,10 +79,10 @@ describe('Sheet', function(){
         cols: ['a','b','c'],
         rows: ['1','2','3','4'],
         cells:{
-          '1':{a:default_cell('a1'),b:default_cell('b1'),c:default_cell('c1')},
-          '2':{a:default_cell('a2'),b:default_cell('b2'),c:default_cell('c2')},
-          '3':{a:default_cell('a3'),b:default_cell('b3'),c:default_cell('c3')},
-          '4':{a:default_cell('a4'),b:default_cell('b4'),c:default_cell('c4')}
+          '1':{'a':default_cell('a1'),'b':default_cell('b1'),'c':default_cell('c1')},
+          '2':{'a':default_cell('a2'),'b':default_cell('b2'),'c':default_cell('c2')},
+          '3':{'a':default_cell('a3'),'b':default_cell('b3'),'c':default_cell('c3')},
+          '4':{'a':default_cell('a4'),'b':default_cell('b4'),'c':default_cell('c4')}
         }
       };
       initializeSheet(data);
@@ -126,8 +126,11 @@ describe('Sheet', function(){
     before(function(){
       initializeSheet();
       new_value = "=1+1";
+      console.log('rows', sheet.rowIds());
+      console.log('cols', sheet.colIds());
       row_id = sheet.rowIds()[0];
       col_id = sheet.colIds()[0];
+      sheet.updateCell(row_id,col_id,new_value);
       sheet.commitCell(row_id,col_id,{value: new_value, display_value:null});
     });
 
@@ -138,8 +141,8 @@ describe('Sheet', function(){
       sheet.getDisplayValue(row_id,col_id).should.equal('2');
     });
     it('should emit a commit_cell event', function(){
-      events.length.should.equal(4);
-      events[2].name.should.equal('commit_cell');
+      events.length.should.equal(6);
+      events[4].name.should.equal('commit_cell');
       events[1].name.should.equal('send');
     });
     it('should emit an update cell event', function(){
@@ -150,6 +153,11 @@ describe('Sheet', function(){
       sheet.getDisplayValue(row_id,col_id).should.equal('foo');
     });
     it('should take a value instead of an object', function(){
+      sheet.commitCell(row_id,col_id,'asdf');
+      sheet.getDisplayValue(row_id,col_id).should.equal('asdf');
+      sheet.getValue(row_id,col_id).should.equal('asdf');
+    });
+    it('should be sure cell is not an object before it instantiates', function(){
       sheet.commitCell(row_id,col_id,'asdf');
       sheet.getDisplayValue(row_id,col_id).should.equal('asdf');
       sheet.getValue(row_id,col_id).should.equal('asdf');
