@@ -9,6 +9,7 @@
     "backbone": "git://github.com/tedsuo/backbone.git",
     "es_command": "git://github.com/ethersheet-collective/es_command.git",
     "es_expression": "git://github.com/ethersheet-collective/es_expression.git",
+    "ref-binder": "git://github.com/ethersheet-collective/ref-binder.git",
     "sockjs-client": ">=0.1.3",
     "stitchit": "*",
     "ref-binder": "*",

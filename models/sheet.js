@@ -146,26 +146,14 @@ var Sheet = module.exports = ESModel.extend({
    * Cells could be an object like this:
    *  b1 = {
    *    type: "number" or "formula" or "date" or "currency"
-   *    value: 3 or "bob" or "=A1", // data stored on disk
-   *    styles: ["bg-red","fg-white", "us_dollar"] //list of styles used for formatting cell
+   *    value: 3 or "bob" or "=CELL(123,123,123)", // data stored on disk
+   *    styles: ["bg-red","fg-white", "us_dollar"], //list of styles used for formatting cell
    *    
    *  # Derived methods
    *    getCellDisplay(): "47", // value in the table
-   *    getObservedCells:[["124e2fef13223","12r213t34gb452"],["svd12f2v31v3v133v1","132f124f134g1g4"]]
-   *    getObservedIndexes:[[1,2],[37,406]]
-   *    
+   *    getForumlaDisplay(): "=A1"
    *}
    *
-   *Sheets in turn keep track of who is watching who
-   *
-   * observed_cells: {"row_123123123":
-   *                    {
-   *                      "col_qqc12d121ed12":[
-   *                         ["row_12eldn12","col_132rfg2vasvd"],
-   *                         ["row_12312rfvdsv","col_acasc2fcqwc"]
-   *                        ]
-   *                     }
-   *                  }
    * Sheets keep track of cells with uncommited changes
    *
    * uncomitted_cells: {....} // cell matrix
@@ -194,11 +182,9 @@ var Sheet = module.exports = ESModel.extend({
    *    the table calls sheet#commitCell
    *
    * when a sheet#commitCell is called:
-   *   the original cell's observervations are removed from the sheet
-   *   the updated cell's observervations are added to the sheet
    *   the updated cell's display values are derived if it is a formula
    *   the original cell is replaced by the updated cell
-   *   the sheet#refreshCell is called for each of the updated cells observers
+   *   the sheet#refreshCell is called for each formula cell
    *   'cell_committed' is emitted
    *   'cell_committed' is sent over the socket 
    *
@@ -209,6 +195,8 @@ var Sheet = module.exports = ESModel.extend({
    * when a sheet#refreshCell is called:
    *   the cell recalculates it's value
    *   it emits 'cell_updated'
+   *
+   *   cell reference should call refresh cell 
    *
    * ***********************************************/
   updateCell: function(row_id,col_id,value,display_value){
