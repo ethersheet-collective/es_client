@@ -168,34 +168,36 @@ var Sheet = module.exports = ESModel.extend({
    *   formula editor is notified
    *   sheet#updateCell is called
    *
-   * sheet#updateCell:
-   *    modifies a cell in uncommitted_cells
-   *    emits 'cell_updated' event 
-   *    sends a 'cell_updated' socket event (maybe this is buffered) 
-   
-   * on 'cell_updated':
-   *    the formula display is updated
-   *    the table display is updated
-   *
    * when a user ends editing:
    *    selection moves to 'next' cell
    *    the table calls sheet#commitCell
    *
-   * when a sheet#commitCell is called:
+   * on 'cell_updated':
+   *    the formula display is updated
+   *    the table display is updated
+   *
+   * on 'cell_committed':
+   *    the formula display is updated
+   *    the table display is updated
+   *
+   * sheet#updateCell:
+   *    gets an existing cell or creates a new cell
+   *    modifies a cell in uncommitted_cells
+   *    emits 'cell_updated' event 
+   *    sends a 'cell_updated' socket event (maybe this is buffered) 
+   
+   *
+   * sheet#commitCell:
    *   the updated cell's display values are derived if it is a formula
    *   the original cell is replaced by the updated cell
    *   the sheet#refreshCell is called for each formula cell
    *   'cell_committed' is emitted
    *   'cell_committed' is sent over the socket 
    *
-   * on 'cell_committed':
-   *    the formula display is updated
-   *    the table display is updated
    *
    * when a sheet#refreshCell is called:
    *   the cell recalculates it's value
    *   it emits 'cell_updated'
-   *
    *   cell reference should call refresh cell 
    *
    * ***********************************************/

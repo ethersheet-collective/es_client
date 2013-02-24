@@ -83,22 +83,20 @@ describe('TableView', function(){
       col_id = sheet.colAt(0);
     });
     describe('on update cell', function(){
-      it('should draw a cell when we update the sheet\'s cell value',function(){
+      it('should update the table display of the cell',function(){
         sheet.updateCell(row_id,col_id,value);
         $('.es-table-cell',$el).first().text().should.equal(value.toString()); 
       });
+
+      it('should update the formula editor display for the cell');
     }); 
+
     describe('on commit cell', function(){
-      it('should draw a cell when we update the sheet\'s cell value',function(){
+      it('should update the table display with the new cell value',function(){
         sheet.commitCell(row_id,col_id,value);
         $('.es-table-cell',$el).first().attr('data-value').should.equal(value.toString()); 
       });
-      it('should parse when we commit a value',function(){
-        sheet.commitCell(row_id,col_id,value);
-        $('.es-table-cell',$el).first().text().should.equal(value.toString()); 
-        sheet.commitCell(row_id,col_id,'=1+1');
-        $('.es-table-cell',$el).first().text().should.equal('2'); 
-      });
+      it('should update th formula display with the new display formula');
     });
     describe('on insert_col', function(){
       it('should draw a new column', function(){
@@ -269,12 +267,9 @@ describe('TableView', function(){
         $input = $('#'+$clicked_cell.attr('id')+'-input');
         $input.length.should.equal(0);
       });
-      it("should have the parsed value", function(){
-        $clicked_cell.text().should.equal('2');
-      });
     });
 
-    describe("and type on the keyboard", function(){
+    describe("when a user edits a cell", function(){
       var row_id, col_id, initial_val;
       
       beforeEach(function(){
@@ -288,6 +283,17 @@ describe('TableView', function(){
       it("should change the value of the cell", function(){
         var new_val = sheet.getValue(row_id, col_id);
         new_val.should.not.equal(initial_val);
+      });
+      it("should call sheet#updateCell");
+
+    });
+
+    describe("When a user finishes editing a cell", function(){
+      it("should move selection to the next cell");
+      it("should call Sheet#CommitCell()");
+
+      it("should have the parsed value", function(){
+        $clicked_cell.text().should.equal('2');
       });
     });
 
