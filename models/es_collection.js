@@ -26,6 +26,7 @@ var ESCollection = module.exports = Backbone.Collection.extend({
   },
   send: function(msg){
     if(this.sendEnabled()){
+      msg = this.formatMessage(msg);
       this.trigger('send',msg);
     }
   },
@@ -34,6 +35,10 @@ var ESCollection = module.exports = Backbone.Collection.extend({
     this.enableSend();
     this.send(msg);
     if(!send_enabled) this.disableSend();
+  },
+  formatMessage: function(msg){
+    if(!msg.params) msg.params = [];
+    return msg;
   }
 });
 
