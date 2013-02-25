@@ -30,6 +30,8 @@ var Ethersheet = module.exports = function(o) {
     es.socket = new Socket(o.channel,es.data);
     es.socket.onOpen(function(){
       es.data.user.createCurrentUser(o.user);
+      es.data.user.replicateCurrentUser();
+      es.data.user.requestReplicateCurrentUser();
       es.data.selection.createLocal();
       es.data.selection.requestReplication();
       es.connect();
