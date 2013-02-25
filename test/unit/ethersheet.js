@@ -31,6 +31,11 @@ describe('Ethersheet Client', function(){
   });
 
   describe('on initialization', function(){
+  
+    it('sends 3 events',function(){
+      assert.equal(user_trap.events.length,3);
+    });
+
     it('sends addUser event',function(){
       var expected_event = {
         name:'send',
@@ -42,9 +47,21 @@ describe('Ethersheet Client', function(){
           }]
         }]
       };
-      assert.equal(user_trap.events.length,2);
       assert.deepEqual(user_trap.events[1],expected_event);
     });
+
+    it('sends requestReplicateCurrentUser event',function(){
+      var expected_event = {
+        name:'send',
+        args:[{
+          type:'user',
+          action:'replicateCurrentUser',
+          params:[]
+        }]
+      };
+      assert.deepEqual(user_trap.events[2],expected_event);
+    });
+
   });
 });
 

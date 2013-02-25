@@ -90,7 +90,6 @@ describe('User', function(){
     });
   });
 
-
   describe('replicateUser',function(){
 
     beforeEach(function(){
@@ -111,6 +110,32 @@ describe('User', function(){
       };
       users.disableSend();
       users.replicateUser('test_user');
+      assert.equal(trap.events.length,1);
+      assert.deepEqual(trap.events[0],expected_event);
+    });
+  });
+
+
+  describe('replicateCurrentUser',function(){
+
+    beforeEach(function(){
+      users.createCurrentUser({id:'test_user'});
+      trap.clearEvents();
+    });
+
+    it('should send an addUser event, even with send_enabled set to false',function(){
+      var expected_event = {
+        name:'send',
+        args:[{
+          type:'user',
+          action:'addUser',
+          params:[{
+            id:'test_user' 
+          }]
+        }]
+      };
+      users.disableSend();
+      users.replicateCurrentUser();
       assert.equal(trap.events.length,1);
       assert.deepEqual(trap.events[0],expected_event);
     });

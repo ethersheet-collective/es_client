@@ -41,11 +41,15 @@ addUser: function(user_data){
     });
   },
 
+  replicateCurrentUser: function(){
+    var user = this.getCurrentUser();
+    this.replicateUser(user.id);
+  },
+
   requestReplicateCurrentUser: function(){
     this.alwaysSend({
       type:'user',
-      action:'replicateCurrentUser',
-      params:[]
+      action:'replicateCurrentUser'
     });
   },
 
@@ -55,7 +59,6 @@ addUser: function(user_data){
     var user = new User(user_data);
     this.add(user);
     this.setCurrentUser(this.get(user.id));
-    this.replicateUser(user.id);
   },
 
   getCurrentUser: function(){
