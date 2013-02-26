@@ -317,7 +317,7 @@ describe('TableView', function(){
         called.should.be.true
       });
 
-      it("should move selection to the next cell", function(done){
+      it("should move selection down a cell when enter is pressed", function(done){
         var e = $.Event("keypress");
         e.which = 13; 
         e.keyCode = 13;
@@ -330,6 +330,10 @@ describe('TableView', function(){
         done();
       });
 
+      it("should move selection over a cell when tab is pressed");
+
+      it("should show display value on previous edited cell when enter or tab are pressed");
+      it("should display cell reference as integer if there is a cell reference");
       it("should have the parsed value", function(){
         $clicked_cell.text().should.equal('2');
       });

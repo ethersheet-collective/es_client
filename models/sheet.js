@@ -241,7 +241,7 @@ var Sheet = module.exports = ESModel.extend({
       id: this.id,
       type: 'sheet',
       action: 'commitCell',
-      params:[row_id,col_id]
+      params:[row_id,col_id,cell]
     });
     var self = this;
     _.each(self.getFormulaCells(), function(idx){

@@ -45,7 +45,7 @@ describe('Websockets', function(){
       id: sheet.id,
       type: 'sheet',
       action:'commitCell', 
-      params:[sheet.rowAt(0),sheet.colAt(0)]
+      params:[sheet.rowAt(0),sheet.colAt(0),{value:1, type:'number'}]
     });
 
     sheet.disableSend();
