@@ -324,15 +324,27 @@ describe('TableView', function(){
         $('#'+$clicked_cell.attr('id')+'-input').length.should.equal(1);
         $input.trigger(e);
         $('#'+$clicked_cell.attr('id')+'-input').length.should.equal(0);
-        $newCell = $('td#1-0');
-        $input = $('#'+$newCell.attr('id')+'-input');
-        $input.length.should.equal(1);
+        var $newCell = $('td#1-0');
+        $input_new = $('#'+$newCell.attr('id')+'-input');
+        $input_new.length.should.equal(1);
         done();
       });
 
       it("should move selection over a cell when tab is pressed");
 
-      it("should show display value on previous edited cell when enter or tab are pressed");
+      it("should show display value on previous edited cell when enter or tab are pressed", function(done){
+        var $newCell = $('td#1-0');
+        sheet.updateCell('1','0','=1+3');
+        $newCell.click();
+        var $input_new = $('#'+$newCell.attr('id')+'-input');
+        $input_new.val('=1+3');
+        var e = $.Event("keypress");
+        e.which = 13; 
+        e.keyCode = 13;
+        $input_new.trigger(e);
+        $newCell.text().should.equal('4');
+        done();
+      });
       it("should display cell reference as integer if there is a cell reference");
       it("should have the parsed value", function(){
         $clicked_cell.text().should.equal('2');

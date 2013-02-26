@@ -140,17 +140,23 @@ var Table = module.exports = View.extend({
     
     this.$el.append($input);
     $input.focus();
-    var self = this;
     var timer = null;
+    var sheet = this.getSheet();
+    this.old_val = this.old_val || '';
     $input.on('keyup', function(){
       /*if (timer) {
         clearTimeout(timer);
       }*/
       //timer = setTimeout(function(){
-        self.getSheet().updateCell(row_id, col_id, $input.val(), $el.text()); 
+      if(!$input.val()){return};
+      if($input.val() != this.old_val){
+        sheet.updateCell(row_id, col_id, $input.val(), $el.text()); 
+        this.old_val = $input.val() || this.old_val; //we use this to check if the value has actually changed or the user hit a control key
+      }
        // clearTimeout(timer);
       //}, 50);
     });
+    return $input;
   },
 
   changeCell: function(e){
@@ -164,6 +170,7 @@ var Table = module.exports = View.extend({
     //return unless code is 'enter' or 'tab' 
     if(code != 13 && code != 9) return;
     if(code == 13){
+      this.changeCell(e);
       var old_cell = $(e.currentTarget);
       var rows = this.getSheet().rows;
       var new_col = old_cell.attr('data-col_id');

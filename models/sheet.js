@@ -308,8 +308,8 @@ var Sheet = module.exports = ESModel.extend({
   },
   //TODO: Delete me!
   getDisplayValue: function(row_id, col_id){
-    console.warn("Warning: getDisplayValue is deperecated, use getCellDisplay instead");
-    return '';
+    var cell = this.getCell(row_id,col_id);
+    return this.getCellDisplay(cell);
   },
   getCellDisplay: function(cell){
     if(!cell) return '';
