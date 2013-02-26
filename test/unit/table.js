@@ -345,10 +345,23 @@ describe('TableView', function(){
         $newCell.text().should.equal('4');
         done();
       });
-      it("should display cell reference as integer if there is a cell reference");
-      it("should have the parsed value", function(){
-        $clicked_cell.text().should.equal('2');
+
+      it("should display cell reference as integer if there is a cell reference", function(){
+        var $newCell = $('td#2-0');
+        sheet.updateCell('2','0','=A1');
+        $newCell.click();
+        var $input_new = $('#'+$newCell.attr('id')+'-input');
+        $input_new.val('=A1');
+        var e = $.Event("keypress");
+        e.which = 13; 
+        e.keyCode = 13;
+        $input_new.trigger(e);
+        $newCell.text().should.equal('2');
       });
+
+      /*it("should have the parsed value", function(){
+        $clicked_cell.text().should.equal('2');
+      });*/
     });
 
   });

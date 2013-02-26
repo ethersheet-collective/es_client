@@ -313,6 +313,9 @@ var Sheet = module.exports = ESModel.extend({
   },
   getCellDisplay: function(cell){
     if(!cell) return '';
+    return this.getRawValue(cell);
+  },
+  getRawValue: function(cell){
     if(!(cell.type == 'formula')) return cell.value; //do nothing if cell is not a formula
     return String(this.parseValue(cell.value));
   },
