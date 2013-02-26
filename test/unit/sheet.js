@@ -422,11 +422,6 @@ describe('Sheet', function(){
       sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a1_value);
       done();
     });
-    it('should update cell when referenced cell changes'/*, function(done){
-      sheet.commitCell(row_id, col_id, '4');
-      sheet.getCell(new_row, new_col).display_value.should.equal('4');
-      done();
-    }*/);
     it('should deal with deleting or adding columns and rows');
   });
 });

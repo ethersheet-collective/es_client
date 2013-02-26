@@ -148,68 +148,15 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
 
-// # Cells
-  //TODO: refactor cell model and how updateCell and commitCell work
-  /****************************************************
-   * Thoughts on refactoring cells
-   * Cells could be an object like this:
-   *  b1 = {
+  /**************************************************** 
+   * # Cells
+   * Cells are a flyweight object that looks like so:
+   * {
    *    type: "number" or "formula" or "date" or "currency"
    *    value: 3 or "bob" or "=CELL(123,123,123)", // data stored on disk
    *    styles: ["bg-red","fg-white", "us_dollar"], //list of styles used for formatting cell
-   *    
-   *  # Derived methods
-   *    getCellDisplay(): "47", // value in the table
-   *    getForumlaDisplay(): "=A1"
    *}
-   *
-   * Sheets keep track of cells with uncommited changes
-   *
-   * uncomitted_cells: {....} // cell matrix
-   *
-   * Workflow should go like this:
-   *
-   * when a user edits a cell:
-   *   table is notified
-   *   sheet#updateCell is called
-   * 
-   * when a user edits a formula:
-   *   formula editor is notified
-   *   sheet#updateCell is called
-   *
-   * when a user ends editing:
-   *    selection moves to 'next' cell
-   *    the table calls sheet#commitCell
-   *
-   * on 'cell_updated':
-   *    the formula display is updated
-   *    the table display is updated
-   *
-   * on 'cell_committed':
-   *    the formula display is updated
-   *    the table display is updated
-   *
-   * sheet#updateCell:
-   *    gets an existing cell or creates a new cell
-   *    modifies a cell in uncommitted_cells
-   *    emits 'cell_updated' event 
-   *    sends a 'cell_updated' socket event (maybe this is buffered) 
-   
-   *
-   * sheet#commitCell:
-   *   the updated cell's display values are derived if it is a formula
-   *   the original cell is replaced by the updated cell
-   *   the sheet#refreshCell is called for each formula cell
-   *   'cell_committed' is emitted
-   *   'cell_committed' is sent over the socket 
-   *
-   *
-   * when a sheet#refreshCell is called:
-   *   the cell recalculates it's value
-   *   it emits 'cell_updated'
-   *   cell reference should call refresh cell 
-   *
-   * ***********************************************/
+   **************************************************/
   updateCell: function(row_id,col_id,value){
     var cell = {value: value, type:'new'};
     this.addCell(row_id, col_id, cell, this.cells);
@@ -227,6 +174,7 @@ var Sheet = module.exports = ESModel.extend({
     });
     return true;
   },
+
   commitCell: function(row_id,col_id){
     var cell = this.getCell(row_id,col_id);
     cell.type = this.getCellType(cell.value); 
@@ -244,8 +192,8 @@ var Sheet = module.exports = ESModel.extend({
       params:[row_id,col_id,cell]
     });
     var self = this;
-    _.each(self.getFormulaCells(), function(idx){
-      self.refreshCell(cell[0],cell[1]);
+    _.each(self.getFormulaCells(), function(tup){
+      self.refreshCell(tup[0],tup[1]);
     });
   },
   getFormulaCells: function(){
@@ -271,7 +219,7 @@ var Sheet = module.exports = ESModel.extend({
       id:this.id,
       row_id:row_id,
       col_id:col_id,
-      value:display_value
+      cell_display:display_value
     });
     return display_value;
   },
@@ -306,28 +254,21 @@ var Sheet = module.exports = ESModel.extend({
     this.cells[row_id][col_id] = cell;
     return true;
   },
-  //TODO: Delete me!
+  getCellDisplay: function(cell){
+    if(!cell) return '';
+    value = this.getRawValue(cell);
+    //this is where we can do formatting
+    return value;
+  },
+  //overloaded getCellDisplay so that we can just pass a row and col
   getDisplayValue: function(row_id, col_id){
     var cell = this.getCell(row_id,col_id);
     return this.getCellDisplay(cell);
   },
-  getCellDisplay: function(cell){
-    if(!cell) return '';
-    return this.getRawValue(cell);
-  },
+  //just get the value without the formatting
   getRawValue: function(cell){
     if(!(cell.type == 'formula')) return cell.value; //do nothing if cell is not a formula
     return String(this.parseValue(cell.value));
-  },
-  getParsedValue: function(row_id,col_id){
-    var cell = this.getCell(row_id, col_id);
-    if(cell) {
-      if(cell.display_value){
-        return cell.display_value.toString();
-      }
-      return cell.value.toString(); 
-    }
-    return '';
   },
   getCells: function(){
     return this.cells;

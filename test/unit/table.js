@@ -252,6 +252,7 @@ describe('TableView', function(){
     });
 
     it("should create an input for selected cell", function(done){
+      var value = '=1+1';
       $input[0].should.not.equal(undefined);
       $input.val().should.equal(value);
       done();
@@ -359,6 +360,15 @@ describe('TableView', function(){
         $newCell.text().should.equal('2');
       });
 
+      it('should update cell when referenced cell changes', function(){
+        sheet.updateCell('0', '0', '4');
+        sheet.commitCell('0','0');
+        sheet.updateCell('0', '1', '=A1');
+        sheet.commitCell('0','1');
+        sheet.updateCell('0', '0', '5');
+        sheet.commitCell('0','0');
+        $('td#0-1').text().should.equal('5');
+      });
       /*it("should have the parsed value", function(){
         $clicked_cell.text().should.equal('2');
       });*/
