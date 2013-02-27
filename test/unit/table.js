@@ -94,7 +94,7 @@ describe('TableView', function(){
       it('should update the table display with the new cell value',function(){
         sheet.updateCell(row_id,col_id,'=1+1');
         sheet.commitCell(row_id,col_id);
-        $('.es-table-cell',$el).first().attr('data-value').should.equal('2'); 
+        $('.es-table-cell',$el).first().text().should.equal('2'); 
       });
       it('should update th formula display with the new display formula');
     });

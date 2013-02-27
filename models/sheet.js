@@ -21,6 +21,10 @@ var ESModel = require('./es_model');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
 
+var CELL_ROW_ID = 0;
+var CELL_COL_ID = 1;
+
+
 var Sheet = module.exports = ESModel.extend({
 
 // # Initialization
@@ -191,11 +195,16 @@ var Sheet = module.exports = ESModel.extend({
       action: 'commitCell',
       params:[row_id,col_id,cell]
     });
+    this.refreshCells();
+  },
+
+  refreshCells: function(){
     var self = this;
-    _.each(self.getFormulaCells(), function(tup){
-      self.refreshCell(tup[0],tup[1]);
+    _.each(self.getFormulaCells(), function(cell_id){
+      self.refreshCell(cell_id[CELL_ROW_ID],cell_id[CELL_COL_ID]);
     });
   },
+
   getFormulaCells: function(){
     var formula_cells = [];
     _.each(this.cells, function(cols,row){
@@ -261,6 +270,7 @@ var Sheet = module.exports = ESModel.extend({
     return value;
   },
   //overloaded getCellDisplay so that we can just pass a row and col
+  //TODO:rename this to getCellDisplayById
   getDisplayValue: function(row_id, col_id){
     var cell = this.getCell(row_id,col_id);
     return this.getCellDisplay(cell);

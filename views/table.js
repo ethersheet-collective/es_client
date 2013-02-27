@@ -186,7 +186,6 @@ var Table = module.exports = View.extend({
   onUpdateCell: function(cell){
     var $el = $('#'+cell.row_id+'-'+cell.col_id);
     $el.text(cell.cell_display);
-    $el.attr('data-value', cell.cell_display);
   },  
 
   onCommitCell: function(cell){
