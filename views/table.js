@@ -170,17 +170,24 @@ var Table = module.exports = View.extend({
     //return unless code is 'enter' or 'tab' 
     if(code != 13 && code != 9) return;
     if(code == 13){
-      this.changeCell(e);
-      var old_cell = $(e.currentTarget);
-      var rows = this.getSheet().rows;
-      var new_col = old_cell.attr('data-col_id');
-      var new_row_idx = _.indexOf(rows,old_cell.attr('data-row_id')) + 1;
-      var new_row = rows[new_row_idx];
-      new_cell = this.getSheet();
-      var new_cell = $('#' + new_row + '-' + new_col);
-      new_cell.click();
+      this.moveCell(e,1,0);
     }
-     
+    if(code == 9){
+      this.moveCell(e,0,1);
+    }
+  },
+
+  moveCell: function(e, row_offset, col_offset){
+    this.changeCell(e);
+    var old_cell = $(e.currentTarget);
+    var rows = this.getSheet().rows;
+    var cols = this.getSheet().cols;
+    var new_col_idx = _.indexOf(rows,old_cell.attr('data-col_id')) + col_offset;
+    var new_col = cols[new_col_idx];
+    var new_row_idx = _.indexOf(rows,old_cell.attr('data-row_id')) + row_offset;
+    var new_row = rows[new_row_idx];
+    var new_cell = $('#' + new_row + '-' + new_col);
+    new_cell.click();
   },
 
   onUpdateCell: function(cell){

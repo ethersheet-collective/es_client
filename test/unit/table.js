@@ -331,7 +331,21 @@ describe('TableView', function(){
         done();
       });
 
-      it("should move selection over a cell when tab is pressed");
+      it("should move selection over a cell when tab is pressed",function(done){
+        var ev = $.Event("keypress");
+        var $the_cell = $('.es-table-cell').first()
+        var $newCell = $('td#0-1');
+        $the_cell.click()
+        ev.which = 9; 
+        ev.keyCode = 9;
+        $('#'+$the_cell.attr('id')+'-input').length.should.equal(1);
+        var $the_input = $('#'+$the_cell.attr('id')+'-input');
+        $the_input.trigger(ev);
+        $('#'+$the_cell.attr('id')+'-input').length.should.equal(0);
+        $input_new = $('#'+$newCell.attr('id')+'-input');
+        $input_new.length.should.equal(1);
+        done();
+      });
 
       it("should show display value on previous edited cell when enter or tab are pressed", function(done){
         var $newCell = $('td#1-0');
