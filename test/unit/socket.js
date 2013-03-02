@@ -69,7 +69,7 @@ describe('Websockets', function(){
       data:JSON.stringify(msg)
     });
     sheet.getCell(sheet.rowAt(0),sheet.colAt(0)).value.should.equal(cell_value);
-    sheet.getCellDisplay(sheet.getCell(sheet.rowAt(0),sheet.colAt(0))).should.equal('9000');
+    sheet.getCellDisplay(sheet.getCell(sheet.rowAt(0),sheet.colAt(0))).should.equal(9000);
   });
   
   it('should not be able to call unauthorized method on sheet', function(){

@@ -142,19 +142,12 @@ var Table = module.exports = View.extend({
     $input.focus();
     var timer = null;
     var sheet = this.getSheet();
-    this.old_val = this.old_val || '';
     $input.on('keyup', function(){
-      /*if (timer) {
-        clearTimeout(timer);
-      }*/
-      //timer = setTimeout(function(){
-      if(!$input.val()){return};
+      this.old_val = this.old_val || '';
       if($input.val() != this.old_val){
         sheet.updateCell(row_id, col_id, $input.val(), $el.text()); 
-        this.old_val = $input.val() || this.old_val; //we use this to check if the value has actually changed or the user hit a control key
+        this.old_val = $input.val() || this.old_val;
       }
-       // clearTimeout(timer);
-      //}, 50);
     });
     return $input;
   },
@@ -182,7 +175,7 @@ var Table = module.exports = View.extend({
     var old_cell = $(e.currentTarget);
     var rows = this.getSheet().rows;
     var cols = this.getSheet().cols;
-    var new_col_idx = _.indexOf(rows,old_cell.attr('data-col_id')) + col_offset;
+    var new_col_idx = _.indexOf(cols,old_cell.attr('data-col_id')) + col_offset;
     var new_col = cols[new_col_idx];
     var new_row_idx = _.indexOf(rows,old_cell.attr('data-row_id')) + row_offset;
     var new_row = rows[new_row_idx];

@@ -233,7 +233,7 @@ describe('Sheet', function(){
       initializeSheet();
       sheet.updateCell(row_id,col_id,'=1+1');
       sheet.commitCell(row_id,col_id);
-      sheet.getCellDisplay(sheet.getCell(row_id,col_id)).should.equal('2');
+      sheet.getCellDisplay(sheet.getCell(row_id,col_id)).should.equal(2);
     });
 
     it('should emit a commit_cell event', function(){
@@ -265,9 +265,9 @@ describe('Sheet', function(){
       sheet.updateCell(row_id,col_id,'=1+1');
       sheet.commitCell(row_id,col_id);
       cell = sheet.getCell(row_id,col_id);
-      sheet.refreshCell(row_id,col_id).should.equal('2');
+      sheet.refreshCell(row_id,col_id).should.equal(2);
       cell.value = '=2+1';
-      sheet.refreshCell(row_id,col_id).should.equal('3');
+      sheet.refreshCell(row_id,col_id).should.equal(3);
     });
 
     it('should emit cell_updated event',function(){

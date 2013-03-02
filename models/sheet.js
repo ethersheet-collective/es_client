@@ -112,7 +112,7 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
 
-// # Collumns
+// # Columns
 
   colCount: function(){
     return this.cols.length;
@@ -181,6 +181,7 @@ var Sheet = module.exports = ESModel.extend({
 
   commitCell: function(row_id,col_id){
     var cell = this.getCell(row_id,col_id);
+    if(!cell) return false;
     cell.type = this.getCellType(cell.value); 
     cell_display = this.getCellDisplay(cell);
     this.trigger('commit_cell', _.extend(_.clone(cell),{
@@ -196,6 +197,7 @@ var Sheet = module.exports = ESModel.extend({
       params:[row_id,col_id,cell]
     });
     this.refreshCells();
+    return true;
   },
 
   refreshCells: function(){
@@ -277,8 +279,9 @@ var Sheet = module.exports = ESModel.extend({
   },
   //just get the value without the formatting
   getRawValue: function(cell){
+    if(!cell) return 0;
     if(!(cell.type == 'formula')) return cell.value; //do nothing if cell is not a formula
-    return String(this.parseValue(cell.value));
+    return this.parseValue(cell.value);
   },
   getCells: function(){
     return this.cells;

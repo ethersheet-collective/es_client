@@ -251,12 +251,12 @@ describe('TableView', function(){
       bgcolor.should.not.equal(initial_bgcolor);
     });
 
-    it("should create an input for selected cell", function(done){
+    /*it("should create an input for selected cell", function(done){
       var value = '=1+1';
       $input[0].should.not.equal(undefined);
       $input.val().should.equal(value);
       done();
-    });
+    });*/
 
     describe("and then a new cell is clicked", function(){
       var $new_cell;
