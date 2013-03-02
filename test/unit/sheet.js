@@ -276,7 +276,6 @@ describe('Sheet', function(){
       events.length.should.eql(1);
       events[0].name.should.eql('update_cell');
     });
-    it('should calculate values in any order');
   });
 
   describe('sheet#getCellType', function(){
@@ -410,6 +409,7 @@ describe('Sheet', function(){
       row_id = sheet.rowAt(0);
       col_id = sheet.colAt(0);
       a1_value = '3';
+      a11_value = '11';
       sheet.updateCell(row_id, col_id, a1_value);
       sheet.commitCell(row_id, col_id);
       new_row = sheet.rowAt(0); 
@@ -420,6 +420,14 @@ describe('Sheet', function(){
       sheet.updateCell(new_row, new_col, '=A1');
       sheet.commitCell(new_row, new_col);
       sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a1_value);
+      done();
+    });
+    it('should reference cells in double digit ranges', function(done){
+      sheet.updateCell('10', '0', a11_value);
+      sheet.commitCell('10', '0');
+      sheet.updateCell(new_row, new_col, '=A11');
+      sheet.commitCell(new_row, new_col);
+      sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a11_value);
       done();
     });
     it('should deal with deleting or adding columns and rows');
