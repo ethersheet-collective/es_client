@@ -422,6 +422,7 @@ describe('Sheet', function(){
       sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a1_value);
       done();
     });
+
     it('should reference cells in double digit ranges', function(done){
       sheet.updateCell('10', '0', a11_value);
       sheet.commitCell('10', '0');
@@ -430,6 +431,16 @@ describe('Sheet', function(){
       sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a11_value);
       done();
     });
+
+    it('should have a cell reference function', function(done){
+      sheet.updateCell(row_id, col_id, a1_value);
+      sheet.commitCell(row_id, col_id);
+      sheet.updateCell(new_row, new_col, "=cellReference('" + sheet.id +"','0','0')");
+      sheet.commitCell(new_row, new_col);
+      sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a1_value);
+      done();
+    });
+
     it('should deal with deleting or adding columns and rows');
   });
 });
