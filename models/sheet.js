@@ -190,6 +190,7 @@ var Sheet = module.exports = ESModel.extend({
       col_id:col_id,
       cell_display:cell_display
     }));
+    console.log(cell.value);
     this.send({
       id: this.id,
       type: 'sheet',
@@ -280,7 +281,9 @@ var Sheet = module.exports = ESModel.extend({
   //just get the value without the formatting
   getRawValue: function(cell){
     if(!cell) return 0;
-    if(!(cell.type == 'formula')) return cell.value; //do nothing if cell is not a formula
+    if(cell.type != 'formula') return cell.value; //do nothing if cell is not a formula
+    cell.value = this.collection.expressionHelpers.preprocessFormula(cell.value, this.collection, this.cid);
+    console.log('in raw value', cell);
     return this.parseValue(cell.value);
   },
   getCells: function(){
