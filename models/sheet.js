@@ -5,6 +5,14 @@ define(function (require,exports,module){
   # Sheet
 
   Data model for a single spreadsheet.
+  Example:
+  var sheet = {
+    rows: [1,2,3] //an array of row id's
+    cols: [1,2,3] //an array of column id's
+    cells: {1: {1: {value: '=1+1', type: 'formula'}} // a sparse matrix of cell objects, stored like so sheet.cells[row_id][col_id] = cellObject
+  }
+
+  possible values for cell type: 'function', 'number', 'string', 'date', 'new'
 
 */
 
@@ -12,6 +20,10 @@ var _ = require('underscore');
 var ESModel = require('./es_model');
 var config = require('es_client/config');
 var uid = require('es_client/helpers/uid');
+
+var CELL_ROW_ID = 0;
+var CELL_COL_ID = 1;
+
 
 var Sheet = module.exports = ESModel.extend({
 
@@ -24,6 +36,7 @@ var Sheet = module.exports = ESModel.extend({
     this.initializeRows(o.rows);
     this.initializeCols(o.cols);
     this.initializeCells(o.cells);
+    this.modifiedCells = {};
     
   },
   initializeRows: function(rows){
@@ -34,7 +47,7 @@ var Sheet = module.exports = ESModel.extend({
     // default initialization
     this.rows = [];
     for(var i = 0; i<config.DEFAULT_ROW_COUNT; i++){
-      this.rows.push(i);
+      this.rows.push(String(i));
     }
   },
   initializeCols: function(cols){
@@ -45,7 +58,7 @@ var Sheet = module.exports = ESModel.extend({
     // default initialization
     this.cols = [];
     for(var i = 0; i<config.DEFAULT_COL_COUNT; i++){
-      this.cols.push(i);
+      this.cols.push(String(i));
     }
   },
   initializeCells: function(cells){
@@ -99,7 +112,7 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
 
-// # Collumns
+// # Columns
 
   colCount: function(){
     return this.cols.length;
@@ -139,114 +152,43 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
 
-// # Cells
-  //TODO: refactor cell model and how updateCell and commitCell work
-  /****************************************************
-   * Thoughts on refactoring cells
-   * Cells could be an object like this:
-   *  b1 = {
+  /**************************************************** 
+   * # Cells
+   * Cells are a flyweight object that looks like so:
+   * {
    *    type: "number" or "formula" or "date" or "currency"
    *    value: 3 or "bob" or "=CELL(123,123,123)", // data stored on disk
    *    styles: ["bg-red","fg-white", "us_dollar"], //list of styles used for formatting cell
-   *    
-   *  # Derived methods
-   *    getCellDisplay(): "47", // value in the table
-   *    getForumlaDisplay(): "=A1"
    *}
-   *
-   * Sheets keep track of cells with uncommited changes
-   *
-   * uncomitted_cells: {....} // cell matrix
-   *
-   * Workflow should go like this:
-   *
-   * when a user edits a cell:
-   *   table is notified
-   *   sheet#updateCell is called
-   * 
-   * when a user edits a formula:
-   *   formula editor is notified
-   *   sheet#updateCell is called
-   *
-   * when a user ends editing:
-   *    selection moves to 'next' cell
-   *    the table calls sheet#commitCell
-   *
-   * on 'cell_updated':
-   *    the formula display is updated
-   *    the table display is updated
-   *
-   * on 'cell_committed':
-   *    the formula display is updated
-   *    the table display is updated
-   *
-   * sheet#updateCell:
-   *    gets an existing cell or creates a new cell
-   *    modifies a cell in uncommitted_cells
-   *    emits 'cell_updated' event 
-   *    sends a 'cell_updated' socket event (maybe this is buffered) 
-   
-   *
-   * sheet#commitCell:
-   *   the updated cell's display values are derived if it is a formula
-   *   the original cell is replaced by the updated cell
-   *   the sheet#refreshCell is called for each formula cell
-   *   'cell_committed' is emitted
-   *   'cell_committed' is sent over the socket 
-   *
-   *
-   * when a sheet#refreshCell is called:
-   *   the cell recalculates it's value
-   *   it emits 'cell_updated'
-   *   cell reference should call refresh cell 
-   *
-   * ***********************************************/
-  updateCell: function(row_id,col_id,value,display_value){
-    console.log('UPDATE CELL', value, display_value);
-    if(!this.rowExists(row_id)) return false;
-    if(!this.colExists(col_id)) return false;
-    if(!this.cells[row_id]) this.cells[row_id] = {};
-
-    var cell = this.cells[row_id][col_id] || {};
-    if(display_value){
-      cell.display_value = display_value; 
-    } else {
-      cell.display_value =  value;
-    }
-
+   **************************************************/
+  updateCell: function(row_id,col_id,value){
+    var cell = {value: value, type:'new'};
+    this.addCell(row_id, col_id, cell, this.cells);
     this.trigger('update_cell',{
       id:this.id,
       row_id:row_id,
       col_id:col_id,
-      value:value,
-      display_value: cell.display_value
+      cell_display:value
     });
     this.send({
       id: this.id,
       type: 'sheet',
       action: 'updateCell',
-      params:[row_id,col_id,value, display_value]
+      params:[row_id,col_id,value]
     });
     return true;
   },
-  commitCell: function(row_id,col_id,cell){
-    if(!_.isObject(cell)){
-      var cell = {
-        value:cell.toString(),
-        display_value: undefined
-      };
-    }
-    try{
-      cell.display_value = this.parseValue(cell.value);
-    } catch (e) {
-      cell.display_value = e.message;
-    }
-    var cell_updated = this.updateCell(row_id,col_id,cell.value,cell.display_value);
-    this.cells[row_id][col_id] = cell;
+
+  commitCell: function(row_id,col_id){
+    var cell = this.getCell(row_id,col_id);
+    if(!cell) return false;
+    cell.type = this.getCellType(cell.value); 
+    cell_display = this.getCellDisplay(cell);
     this.trigger('commit_cell', _.extend(_.clone(cell),{
       id:this.id,
       row_id:row_id,
-      col_id:col_id
+      col_id:col_id,
+      cell_display:cell_display
     }));
     this.send({
       id: this.id,
@@ -254,6 +196,50 @@ var Sheet = module.exports = ESModel.extend({
       action: 'commitCell',
       params:[row_id,col_id,cell]
     });
+    this.refreshCells();
+    return true;
+  },
+
+  refreshCells: function(){
+    var self = this;
+    _.each(self.getFormulaCells(), function(cell_id){
+      self.refreshCell(cell_id[CELL_ROW_ID],cell_id[CELL_COL_ID]);
+    });
+  },
+
+  getFormulaCells: function(){
+    var formula_cells = [];
+    _.each(this.cells, function(cols,row){
+      _.each(cols, function(cell,col){
+        if(cell.type == 'formula'){
+          formula_cells.push([row,col]);
+        }
+      });
+    });
+    return formula_cells;
+  },
+  refreshCell: function(row_id,col_id){
+    var cell = this.getCell(row_id,col_id);
+    var display_value = ''
+    try{
+      display_value = this.getCellDisplay(cell);
+    } catch (e) {
+      display_value = e.message;
+    }
+    this.trigger('update_cell',{
+      id:this.id,
+      row_id:row_id,
+      col_id:col_id,
+      cell_display:display_value
+    });
+    return display_value;
+  },
+  getCellType: function(cell_value){
+    if(_.isNumber(cell_value)) return 'number';
+    if(cell_value.charAt(0) == '=') return 'formula';
+    if(_.isString(cell_value) && _.isNaN(cell_value * 1)) return 'string';
+    if(_.isString(cell_value) && _.isFinite(cell_value * 1)) return 'number';
+    throw 'Undefined Cell Type ' + cell_value;
   },
   parseValue: function(value){
     if(value.charAt(0) != '=') return value;
@@ -267,23 +253,35 @@ var Sheet = module.exports = ESModel.extend({
     if(_.isUndefined(this.cells[row_id])) return null;
     return this.cells[row_id][col_id] || null;
   },
-  getValue: function(row_id, col_id){
-    var cell = this.getCell(row_id, col_id);
-    if(cell) return cell.value.toString();
-    return '';
+  getCellValue: function(row_id,col_id){
+    cell = this.getCell(row_id,col_id);
+    if(!cell) return '';
+    return cell.value;
   },
+  addCell: function(row_id,col_id,cell){
+    if(!this.rowExists(row_id)) return false;
+    if(!this.colExists(col_id)) return false;
+    if(!this.cells[row_id]) this.cells[row_id] = {};
+    this.cells[row_id][col_id] = cell;
+    return true;
+  },
+  getCellDisplay: function(cell){
+    if(!cell) return '';
+    value = this.getRawValue(cell);
+    //this is where we can do formatting
+    return value;
+  },
+  //overloaded getCellDisplay so that we can just pass a row and col
+  //TODO:rename this to getCellDisplayById
   getDisplayValue: function(row_id, col_id){
-    return this.getParsedValue(row_id,col_id);
+    var cell = this.getCell(row_id,col_id);
+    return this.getCellDisplay(cell);
   },
-  getParsedValue: function(row_id,col_id){
-    var cell = this.getCell(row_id, col_id);
-    if(cell) {
-      if(cell.display_value){
-        return cell.display_value.toString();
-      }
-      return cell.value.toString(); 
-    }
-    return '';
+  //just get the value without the formatting
+  getRawValue: function(cell){
+    if(!cell) return 0;
+    if(!(cell.type == 'formula')) return cell.value; //do nothing if cell is not a formula
+    return this.parseValue(cell.value);
   },
   getCells: function(){
     return this.cells;

@@ -2,7 +2,7 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define(function (require) {
 
 var assert = require('chai').assert;
-var EventTrap = require('es_client/test/event_trap');
+var EventTrap = require('../event_trap');
 var Ethersheet = require('es_client/ethersheet');
 var $ = require('jquery');
 

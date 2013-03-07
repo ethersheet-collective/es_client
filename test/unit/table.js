@@ -25,7 +25,6 @@ describe('TableView', function(){
     sheets = new SheetCollection();
     sheet = new Sheet();
     sheets.add(sheet);
-
     selections = new SelectionCollection([],{sheet_collection:sheets});
     selections.createLocal();
     selection = selections.getLocal();
@@ -84,8 +83,8 @@ describe('TableView', function(){
     });
     describe('on update cell', function(){
       it('should update the table display of the cell',function(){
-        sheet.updateCell(row_id,col_id,value);
-        $('.es-table-cell',$el).first().text().should.equal(value.toString()); 
+        sheet.updateCell(row_id,col_id,'=1+1');
+        $('.es-table-cell',$el).first().text().should.equal('=1+1'); 
       });
 
       it('should update the formula editor display for the cell');
@@ -93,8 +92,9 @@ describe('TableView', function(){
 
     describe('on commit cell', function(){
       it('should update the table display with the new cell value',function(){
-        sheet.commitCell(row_id,col_id,value);
-        $('.es-table-cell',$el).first().attr('data-value').should.equal(value.toString()); 
+        sheet.updateCell(row_id,col_id,'=1+1');
+        sheet.commitCell(row_id,col_id);
+        $('.es-table-cell',$el).first().text().should.equal('2'); 
       });
       it('should update th formula display with the new display formula');
     });
@@ -113,7 +113,8 @@ describe('TableView', function(){
       });
 
       it('should draw values in correct location', function(){
-        sheet.commitCell(row_id,col_id,value);
+        sheet.updateCell(row_id,col_id,value);
+        sheet.commitCell(row_id,col_id);
         sheet.insertCol(0);
         
         $('.es-table-cell',$el)
@@ -144,7 +145,8 @@ describe('TableView', function(){
       it('should draw values in correct location', function(){
         row_id = sheet.rowAt(0);
         col_id = sheet.colAt(1);
-        sheet.commitCell(row_id,col_id,value);
+        sheet.updateCell(row_id,col_id,value);
+        sheet.commitCell(row_id,col_id);
         sheet.deleteCol(sheet.colAt(0));
         
         $('.es-table-cell',$el)
@@ -169,7 +171,8 @@ describe('TableView', function(){
       });
 
       it('should draw values in correct location', function(){
-        sheet.commitCell(row_id,col_id,value);
+        sheet.updateCell(row_id,col_id,value);
+        sheet.commitCell(row_id,col_id);
         sheet.insertRow(0);
         
         $('.es-table-cell',$el)
@@ -199,7 +202,8 @@ describe('TableView', function(){
       it('should draw values in correct location', function(){
         row_id = sheet.rowAt(1);
         col_id = sheet.colAt(0);
-        sheet.commitCell(row_id,col_id,value);
+        sheet.updateCell(row_id,col_id,value);
+        sheet.commitCell(row_id,col_id);
         sheet.deleteRow(sheet.rowAt(0));
         
         $('.es-table-cell',$el)
@@ -226,7 +230,8 @@ describe('TableView', function(){
       row_id = sheet.rowAt(0);
       col_id = sheet.colAt(0);
       value = '=1+1';
-      sheet.commitCell(row_id,col_id,value);
+      sheet.updateCell(row_id,col_id,value);
+      sheet.commitCell(row_id,col_id);
       $clicked_cell = $('.es-table-cell').first()
       initial_bgcolor = $clicked_cell.css('background-color');
       $clicked_cell.click()
@@ -246,10 +251,12 @@ describe('TableView', function(){
       bgcolor.should.not.equal(initial_bgcolor);
     });
 
-    it("should create an input for selected cell", function(){
+    /*it("should create an input for selected cell", function(done){
+      var value = '=1+1';
       $input[0].should.not.equal(undefined);
       $input.val().should.equal(value);
-    });
+      done();
+    });*/
 
     describe("and then a new cell is clicked", function(){
       var $new_cell;
@@ -273,28 +280,112 @@ describe('TableView', function(){
       var row_id, col_id, initial_val;
       
       beforeEach(function(){
-        row_id = $clicked_cell.data("row_id");
-        col_id = $clicked_cell.data("col_id");
-        initial_val = sheet.getValue(row_id, col_id);
+        row_id = $clicked_cell.data("row_id").toString();
+        col_id = $clicked_cell.data("col_id").toString();
+        initial_val = sheet.getCellDisplay(sheet.getCell(row_id, col_id));
+        sheet.updateCell(row_id,col_id,'new_text');
         $input.val('new text');
         $input.trigger('change');
       });
 
-      it("should change the value of the cell", function(){
-        var new_val = sheet.getValue(row_id, col_id);
+      it("should change the value of the cell", function(done){
+        var new_val = sheet.getCellDisplay(sheet.getCell(row_id, col_id));
         new_val.should.not.equal(initial_val);
+        done();
       });
-      it("should call sheet#updateCell");
+
+      it("should call sheet#updateCell", function(done){
+        var called = false;
+        sheet.updateCell = function(){
+          called = true;
+        }
+        $input.val('text');
+        $input.trigger('keyup');
+        called.should.be.true
+        done();
+      });
 
     });
 
     describe("When a user finishes editing a cell", function(){
-      it("should move selection to the next cell");
-      it("should call Sheet#CommitCell()");
-
-      it("should have the parsed value", function(){
-        $clicked_cell.text().should.equal('2');
+      it("should call Sheet#CommitCell()", function(){
+        var called = false;
+        sheet.commitCell = function(){
+          called = true;
+        }
+        $input.val('text');
+        $input.trigger('change');
+        called.should.be.true
       });
+
+      it("should move selection down a cell when enter is pressed", function(done){
+        var e = $.Event("keypress");
+        e.which = 13; 
+        e.keyCode = 13;
+        $('#'+$clicked_cell.attr('id')+'-input').length.should.equal(1);
+        $input.trigger(e);
+        $('#'+$clicked_cell.attr('id')+'-input').length.should.equal(0);
+        var $newCell = $('td#1-0');
+        $input_new = $('#'+$newCell.attr('id')+'-input');
+        $input_new.length.should.equal(1);
+        done();
+      });
+
+      it("should move selection over a cell when tab is pressed",function(done){
+        var ev = $.Event("keypress");
+        var $the_cell = $('.es-table-cell').first()
+        var $newCell = $('td#0-1');
+        $the_cell.click()
+        ev.which = 9; 
+        ev.keyCode = 9;
+        $('#'+$the_cell.attr('id')+'-input').length.should.equal(1);
+        var $the_input = $('#'+$the_cell.attr('id')+'-input');
+        $the_input.trigger(ev);
+        $('#'+$the_cell.attr('id')+'-input').length.should.equal(0);
+        $input_new = $('#'+$newCell.attr('id')+'-input');
+        $input_new.length.should.equal(1);
+        done();
+      });
+
+      it("should show display value on previous edited cell when enter or tab are pressed", function(done){
+        var $newCell = $('td#1-0');
+        sheet.updateCell('1','0','=1+3');
+        $newCell.click();
+        var $input_new = $('#'+$newCell.attr('id')+'-input');
+        $input_new.val('=1+3');
+        var e = $.Event("keypress");
+        e.which = 13; 
+        e.keyCode = 13;
+        $input_new.trigger(e);
+        $newCell.text().should.equal('4');
+        done();
+      });
+
+      it("should display cell reference as integer if there is a cell reference", function(){
+        var $newCell = $('td#2-0');
+        sheet.updateCell('2','0','=A1');
+        $newCell.click();
+        var $input_new = $('#'+$newCell.attr('id')+'-input');
+        $input_new.val('=A1');
+        var e = $.Event("keypress");
+        e.which = 13; 
+        e.keyCode = 13;
+        $input_new.trigger(e);
+        $newCell.text().should.equal('2');
+      });
+
+      it('should update cell when referenced cell changes', function(){
+        sheet.updateCell('0', '0', '4');
+        sheet.commitCell('0','0');
+        sheet.updateCell('0', '1', '=A1');
+        sheet.commitCell('0','1');
+        sheet.updateCell('0', '0', '5');
+        sheet.commitCell('0','0');
+        $('td#0-1').text().should.equal('5');
+      });
+      /*it("should have the parsed value", function(){
+        $clicked_cell.text().should.equal('2');
+      });*/
     });
 
   });

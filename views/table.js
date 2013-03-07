@@ -23,7 +23,8 @@ var Table = module.exports = View.extend({
 
   events: {
     'click .es-table-cell': 'cellClicked',
-    'change .es-table-cell-input': 'changeCell'
+    'change .es-table-cell-input': 'changeCell',
+    'keypress .es-table-cell-input': 'inputKeypress'
   },
 
   initialize: function(o){
@@ -35,6 +36,7 @@ var Table = module.exports = View.extend({
   setSheet: function(sheet){
     this.models.set('sheet',sheet,{
       'update_cell': 'onUpdateCell',
+      'commit_cell': 'onCommitCell',
       'insert_col': 'render',
       'delete_col': 'render',
       'insert_row': 'render',
@@ -119,7 +121,7 @@ var Table = module.exports = View.extend({
     var s = this.getSelections().getLocal();
     var data = $(e.currentTarget).data();
     s.clear();
-    s.addCell(this.getSheet().id,data.row_id,data.col_id);
+    s.addCell(this.getSheet().id,data.row_id.toString(),data.col_id.toString());
   },
 
   createCellInput: function(e){
@@ -129,36 +131,65 @@ var Table = module.exports = View.extend({
     var width = $el.width();
     var height = $el.height() - 2;
     var color = "#ffaa99";
-    var row_id = $el.data().row_id;
-    var col_id = $el.data().col_id;
+    var row_id = $el.data().row_id.toString();
+    var col_id = $el.data().col_id.toString();
+    var cell_value = this.getSheet().getCellValue(row_id,col_id);
+    
 
-    var $input = $("<input id='"+$el.attr('id')+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' class='es-table-cell-input' value='"+$el.attr('data-value')+"' style='left: "+x+"px; top: "+y+"px; width: "+width+"px; height: "+height+"px; background-color: "+color+";' />");
+    var $input = $("<input id='"+$el.attr('id')+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' class='es-table-cell-input' value='"+cell_value+"' style='left: "+x+"px; top: "+y+"px; width: "+width+"px; height: "+height+"px; background-color: "+color+";' />");
     
     this.$el.append($input);
     $input.focus();
-    var self = this;
     var timer = null;
+    var sheet = this.getSheet();
     $input.on('keyup', function(){
-      if (timer) {
-        clearTimeout(timer);
+      this.old_val = this.old_val || '';
+      if($input.val() != this.old_val){
+        sheet.updateCell(row_id, col_id, $input.val(), $el.text()); 
+        this.old_val = $input.val() || this.old_val;
       }
-      timer = setTimeout(function(){
-        self.getSheet().updateCell(row_id, col_id, $input.val(), $el.text()); 
-        clearTimeout(timer);
-      }, 500);
     });
+    return $input;
   },
 
   changeCell: function(e){
     var $el = $(e.currentTarget);
     var data = $el.data();
-    this.getSheet().commitCell(data.row_id, data.col_id, $el.val());
+    this.getSheet().commitCell(data.row_id.toString(), data.col_id.toString(), $el.val());
+  },
+
+  inputKeypress: function(e){
+    var code = (e.keyCode ? e.keyCode : e.which);
+    //return unless code is 'enter' or 'tab' 
+    if(code != 13 && code != 9) return;
+    if(code == 13){
+      this.moveCell(e,1,0);
+    }
+    if(code == 9){
+      this.moveCell(e,0,1);
+    }
+  },
+
+  moveCell: function(e, row_offset, col_offset){
+    this.changeCell(e);
+    var old_cell = $(e.currentTarget);
+    var rows = this.getSheet().rows;
+    var cols = this.getSheet().cols;
+    var new_col_idx = _.indexOf(cols,old_cell.attr('data-col_id')) + col_offset;
+    var new_col = cols[new_col_idx];
+    var new_row_idx = _.indexOf(rows,old_cell.attr('data-row_id')) + row_offset;
+    var new_row = rows[new_row_idx];
+    var new_cell = $('#' + new_row + '-' + new_col);
+    new_cell.click();
   },
 
   onUpdateCell: function(cell){
     var $el = $('#'+cell.row_id+'-'+cell.col_id);
-    $el.text(cell.display_value);
-    $el.attr('data-value', cell.value);
+    $el.text(cell.cell_display);
+  },  
+
+  onCommitCell: function(cell){
+    this.onUpdateCell(cell);
   },  
 
   destroy: function(){

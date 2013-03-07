@@ -19,7 +19,7 @@ var SheetCollection = module.exports = Backbone.Collection.extend({
     o = o || {};
     this.expressionHelpers = new ExpressionHelpers(this);
     this.parser = parser;
-    this.parser.lexer.expressionHelpers = this.expressionHelpers;
+    this.parser.yy = this.expressionHelpers;
   },
   setParserSheet: function(sheet){
     this.expressionHelpers.setSheet(sheet);

@@ -31,7 +31,7 @@ describe('Socket', function(){
     sheet = sheets.first();
     selections = es.data.selection; 
     socket = es.socket; 
-    cell = {value:1,display_value:1};
+    cell = {value:1,type:"number"};
   });
 
   it('should trigger data event when cell is updated', function(){
@@ -40,36 +40,44 @@ describe('Socket', function(){
       id: sheet.id,
       type: 'sheet',
       action:'updateCell', 
-      params:[sheet.rowAt(0),sheet.colAt(0),1,1]
+      params:[sheet.rowAt(0),sheet.colAt(0),1]
     }));
 
-    sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),1,1);
+    sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),1);
     mock.verify();
   });
 
   it('should trigger data event when cell is committed', function(){
     var mock = sinon.mock(socket);
-    mock.expects('send').twice();
+    mock.expects('send').withArgs({
+      id: sheet.id,
+      type: 'sheet',
+      action:'commitCell', 
+      params:[sheet.rowAt(0),sheet.colAt(0),{value:1, type:'number'}]
+    });
 
-    sheet.commitCell(sheet.rowAt(0),sheet.colAt(0),1);
+    sheet.disableSend();
+    sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),1);
+    sheet.enableSend();
+    sheet.commitCell(sheet.rowAt(0),sheet.colAt(0));
     mock.verify();
   });
 
 
   it('should call correct method on sheet when "sheet" event is emitted', function(){
-    cell.value = '=9000';
+    cell_value = '=9000';
     var msg ={
       id: sheet.id,
       type: 'sheet',
       action:'commitCell', 
-      params:[sheet.rowAt(0),sheet.colAt(0),cell]
+      params:[sheet.rowAt(0),sheet.colAt(0)]
     };
-    sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.not.equal(cell.value)
-    socket.message({
+    sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),cell_value);
+    socket.onMessage({
       data:JSON.stringify(msg)
     });
-    sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.equal(cell.value)
-    sheet.getDisplayValue(sheet.rowAt(0),sheet.colAt(0)).should.equal('9000')
+    sheet.getCell(sheet.rowAt(0),sheet.colAt(0)).value.should.equal(cell_value);
+    sheet.getCellDisplay(sheet.getCell(sheet.rowAt(0),sheet.colAt(0))).should.equal(9000);
   });
   
   it('should not be able to call unauthorized method on sheet', function(){

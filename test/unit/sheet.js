@@ -58,6 +58,11 @@ describe('Sheet', function(){
       var row_id = sheet.rowIds()[0];
       sheet.rowAt(0).should.equal(row_id);
     });
+    it('should be initialized with a modifiedCells array', function(){
+      
+      sheet.modifiedCells.should.be.instanceOf(Object);
+      sheet.modifiedCells.should.be.empty;
+    });
     it('letterToIndex should return an index of a given letter in the alphabet', function(){
       sheet.identifierToIndex('A').should.equal(0);
       sheet.identifierToIndex('a').should.equal(0);
@@ -74,7 +79,7 @@ describe('Sheet', function(){
     var data;
 
     before(function(){
-      default_cell = function(rowcol){ return {value:rowcol, display_value:rowcol} } ;
+      default_cell = function(rowcol){ return {value:rowcol, display_value: rowcol, type: 'string', styles: [] } } ;
       data = {
         cols: ['a','b','c'],
         rows: ['1','2','3','4'],
@@ -113,67 +118,13 @@ describe('Sheet', function(){
     it('rowAt should return the id of the row at index', function(){
       sheet.rowAt(0).should.equal('1');
     });
-    it('getCell should return the correct value', function(){
-      sheet.getValue('1','a').should.equal('a1');
+    it('getCell should return the correct cell', function(){
+      sheet.getCell('1','a').should.equal(sheet.cells['1']['a']);
     });
     it('getCells should return the correct data', function(){
       sheet.getCells().should.equal(data.cells);
     });
   });
-
-  describe('sheet#commitCell', function(){
-    var new_value,row_id, col_id, success;
-    before(function(){
-      initializeSheet();
-      new_value = "=1+1";
-      console.log('rows', sheet.rowIds());
-      console.log('cols', sheet.colIds());
-      row_id = sheet.rowIds()[0];
-      col_id = sheet.colIds()[0];
-      sheet.updateCell(row_id,col_id,new_value);
-      sheet.commitCell(row_id,col_id,{value: new_value, display_value:null});
-    });
-
-    it('determines cell type');
-
-    it('derives display values if cell is formula type');
-    it('removes cell from updated cells array');
-    it('replaces original cell with updated cell');
-    
-    it('should call sheet#refreshCell for each formula cell');
-
-
-    it('should change the cell value', function(){
-      sheet.getValue(row_id,col_id).should.equal(new_value.toString());
-    });
-    it('should parse the display value', function(){
-      sheet.getDisplayValue(row_id,col_id).should.equal('2');
-    });
-    it('should emit a commit_cell event', function(){
-      events.length.should.equal(6);
-      events[4].name.should.equal('commit_cell');
-      events[1].name.should.equal('send');
-    });
-    it('should emit an update cell event', function(){
-       events[0].name.should.equal('update_cell');
-    });
-    it('should return same display value for non expressions', function(){
-      sheet.commitCell(row_id,col_id,{value: 'foo', display_value:null});
-      sheet.getDisplayValue(row_id,col_id).should.equal('foo');
-    });
-    it('should take a value instead of an object', function(){
-      sheet.commitCell(row_id,col_id,'asdf');
-      sheet.getDisplayValue(row_id,col_id).should.equal('asdf');
-      sheet.getValue(row_id,col_id).should.equal('asdf');
-    });
-    it('should be sure cell is not an object before it instantiates', function(){
-      sheet.commitCell(row_id,col_id,'asdf');
-      sheet.getDisplayValue(row_id,col_id).should.equal('asdf');
-      sheet.getValue(row_id,col_id).should.equal('asdf');
-    });
-
-  });
-
   describe('sheet#updateCell', function(){
     var new_value,row_id, col_id, success;
 
@@ -189,9 +140,20 @@ describe('Sheet', function(){
       success.should.equal(true);
     });
 
-    it('should get a cell object or create a new one');
+    it('should create a new object in cells if none exists', function(){
+      _.size(sheet.cells[row_id]).should.equal(1);
+      sheet.cells[row_id][col_id].value.should.equal(new_value);
+    });
+
+    it('should upate object in modified cells if it already exists', function(){
+      sheet.updateCell(row_id,col_id,8);
+      _.size(sheet.cells[row_id]).should.equal(1);
+      sheet.cells[row_id][col_id].value.should.equal(8);
+    });
 
     it('should trigger an update_cell and send event',function(){
+      clearEvents();
+      sheet.updateCell(row_id,col_id,new_value);
       events.length.should.equal(2);
       events[0].name.should.equal('update_cell');
       events[1].name.should.equal('send');
@@ -201,15 +163,138 @@ describe('Sheet', function(){
       var cell = events[0].args[0];
       cell.row_id.should.equal(row_id);
       cell.col_id.should.equal(col_id);
-      cell.value.should.equal(new_value);
+      cell.cell_display.should.equal(new_value);
       cell.id.should.equal(sheet.id);
     });
   });
 
+  describe('sheet#commitCell', function(){
+    var new_value,row_id, col_id, success;
+    before(function(){
+      initializeSheet();
+      new_value = "=1+1";
+      row_id = sheet.rowIds()[0];
+      col_id = sheet.colIds()[0];
+      row2 = sheet.rowIds()[0];
+      col2 = sheet.colIds()[0];
+      sheet.updateCell(row_id,col_id,new_value);
+      sheet.updateCell(row_id,col_id,new_value);
+      sheet.commitCell(row_id,col_id);
+    });
+
+    it('determines cell type', function(){
+      sheet.updateCell(row2,col2,3);
+      sheet.commitCell(row2,col2);
+      sheet.getCell(row2,col2).type.should.not.be.empty;
+      sheet.getCell(row2,col2).type.should.not.eql('new');
+    });
+
+    it('calls Sheet#getCellDisplay', function(done){
+      var called = false;
+      sheet.getCellDisplay = function(){
+        called = true;
+      };
+      sheet.commitCell(row2,col2);
+      called.should.equal(true);
+      done();
+    });
+
+    it('replaces original cell with updated cell', function(){
+      sheet.updateCell(row2,col2,3);
+      sheet.commitCell(row2,col2);
+      sheet.getCell(row2,col2).value.should.equal(3);
+      sheet.getCell(row2,col2).type.should.equal('number');
+      sheet.updateCell(row2,col2,'test');
+      sheet.commitCell(row2,col2);
+      sheet.getCell(row2,col2).type.should.equal('string');
+      sheet.getCell(row2,col2).value.should.equal('test');
+    });
+    
+    it('should call sheet#refreshCell for each formula cell in the sheet', function(){
+      var count = 0;
+      sheet.cells = {};
+      sheet.updateCell('0','0','=1+1');
+      sheet.updateCell('0','1','=1+1');
+      sheet.commitCell('0','0');
+      sheet.commitCell('0','1');
+      sheet.refreshCell = function(){
+        count += 1;
+      };
+      sheet.updateCell('0','2','foo');
+      sheet.commitCell('0','2');
+      count.should.equal(2);
+    });
+
+    it('should change the cell value', function(){
+      sheet.getCell(row_id,col_id).value.should.equal(new_value.toString());
+    });
+
+    it('should parse the display value', function(){
+      initializeSheet();
+      sheet.updateCell(row_id,col_id,'=1+1');
+      sheet.commitCell(row_id,col_id);
+      sheet.getCellDisplay(sheet.getCell(row_id,col_id)).should.equal(2);
+    });
+
+    it('should emit a commit_cell event', function(){
+      clearEvents();
+      sheet.commitCell(row_id,col_id);
+      events.length.should.equal(3);
+      events[0].name.should.equal('commit_cell');
+      events[1].name.should.equal('send');
+    });
+
+    it('should return same display value for non formulas', function(){
+      sheet.updateCell(row_id,col_id,'foo');
+      sheet.commitCell(row_id,col_id);
+      sheet.getCellDisplay(sheet.getCell(row_id,col_id)).should.equal('foo');
+    });
+
+  });
+
   describe('sheet#refreshCell', function(){
-    it('should recalculate a cells value');
-    it('should calculate values in any order');
-    it('should emit cell_updated event');
+    var new_value,row_id, col_id, success;
+
+    before(function(){
+      initializeSheet();
+      row_id = sheet.rowIds()[0];
+      col_id = sheet.colIds()[0];
+    });
+
+    it('should recalculate a cells value', function(){
+      sheet.updateCell(row_id,col_id,'=1+1');
+      sheet.commitCell(row_id,col_id);
+      cell = sheet.getCell(row_id,col_id);
+      sheet.refreshCell(row_id,col_id).should.equal(2);
+      cell.value = '=2+1';
+      sheet.refreshCell(row_id,col_id).should.equal(3);
+    });
+
+    it('should emit cell_updated event',function(){
+      clearEvents();
+      sheet.refreshCell(row_id,col_id);
+      events.length.should.eql(1);
+      events[0].name.should.eql('update_cell');
+    });
+  });
+
+  describe('sheet#getCellType', function(){
+    it('should return "number" if value is a number',function(){
+      sheet.getCellType(3).should.equal('number');
+      sheet.getCellType('3').should.equal('number');
+      sheet.getCellType('onetwo3').should.not.equal('number');
+      sheet.getCellType('=3+3').should.not.equal('number');
+    });
+    it('should return "string" if value is a string', function(){
+      sheet.getCellType('onetwo3').should.equal('string');
+      sheet.getCellType('3').should.not.equal('string');
+      sheet.getCellType('=3+3').should.not.equal('string');
+    });
+    it('should return "formula" if vlaue is a formula', function(){
+      sheet.getCellType('=3+3').should.equal('formula');
+      sheet.getCellType('"=3"').should.not.equal('formula');
+      sheet.getCellType(3).should.not.equal('formula');
+    });
   });
 
   describe('insert row', function(){
@@ -254,8 +339,7 @@ describe('Sheet', function(){
     });
 
     it('should remove the deleted row\'s cells', function(){
-      expect(sheet.getValue(row_id,col_id)).to.equal('')
-      expect(sheet.get(row_id,col_id)).to.be.undefined;
+      expect(sheet.getCell(row_id,col_id)).to.be.undefined;
     });
     
     it('should trigger a delete row event',function(){
@@ -308,7 +392,6 @@ describe('Sheet', function(){
     });
 
     it('should remove the deleted column\'s cells', function(){
-      expect(sheet.getValue(row_id,col_id)).to.equal('');
       expect(sheet.getCell(row_id,col_id)).to.be.undefined;
     });
     
@@ -326,21 +409,39 @@ describe('Sheet', function(){
       row_id = sheet.rowAt(0);
       col_id = sheet.colAt(0);
       a1_value = '3';
-      sheet.commitCell(row_id, col_id, a1_value);
+      a11_value = '11';
+      sheet.updateCell(row_id, col_id, a1_value);
+      sheet.commitCell(row_id, col_id);
       new_row = sheet.rowAt(0); 
       new_col = sheet.colAt(1); 
-      sheet.commitCell(new_row, new_col, '=A1');
     });
 
-    it('should reference a cell', function(done){
-      sheet.getCell(new_row, new_col).display_value.should.equal(a1_value);
+    it('should reference a cell by identifier', function(done){
+      sheet.updateCell(new_row, new_col, '=A1');
+      sheet.commitCell(new_row, new_col);
+      sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a1_value);
       done();
     });
-    it('should update cell when referenced cell changes'/*, function(done){
-      sheet.commitCell(row_id, col_id, '4');
-      sheet.getCell(new_row, new_col).display_value.should.equal('4');
+
+    it('should reference cells in double digit ranges', function(done){
+      sheet.updateCell('10', '0', a11_value);
+      sheet.commitCell('10', '0');
+      sheet.updateCell(new_row, new_col, '=A11');
+      sheet.commitCell(new_row, new_col);
+      sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a11_value);
       done();
-    }*/);
+    });
+
+    it('should have a cell reference function', function(done){
+      sheet.updateCell(row_id, col_id, a1_value);
+      sheet.commitCell(row_id, col_id);
+      sheet.updateCell(new_row, new_col, "=cellReference('" + sheet.id +"','0','0')");
+      sheet.commitCell(new_row, new_col);
+      sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a1_value);
+      done();
+    });
+
+    it('should deal with deleting or adding columns and rows');
   });
 });
 
