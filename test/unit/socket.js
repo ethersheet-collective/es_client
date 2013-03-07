@@ -1,6 +1,7 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define(function (require) {
 
+var Ethersheet = require('es_client/ethersheet');
 var SheetCollection = require('es_client/models/sheet_collection');
 var SelectionCollection = require('es_client/models/selection_collection');
 var config = require('es_client/config');
@@ -13,27 +14,34 @@ var fake_websocket = {
   send: function(){}
 };
 
-describe('Websockets', function(){
+describe('Socket', function(){
   var socket, selections, sheets, sheet;
 
   beforeEach(function(){
-    sheets = new SheetCollection();
+     es = new Ethersheet({
+      target:'#ethersheet-container',
+      channel:'test_channel',
+      socket: fake_websocket,
+      user:{
+        id: 'test_user'
+      }
+    });
+    sheets = es.data.sheet; 
     sheets.add({});
     sheet = sheets.first();
-    selections = new SelectionCollection([],{sheet_collection:sheets});
-    selections.createLocal();
-    socket = new Socket('test_channel',{sheet:sheets,selection:selections},fake_websocket);
+    selections = es.data.selection; 
+    socket = es.socket; 
     cell = {value:1,display_value:1};
   });
 
   it('should trigger data event when cell is updated', function(){
     var mock = sinon.mock(socket);
-    mock.expects('send').withArgs({
+    mock.expects('send').withArgs(JSON.stringify({
       id: sheet.id,
       type: 'sheet',
       action:'updateCell', 
       params:[sheet.rowAt(0),sheet.colAt(0),1,1]
-    });
+    }));
 
     sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),1,1);
     mock.verify();
@@ -57,7 +65,7 @@ describe('Websockets', function(){
       params:[sheet.rowAt(0),sheet.colAt(0),cell]
     };
     sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.not.equal(cell.value)
-    socket.onMessage({
+    socket.message({
       data:JSON.stringify(msg)
     });
     sheet.getValue(sheet.rowAt(0),sheet.colAt(0)).should.equal(cell.value)
@@ -82,7 +90,7 @@ describe('Websockets', function(){
       action:'replicateSelection', 
       params:[{id:'test_selection',color:'000000'}]
     };
-    socket.onMessage({
+    socket.message({
       data:JSON.stringify(msg)
     });
     selections

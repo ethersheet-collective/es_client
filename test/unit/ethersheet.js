@@ -33,7 +33,8 @@ describe('Ethersheet Client', function(){
   describe('on initialization', function(){
   
     it('sends 3 events',function(){
-      assert.equal(user_trap.events.length,3);
+      console.log('events',user_trap.events);
+      assert.equal(user_trap.events.length,2);
     });
 
     it('sends addUser event',function(){
@@ -47,7 +48,7 @@ describe('Ethersheet Client', function(){
           }]
         }]
       };
-      assert.deepEqual(user_trap.events[1],expected_event);
+      assert.deepEqual(user_trap.events[0],expected_event);
     });
 
     it('sends requestReplicateCurrentUser event',function(){
@@ -59,7 +60,7 @@ describe('Ethersheet Client', function(){
           params:[]
         }]
       };
-      assert.deepEqual(user_trap.events[2],expected_event);
+      assert.deepEqual(user_trap.events[1],expected_event);
     });
 
   });
