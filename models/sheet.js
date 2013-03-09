@@ -183,6 +183,9 @@ var Sheet = module.exports = ESModel.extend({
     var cell = this.getCell(row_id,col_id);
     if(!cell) return false;
     cell.type = this.getCellType(cell.value); 
+    if(cell.type == 'formula'){
+      cell.value = this.collection.expressionHelpers.preprocessFormula(cell.value, this.collection, this.cid);
+    }
     cell_display = this.getCellDisplay(cell);
     this.trigger('commit_cell', _.extend(_.clone(cell),{
       id:this.id,
@@ -190,7 +193,6 @@ var Sheet = module.exports = ESModel.extend({
       col_id:col_id,
       cell_display:cell_display
     }));
-    console.log(cell.value);
     this.send({
       id: this.id,
       type: 'sheet',
@@ -282,8 +284,6 @@ var Sheet = module.exports = ESModel.extend({
   getRawValue: function(cell){
     if(!cell) return 0;
     if(cell.type != 'formula') return cell.value; //do nothing if cell is not a formula
-    cell.value = this.collection.expressionHelpers.preprocessFormula(cell.value, this.collection, this.cid);
-    console.log('in raw value', cell);
     return this.parseValue(cell.value);
   },
   getCells: function(){
