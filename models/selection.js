@@ -27,6 +27,7 @@ var Selection = module.exports = ESModel.extend({
     this.cells = [];
     this.send_enabled  = true;
     this.sheet_id = null;
+    this.user_id = o.user_id;
     this.color = o.color || config.DEFAULT_SELECTION_COLOR;
 
     if(o.sheet_id) this.setSheet(o.sheet_id);
@@ -68,6 +69,7 @@ var Selection = module.exports = ESModel.extend({
     return {
       id: this.id,
       sheet_id: this.sheet_id,
+      user_id: this.user_id,
       cells: this.cells,
       color: this.color
     }

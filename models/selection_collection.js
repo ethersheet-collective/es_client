@@ -20,10 +20,16 @@ var SelectionCollection = module.exports = ESCollection.extend({
     this.local = null;
   },
 
+  findByUserId:function(user_id){
+    return this.find(function(selection){
+      return selection.user_id === user_id;
+    });
+  },
+
 // ## Local Selection
 
-  createLocal: function(){
-    var local =  this.getLocal() || new Selection();
+  createLocal: function(o){
+    var local =  this.getLocal() || new Selection(o);
     this.setLocal(local);
   },
 
