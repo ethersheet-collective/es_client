@@ -37,6 +37,15 @@ var ESModel = module.exports = Backbone.Model.extend({
     if(!send_enabled) this.disableSend();
   },
 
+// # CRUD
+  destroy:function(){
+    this.onDestroy();
+    this.trigger('destroy', this, this.collection);
+  },
+
+  onDestroy:function(){
+    // overwrite in subclass
+  },
 // # Unused
 
   sync: function(method, model, options){
