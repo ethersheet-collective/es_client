@@ -25,9 +25,9 @@ var Ethersheet = module.exports = function(o) {
 Ethersheet.prototype.initializeData = function(o){
   this.data.sheet = new SheetCollection([o.sheet]);
   this.data.selection = new SelectionCollection([],{sheet_collection: this.data.sheet});
-  this.data.user = new UserCollection();
+  this.data.user = new UserCollection([],{selection_collection:this.data.selection});
   this.data.user.createCurrentUser(o.user);
-  this.data.selection.createLocal();
+  this.data.selection.createLocal({user_id:this.data.user.getCurrentUser().id});
 };
 
 Ethersheet.prototype.initializeSocket = function(o){
