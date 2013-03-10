@@ -20,7 +20,14 @@ var User = module.exports = ESModel.extend({
     return {
       id: this.id
     }
+  },
+
+  onDestroy:function(){
+    if(!this.collection) return;
+    var selection = this.collection.selection_collection.findByUserId(this.id);
+    selection.destroy();
   }
+
 
 });
 

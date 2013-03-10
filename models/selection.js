@@ -160,8 +160,11 @@ var Selection = module.exports = ESModel.extend({
       return true;
     });
     if(changed) this.trigger('change');
-  }
+  },
 
+  onDestroy: function(){
+    this.unsetSheet();
+  }
 });
 
 });
