@@ -16,19 +16,27 @@ var UserCollection = module.exports = ESCollection.extend({
     o = o || {};
     this.send_enabled = true;
     this.current_user = null;
+    this.selection_collection = o.selection_collection;
   },
 
 // ## CRUD
 
-addUser: function(user_data){
-  var user = new User(user_data);
-  this.add(user);
-  this.send({
-    type:'user',
-    action:'addUser',
-    params:[user.getData()]
-  });
-},
+  addUser: function(user_data){
+    var user = new User(user_data);
+    this.add(user);
+    this.send({
+      type:'user',
+      action:'addUser',
+      params:[user.getData()]
+    });
+  },
+
+  removeUser: function(id){
+    var user = this.get(id);
+    if(!user) return;
+    user.destroy();
+    console.log('removed user',user);
+  },
 
 // ## Replication
   replicateUser: function(id){
