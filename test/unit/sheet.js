@@ -432,15 +432,25 @@ describe('Sheet', function(){
       done();
     });
 
-    /*it('should have a cell reference function', function(done){
+    it('should have a cell reference function', function(done){
       sheet.updateCell(row_id, col_id, a1_value);
       sheet.commitCell(row_id, col_id);
       sheet.updateCell(new_row, new_col, "=cellReference('" + sheet.id +"','0','0')");
       sheet.commitCell(new_row, new_col);
       sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a1_value);
       done();
-    });*/
-
+    });
+    it('should convert excel style cell references to ethersheet style cell references', function(){
+      sheet.updateCell(row_id, col_id, '=B2');
+      sheet.commitCell(row_id, col_id);
+      sheet.getCell(row_id,col_id).value.should.equal('=cellReference("' + sheet.id +'", "1", "1")');
+    });
+  
+    it('should convert es style cell reference to excel style when getDisplayFormula is called', function(){
+      sheet.updateCell(row_id, col_id, '=B2');
+      sheet.commitCell(row_id, col_id);
+      sheet.getDisplayFormula(row_id,col_id).should.equal('=B2');
+    });
     it('should deal with deleting or adding columns and rows');
   });
 });

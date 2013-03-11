@@ -49,12 +49,12 @@ describe('Socket', function(){
 
   it('should trigger data event when cell is committed', function(){
     var mock = sinon.mock(socket);
-    mock.expects('send').withArgs({
+    mock.expects('send').withArgs(JSON.stringify({
       id: sheet.id,
       type: 'sheet',
       action:'commitCell', 
       params:[sheet.rowAt(0),sheet.colAt(0),{value:1, type:'number'}]
-    });
+    }));
 
     sheet.disableSend();
     sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),1);
@@ -70,10 +70,10 @@ describe('Socket', function(){
       id: sheet.id,
       type: 'sheet',
       action:'commitCell', 
-      params:[sheet.rowAt(0),sheet.colAt(0)]
+      params:[sheet.rowAt(0),sheet.colAt(0),{value:cell_value, type:"formula"}]
     };
     sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),cell_value);
-    socket.onMessage({
+    socket.message({
       data:JSON.stringify(msg)
     });
     sheet.getCell(sheet.rowAt(0),sheet.colAt(0)).value.should.equal(cell_value);
