@@ -280,6 +280,12 @@ var Sheet = module.exports = ESModel.extend({
     var cell = this.getCell(row_id,col_id);
     return this.getCellDisplay(cell);
   },
+  getDisplayFormula: function(row_id, col_id){
+    var display_formula = this.getCell(row_id,col_id).value;
+    if(!display_formula){return ''};
+    display_formula = this.collection.expressionHelpers.xlRefToEsRef(display_formula);
+    return display_formula;
+  },
   //just get the value without the formatting
   getRawValue: function(cell){
     if(!cell) return 0;
