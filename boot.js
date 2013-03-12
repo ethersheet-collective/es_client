@@ -26,6 +26,12 @@ require.config({
     },
     'sockjs-client':{
       exports: 'SockJS'
+    },
+    'xregexp':{
+      exports: 'XRegExp'
+    },
+    'lookbehind':{
+      exports: 'lookbehind'
     }
   }
 });

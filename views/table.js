@@ -133,7 +133,7 @@ var Table = module.exports = View.extend({
     var color = "#ffaa99";
     var row_id = $el.data().row_id.toString();
     var col_id = $el.data().col_id.toString();
-    var cell_value = this.getSheet().getCellValue(row_id,col_id);
+    var cell_value = this.getSheet().getDisplayFormula(row_id,col_id);
     
 
     var $input = $("<input id='"+$el.attr('id')+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' class='es-table-cell-input' value='"+cell_value+"' style='left: "+x+"px; top: "+y+"px; width: "+width+"px; height: "+height+"px; background-color: "+color+";' />");

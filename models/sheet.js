@@ -180,6 +180,7 @@ var Sheet = module.exports = ESModel.extend({
   },
 
   commitCell: function(row_id,col_id){
+    console.log('commiting', row_id, col_id);
     var cell = this.getCell(row_id,col_id);
     if(!cell) return false;
     cell.type = this.getCellType(cell.value); 
@@ -199,6 +200,7 @@ var Sheet = module.exports = ESModel.extend({
       action: 'commitCell',
       params:[row_id,col_id,cell]
     });
+    console.log('REFRESH CELLS!!!!!!');
     this.refreshCells();
     return true;
   },
@@ -270,7 +272,7 @@ var Sheet = module.exports = ESModel.extend({
   },
   getCellDisplay: function(cell){
     if(!cell) return '';
-    value = this.getRawValue(cell);
+    var value = this.getRawValue(cell);
     //this is where we can do formatting
     return value;
   },
@@ -281,8 +283,9 @@ var Sheet = module.exports = ESModel.extend({
     return this.getCellDisplay(cell);
   },
   getDisplayFormula: function(row_id, col_id){
-    var display_formula = this.getCell(row_id,col_id).value;
-    if(!display_formula){return ''};
+    var cell = this.getCell(row_id,col_id);
+    if(!cell){return ''};
+    var display_formula = cell.value;
     display_formula = this.collection.expressionHelpers.xlRefToEsRef(display_formula);
     return display_formula;
   },
