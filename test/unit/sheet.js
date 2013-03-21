@@ -23,6 +23,11 @@ describe('Sheet', function(){
       });
     });
   };
+   
+  var addCell = function(row,col,val){
+    sheet.updateCell(row,col,val);
+    sheet.commitCell(row,col);
+  };
   
   var clearEvents = function(){
     events = [];
@@ -452,6 +457,14 @@ describe('Sheet', function(){
       sheet.getDisplayFormula(row_id,col_id).should.equal('=B2');
     });
     it('should deal with deleting or adding columns and rows');
+    it('should deal with math on nested cell references', function(){
+      initializeSheet;
+      test_val = '123';
+      addCell('0','0', test_val);
+      addCell('0','1', '=A1');
+      addCell('0','2', '=B1 + 1');
+      sheet.getCellDisplay(sheet.getCell('0','2')).should.equal(test_val);
+    });
   });
 });
 

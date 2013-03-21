@@ -357,8 +357,10 @@ describe('TableView', function(){
         e.which = 13; 
         e.keyCode = 13;
         $input_new.trigger(e);
-        $newCell.text().should.equal('4');
-        done();
+        setTimeout(function(){ 
+          $newCell.text().should.equal('4');
+          done();
+        }, 1000);
       });
 
       it("should display cell reference as integer if there is a cell reference", function(){

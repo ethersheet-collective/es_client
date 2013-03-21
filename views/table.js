@@ -153,6 +153,7 @@ var Table = module.exports = View.extend({
   },
 
   changeCell: function(e){
+    console.log(e);
     var $el = $(e.currentTarget);
     var data = $el.data();
     this.getSheet().commitCell(data.row_id.toString(), data.col_id.toString(), $el.val());
@@ -180,7 +181,7 @@ var Table = module.exports = View.extend({
     var new_row_idx = _.indexOf(rows,old_cell.attr('data-row_id')) + row_offset;
     var new_row = rows[new_row_idx];
     var new_cell = $('#' + new_row + '-' + new_col);
-    new_cell.click();
+    this.cellClicked({currentTarget: new_cell});
   },
 
   onUpdateCell: function(cell){
