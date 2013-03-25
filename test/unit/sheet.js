@@ -440,8 +440,7 @@ describe('Sheet', function(){
     it('should have a cell reference function', function(done){
       sheet.updateCell(row_id, col_id, a1_value);
       sheet.commitCell(row_id, col_id);
-      sheet.updateCell(new_row, new_col, "=cellReference('" + sheet.id +"','0','0')");
-      sheet.commitCell(new_row, new_col);
+      sheet.cells[new_row][new_col] = {value:"=cellReference('" + sheet.id +"','0','0')", type:'formula'};
       sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a1_value);
       done();
     });
@@ -456,7 +455,10 @@ describe('Sheet', function(){
       sheet.commitCell(row_id, col_id);
       sheet.getDisplayFormula(row_id,col_id).should.equal('=B2');
     });
-    it('should deal with deleting or adding columns and rows');
+    it('should deal with deleting or adding columns and rows', function(){
+      initializeSheet;
+      addCell('0','0', '123');
+      addCell('0','1', '=A1'); sheet.insertCol(0); sheet.getDisplayFormula('0', '1').should.equal('=B1'); });
     it('should deal with math on nested cell references', function(){
       initializeSheet;
       test_val = '123';
@@ -464,6 +466,27 @@ describe('Sheet', function(){
       addCell('0','1', '=A1');
       addCell('0','2', '=B1 * 2');
       sheet.getCellDisplay(sheet.getCell('0','2')).should.equal(test_val * 2);
+    });
+  });
+  describe('userland functions', function(){
+    before(function(){
+      initializeSheet();
+    });
+    it('should display an error when the function does not exist', function(){
+      addCell('0','0', '=KITTENS(123)');
+      sheet.getDisplayValue('0','0').should.equal('ERR: No such function.');
+    });
+    it('should not care about capitalization', function(){
+      addCell('0','0', '=sum(2,2,4)');
+      sheet.getDisplayValue('0','0').should.equal(8);
+      addCell('0','0', '=SuM(2,2,4)');
+      sheet.getDisplayValue('0','0').should.equal(8);
+    });
+    it('should have SUM(...)', function(){
+      addCell('0','0', '=SUM(2,2,4)');
+      sheet.getDisplayValue('0','0').should.equal(8);
+      addCell('0', '1', '=SUM(A1,2)');
+      sheet.getDisplayValue('0','1').should.equal(10);
     });
   });
 });
