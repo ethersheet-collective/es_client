@@ -69,7 +69,6 @@ describe('User', function(){
     });
 
     it('should add the user to the collection',function(){
-      console.log(users.get('test_user'));
       assert.deepEqual(users.get('test_user').getData(),
                        {id:'test_user'});
     });

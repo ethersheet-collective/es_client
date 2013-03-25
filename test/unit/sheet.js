@@ -462,8 +462,8 @@ describe('Sheet', function(){
       test_val = '123';
       addCell('0','0', test_val);
       addCell('0','1', '=A1');
-      addCell('0','2', '=B1 + 1');
-      sheet.getCellDisplay(sheet.getCell('0','2')).should.equal(test_val);
+      addCell('0','2', '=B1 * 2');
+      sheet.getCellDisplay(sheet.getCell('0','2')).should.equal(test_val * 2);
     });
   });
 });

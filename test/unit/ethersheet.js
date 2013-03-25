@@ -33,7 +33,6 @@ describe('Ethersheet Client', function(){
   describe('on initialization', function(){
   
     it('sends 3 events',function(){
-      console.log('events',user_trap.events);
       assert.equal(user_trap.events.length,2);
     });
 

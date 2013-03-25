@@ -35,7 +35,6 @@ var UserCollection = module.exports = ESCollection.extend({
     var user = this.get(id);
     if(!user) return;
     user.destroy();
-    console.log('removed user',user);
   },
 
 // ## Replication

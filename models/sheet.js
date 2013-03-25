@@ -180,7 +180,6 @@ var Sheet = module.exports = ESModel.extend({
   },
 
   commitCell: function(row_id,col_id){
-    console.log('commiting', row_id, col_id);
     var cell = this.getCell(row_id,col_id);
     if(!cell) return false;
     cell.type = this.getCellType(cell.value); 
@@ -200,7 +199,6 @@ var Sheet = module.exports = ESModel.extend({
       action: 'commitCell',
       params:[row_id,col_id,cell]
     });
-    console.log('REFRESH CELLS!!!!!!');
     this.refreshCells();
     return true;
   },
@@ -227,7 +225,7 @@ var Sheet = module.exports = ESModel.extend({
     var cell = this.getCell(row_id,col_id);
     var display_value = ''
     try{
-      display_value = this.getCellDisplay(cell);
+      display_value = this.getCellDisplay(cell,true);
     } catch (e) {
       display_value = e.message;
     }
@@ -272,7 +270,7 @@ var Sheet = module.exports = ESModel.extend({
   },
   getCellDisplay: function(cell){
     if(!cell) return '';
-    var value = this.getRawValue(cell);
+    var value = this.getRawValue(cell,true);
     //this is where we can do formatting
     return value;
   },
@@ -290,10 +288,13 @@ var Sheet = module.exports = ESModel.extend({
     return display_formula;
   },
   //just get the value without the formatting
-  getRawValue: function(cell){
+  getRawValue: function(cell,force_recalc){
     if(!cell) return 0;
     if(cell.type != 'formula') return cell.value; //do nothing if cell is not a formula
-    return this.parseValue(cell.value);
+    if(!cell.cachedValue || force_recalc){
+      cell.cachedValue = this.parseValue(cell.value);
+    }
+    return cell.cachedValue
   },
   getCells: function(){
     return this.cells;

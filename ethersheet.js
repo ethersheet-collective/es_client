@@ -44,11 +44,9 @@ Ethersheet.prototype.initializeSocket = function(o){
   });
 
   this.socket.onMessage(function(e){
-    console.log('message',e);
     var data_string = e.data;
     var c = new Command(data_string);
     var model = es.getModel(c.getDataType(),c.getDataId());
-    console.log('model',model);
     model.disableSend();
     c.execute(model);
     model.enableSend();
@@ -79,8 +77,6 @@ Ethersheet.prototype.connect = function(){
 };
 
 Ethersheet.prototype.getModel = function(type,id){
-  console.log('type',type);
-  console.log('id',id);
   var collection = this.data[type];
   if(!collection) return false;
   if(!id) return collection;

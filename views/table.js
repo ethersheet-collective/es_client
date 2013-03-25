@@ -153,7 +153,6 @@ var Table = module.exports = View.extend({
   },
 
   changeCell: function(e){
-    console.log(e);
     var $el = $(e.currentTarget);
     var data = $el.data();
     this.getSheet().commitCell(data.row_id.toString(), data.col_id.toString(), $el.val());
