@@ -91,12 +91,18 @@ var Sheet = module.exports = ESModel.extend({
     return idx;
        
   },
-  insertRow: function(position){
-    var new_id = uid();
+  insertRow: function(position, id){
+    var new_id = id || uid();
     this.rows.splice(position,0,new_id);
     this.trigger('insert_row',{
       row_id:new_id,
       sheet_id:this.id
+    });
+    this.send({
+      id: this.id,
+      type: 'sheet',
+      action: 'insertRow',
+      params:[position, new_id]
     });
     return new_id;
   },
@@ -108,6 +114,12 @@ var Sheet = module.exports = ESModel.extend({
     this.trigger('delete_row',{
       row_id:row_id,
       sheet_id:this.id
+    });
+    this.send({
+      id: this.id,
+      type: 'sheet',
+      action: 'deleteRow',
+      params:[row_id]
     });
     return true;
   },
@@ -126,12 +138,18 @@ var Sheet = module.exports = ESModel.extend({
   colAt: function(index){
     return this.cols[index];
   },
-  insertCol: function(position){
-    var new_id = uid();
+  insertCol: function(position, id){
+    var new_id = id || uid();
     this.cols.splice(position,0,new_id);
     this.trigger('insert_col',{
       col_id:new_id,
       sheet_id:this.id
+    });
+    this.send({
+      id: this.id,
+      type: 'sheet',
+      action: 'insertCol',
+      params:[position, new_id]
     });
     return new_id;
   },
@@ -148,6 +166,12 @@ var Sheet = module.exports = ESModel.extend({
     es.trigger('delete_col',{
       col_id:col_id,
       sheet_id:this.id
+    });
+    this.send({
+      id: this.id,
+      type: 'sheet',
+      action: 'deleteCol',
+      params:[col_id]
     });
     return true;
   },

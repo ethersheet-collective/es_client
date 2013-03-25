@@ -307,6 +307,7 @@ describe('Sheet', function(){
   
     before(function(){
       initializeSheet();
+      sheet.disableSend();
       old_row_id = sheet.rowIds()[1];
       new_row_id = sheet.insertRow(1);
     });
@@ -332,6 +333,7 @@ describe('Sheet', function(){
 
     before(function(){
       initializeSheet();
+      sheet.disableSend();
       row_id = sheet.rowIds()[0];
       col_id = sheet.colIds()[0];
       cell_id = sheet.updateCell(row_id,col_id,5);
@@ -360,6 +362,7 @@ describe('Sheet', function(){
     
     before(function(){
       initializeSheet();
+      sheet.disableSend();
       second_col_id = sheet.colIds()[1];
       new_col_id = sheet.insertCol(1);
     });
@@ -385,6 +388,7 @@ describe('Sheet', function(){
 
     before(function(){
       initializeSheet();
+      sheet.disableSend();
       row_id = sheet.rowIds()[0];
       col_id = sheet.colIds()[0];
       cell_id = sheet.updateCell(row_id,col_id,5);
@@ -487,6 +491,12 @@ describe('Sheet', function(){
       sheet.getDisplayValue('0','0').should.equal(8);
       addCell('0', '1', '=SUM(A1,2)');
       sheet.getDisplayValue('0','1').should.equal(10);
+    });
+    it('should typecast arguments', function(){
+      addCell('0', '0', '123');
+      addCell('0', '1', '123');
+      addCell('0', '2', '=SUM(A1,B1)');
+      sheet.getDisplayValue('0','2').should.equal(246);
     });
   });
 });

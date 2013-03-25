@@ -63,6 +63,54 @@ describe('Socket', function(){
     mock.verify();
   });
 
+  it('should trigger data event when column is added', function(){
+    var mock = sinon.mock(socket);
+    mock.expects('send').withArgs(JSON.stringify({
+      id: sheet.id,
+      type: 'sheet',
+      action:'insertCol', 
+      params:[0, 'new1']
+    }));
+    sheet.insertCol(0, 'new1');
+    mock.verify();
+  });
+
+  it('should trigger data event when column is deleted', function(){
+    var mock = sinon.mock(socket);
+    mock.expects('send').withArgs(JSON.stringify({
+      id: sheet.id,
+      type: 'sheet',
+      action:'deleteCol', 
+      params:[sheet.cols[0]]
+    }));
+    console.log(sheet);
+    sheet.deleteCol(sheet.cols[0]);
+    mock.verify();
+  });
+
+  it('should trigger data event when row is deleted', function(){
+    var mock = sinon.mock(socket);
+    mock.expects('send').withArgs(JSON.stringify({
+      id: sheet.id,
+      type: 'sheet',
+      action:'deleteRow', 
+      params:[sheet.rows[0]]
+    }));
+    sheet.deleteRow(sheet.rows[0]);
+    mock.verify();
+  });
+
+  it('should trigger data event when row is added', function(){
+    var mock = sinon.mock(socket);
+    mock.expects('send').withArgs(JSON.stringify({
+      id: sheet.id,
+      type: 'sheet',
+      action:'insertRow', 
+      params:[0, 'new1']
+    }));
+    sheet.insertRow(0, 'new1');
+    mock.verify();
+  });
 
   it('should call correct method on sheet when "sheet" event is emitted', function(){
     cell_value = '=9000';
