@@ -90,7 +90,7 @@ var Table = module.exports = View.extend({
 
     var $el = this._$el = $('<div>');
 
-    $el.html(t.sheet_table({id:this.getId()}));
+    $el.append(t.sheet_table({id:this.getId()}));
 
     $('#data-table-'+this.getId(),$el)
       .html(t.table({sheet:this.getSheet()}));
