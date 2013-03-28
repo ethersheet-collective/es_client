@@ -20,7 +20,9 @@ var View = require('backbone').View;
 
 var ExpressionEditor = module.exports = View.extend({
   events: {
-    'keypress .ExpressionEditor input': 'inputKeypress'
+    'keypress .ExpressionEditor input': 'inputKeypress',
+    'blur .ExpressionEditor input': 'inputOnBlur',
+    'focus .ExpressionEditor input': 'inputOnFocus'
   },
 
   initialize: function(o){
@@ -44,12 +46,15 @@ var ExpressionEditor = module.exports = View.extend({
   onAddCell: function(cell){
     console.log('click', cell);
     var $form = $('.ExpressionEditor input');
+    this.currentCell = cell;
     $form.val(this.getSheet().getDisplayFormula(cell.row_id,cell.col_id));
 
   },
 
   setSheet: function(sheet){
-    this.models.set('sheet',sheet,{});
+    this.models.set('sheet',sheet,{
+      'update_cell': 'onUpdateCell',
+    });
   },
 
   getSheet: function(){
@@ -61,11 +66,28 @@ var ExpressionEditor = module.exports = View.extend({
       'clear': 'onClear'
     }); 
   },
+  
   getSelections: function(){
     return this.models.get('selections');
   },
-  inputKeypress: function(){
-    console.log('keypress');
+
+  inputKeypress: function(e){
+    $input = $(e.currentTarget)
+    this.getSheet().updateCell(this.currentCell.row_id, this.currentCell.col_id, $input.val()); 
+  },
+
+  inputOnBlur: function(e){
+    console.log('blur');
+  },
+
+  inputOnFocus: function(e){
+    console.log('focus');
+  },
+
+  onUpdateCell: function(cell){
+    var $form = $('.ExpressionEditor input');
+    console.log(this.getSheet().getDisplayValue(cell.row_id, cell.col_id));
+    $form.val(this.getSheet().getDisplayValue(cell.row_id, cell.col_id));
   }
 });
 

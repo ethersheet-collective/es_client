@@ -7,7 +7,7 @@ var UserCollection = require('es_client/models/user_collection');
 var SheetCollection = require('es_client/models/sheet_collection');
 var SelectionCollection = require('es_client/models/selection_collection');
 var TableView = require('es_client/views/table');
-var ExpressionEditorView = require('es_client/views/expression_editor');
+//var ExpressionEditorView = require('es_client/views/expression_editor');
 var EthersheetContainerView = require('es_client/views/ethersheet_container');
 var Socket = require('es_client/lib/socket');
 var Command = require('es_command');
@@ -64,11 +64,11 @@ Ethersheet.prototype.initializeDisplay = function(o){
     es.ethersheet_container = new EthersheetContainerView({
       el: es.$el
     }).render();
-    es.expression_editor = new ExpressionEditorView({
+    /*es.expression_editor = new ExpressionEditorView({
       el: $(expression_editor_container, es.$el),
       sheet: es.data.sheet.first(),
       selections: es.data.selection.getLocal(),
-    }).render();
+    }).render();*/
     es.table = new TableView({
       el: $(table_container, es.$el),
       sheet: es.data.sheet.first(),
