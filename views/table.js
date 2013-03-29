@@ -77,9 +77,9 @@ var Table = module.exports = View.extend({
   },
 
   initializeElements: function(){
-    this.$table = $('#data-table-'+this.getId(),$el);
-    this.$table_col_headers = $('#column-headers-'+this.getId(),$el);
-    this.$table_row_headers = $('#row-headers-'+this.getId(),$el);
+    this.$table = $('#es-data-table-'+this.getId(),$el);
+    this.$table_col_headers = $('#es-column-headers-'+this.getId(),$el);
+    this.$table_row_headers = $('#es-row-headers-'+this.getId(),$el);
   },
 
   getId: function(){
@@ -92,11 +92,11 @@ var Table = module.exports = View.extend({
 
     $el.append(t.sheet_table({id:this.getId()}));
 
-    $('#data-table-'+this.getId(),$el)
+    $('#es-data-table-'+this.getId(),$el)
       .html(t.table({sheet:this.getSheet()}));
-    $('#column-headers-'+this.getId(),$el)
+    $('#es-column-headers-'+this.getId(),$el)
       .html(t.table_col_headers({num_col:this.getSheet().colCount()}));
-    $('#row-headers-'+this.getId(),$el)
+    $('#es-row-headers-'+this.getId(),$el)
       .html(t.table_row_headers({num_row:this.getSheet().rowCount()}));
 
     this.swapElement();
