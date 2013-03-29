@@ -1,3 +1,6 @@
+body{
+  margin: 0px;
+}
 .table{
 border-collapse: collapse;
 float:left;
@@ -7,10 +10,11 @@ width: 0;
 .table td, .table th{
 padding:0;
 margin:0;
-width: 48px;
-height: 14px;
-font-size:12px;
-line-height:12px;
+font-size:16px;
+line-height:17px;
+}
+.table tr{
+height: 18px;
 }
 .table .table-corner{
 background: #cccccc;
@@ -28,6 +32,13 @@ border:1px solid #666666;
 background:#aaaaaa;
 border-right: none;
 }
+#row-header{
+width: 40px;
+}
+.es-column{
+width: 120px;
+}
+  
 .es-table-cell{
 width: 36px;
 height: 12px;
