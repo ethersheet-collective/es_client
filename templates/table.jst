@@ -1,7 +1,6 @@
 <% var _ = require('underscore'); %>
-<% _.each(sheet.rowIds(), function(row_id,idx){ %>
+<% _.each(sheet.rowIds(), function(row_id){ %>
   <tr class="es-table-row" data-row_id="<%= row_id %>">
-    <th class="row-header"><%= idx %></th>
     <% _.each(sheet.colIds(), function(col_id){ %>
       <td id="<%= row_id %>-<%= col_id %>" class="es-table-cell" style="background-color: <%= sheet.getColor(row_id, col_id) %>" data-row_id="<%= row_id %>" data-col_id="<%= col_id %>" data-value="<%= sheet.getCellValue(row_id,col_id)%>"><%= sheet.getDisplayValue(row_id,col_id) %></td>
     <% }) %>

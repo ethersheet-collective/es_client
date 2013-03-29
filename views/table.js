@@ -90,14 +90,14 @@ var Table = module.exports = View.extend({
 
     var $el = this._$el = $('<div>');
 
-    $el.append(t.sheet_table({id:this.getId(), num_col: this.getSheet().colCount()}));
+    $el.append(t.sheet_table({id:this.getId()}));
 
     $('#data-table-'+this.getId(),$el)
       .html(t.table({sheet:this.getSheet()}));
     $('#column-headers-'+this.getId(),$el)
       .html(t.table_col_headers({num_col:this.getSheet().colCount()}));
-    /*$('#row-headers-'+this.getId(),$el)
-     .html(t.table_row_headers({num_row:this.getSheet().rowCount()}));*/
+    $('#row-headers-'+this.getId(),$el)
+      .html(t.table_row_headers({num_row:this.getSheet().rowCount()}));
 
     this.swapElement();
     return this;

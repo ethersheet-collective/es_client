@@ -57,7 +57,7 @@ describe('TableView', function(){
     });
 
     it('should have the right column headers', function(){
-      $('#ethersheet .column-header').length.should.equal(ES.DEFAULT_COL_COUNT + 1);
+      $('#ethersheet .column-header').length.should.equal(ES.DEFAULT_COL_COUNT);
       $("#ethersheet .column-header").last().text().should.equal('T');
     });
 
