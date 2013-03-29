@@ -1,10 +1,10 @@
-.table{
+.es-table{
 border-collapse: collapse;
 float:left;
 table-layout: fixed;
 width: 0;
 }
-.table td, .table th{
+.es-table td, .es-table th{
 padding:0;
 margin:0;
 width: 48px;
@@ -12,22 +12,23 @@ height: 14px;
 font-size:12px;
 line-height:12px;
 }
-.table .table-corner{
+.es-table .es-table-corner{
 background: #cccccc;
 border: 1px solid #cccccc;
 border-bottom-color: #666666;
 height:15px;
 }
-.column-header{
+.es-column-header{
 border:1px solid #666666;
 border-bottom: none;
 background:#aaaaaa;
 }
-.row-header{
+.es-row-header{
 border:1px solid #666666;
 background:#aaaaaa;
 border-right: none;
 }
+
 .es-table-cell{
 width: 36px;
 height: 12px;
