@@ -18,7 +18,6 @@ var t = require('es_client/templates');
 var RefBinder = require('ref-binder');
 var View = require('backbone').View;
 var _ = require('underscore');
-
 var Table = module.exports = View.extend({
 
   events: {
@@ -77,9 +76,10 @@ var Table = module.exports = View.extend({
   },
 
   initializeElements: function(){
-    this.$table = $('#es-data-table-'+this.getId(),$el);
-    this.$table_col_headers = $('#es-column-headers-'+this.getId(),$el);
-    this.$table_row_headers = $('#es-row-headers-'+this.getId(),$el);
+    this.$table = $('#es-table-'+this.getId(),this.$el);
+    this.$grid = $('#es-grid-container-'+this.getId(),this.$el);
+    this.$table_col_headers = $('#es-column-headers-'+this.getId(),this.$el);
+    this.$table_row_headers = $('#es-row-headers-'+this.getId(),this.$el);
   },
 
   getId: function(){
@@ -100,7 +100,18 @@ var Table = module.exports = View.extend({
       .html(t.table_row_headers({num_row:this.getSheet().rowCount()}));
 
     this.swapElement();
+    this.initializeElements();
+    this.initializeScrolling();
     return this;
+  },
+
+  initializeScrolling: function(){
+    var view = this;
+    var grid_el = this.$grid[0];
+    this.$grid.scroll(function(e){
+      view.$table_col_headers.css('left',(0-grid_el.scrollLeft)+"px");
+      view.$table_row_headers.css('top',(0-grid_el.scrollTop)+"px");
+    });
   },
 
   swapElement: function(){

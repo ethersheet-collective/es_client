@@ -1,14 +1,17 @@
 <div id="es-table-<%= id %>" class="es-table-view">
-  <table class="es-row-headers es-table">
-    <thead id="es-row-headers-<%=id%>"></thead>
-    <tbody></tbody>
-  </table>
-  <table class="es-column-headers es-table">
-    <thead id="es-column-headers-<%=id%>"></thead>
-    <tbody></tbody>
-  </table>
-  <table class="es-table-grid es-table">
+  <table id="es-column-headers-<%=id%>" class="es-column-headers es-table">
     <thead></thead>
-    <tbody id="es-data-table-<%=id%>"></tbody>
+    <tbody></tbody>
   </table>
+  <table id="es-row-headers-<%=id%>" class="es-row-headers es-table">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+  <div id="es-grid-container-<%= id %>" class="es-grid-container">
+    <table id="es-grid-<%= id %>" class="es-grid es-table">
+      <thead></thead>
+      <tbody id="es-data-table-<%=id%>"></tbody>
+    </table>
+  </div>
+  <div class="es-table-corner"></div>
 </div>
