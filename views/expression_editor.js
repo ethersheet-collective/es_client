@@ -20,7 +20,7 @@ var View = require('backbone').View;
 
 var ExpressionEditor = module.exports = View.extend({
   events: {
-    'keypress .ExpressionEditor input': 'inputKeypress',
+    'keyup.ExpressionEditor input': 'inputKeypress',
     'blur .ExpressionEditor input': 'inputOnBlur',
     'focus .ExpressionEditor input': 'inputOnFocus'
   },
@@ -73,6 +73,7 @@ var ExpressionEditor = module.exports = View.extend({
 
   inputKeypress: function(e){
     $input = $(e.currentTarget)
+    console.log('keypress!', $input.val());
     this.getSheet().updateCell(this.currentCell.row_id, this.currentCell.col_id, $input.val()); 
   },
 
