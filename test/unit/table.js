@@ -57,13 +57,13 @@ describe('TableView', function(){
     });
 
     it('should have the right column headers', function(){
-      $('#ethersheet .column-header').length.should.equal(ES.DEFAULT_COL_COUNT);
-      $("#ethersheet .column-header").last().text().should.equal('T');
+      $('#ethersheet .es-column-header').length.should.equal(ES.DEFAULT_COL_COUNT);
+      $("#ethersheet .es-column-header").last().text().should.equal('T');
     });
 
     it('should have the right row headers', function(){
-      $('#ethersheet .row-header').length.should.equal(ES.DEFAULT_ROW_COUNT)
-      $("#ethersheet .row-header").last().text().should.equal('100');
+      $('#ethersheet .es-row-header').length.should.equal(ES.DEFAULT_ROW_COUNT)
+      $("#ethersheet .es-row-header").last().text().should.equal('100');
     });
     it('should have empty cells', function(){
       $('td',$el).each(function(){
