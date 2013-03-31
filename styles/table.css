@@ -1,6 +1,17 @@
 ::-webkit-scrollbar {
     -webkit-appearance: none;
     width: 7px;
+  }
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Source Code Pro'), local('SourceCodePro-Regular'), url(/es_client/styles/sourcecodepro.woff) format('woff');
+}
+
+body{
+  margin: 0px;
+  font-family: "Source Code Pro", sans-serif
 }
 ::-webkit-scrollbar-thumb {
     border-radius: 4px;
@@ -81,4 +92,6 @@ border:1px solid #888888;
 .es-table-cell-input{
   border: 0px;
   position: absolute;
+}
+#table_container{
 }

@@ -23,7 +23,7 @@ var Table = module.exports = View.extend({
   events: {
     'click .es-table-cell': 'cellClicked',
     'change .es-table-cell-input': 'changeCell',
-    'keypress .es-table-cell-input': 'inputKeypress'
+    'keypress': 'inputKeypress'
   },
 
   initialize: function(o){
@@ -124,6 +124,7 @@ var Table = module.exports = View.extend({
 
   removeCellInputs: function(){
     $('.es-table-cell-input').remove();
+
   },
 
   selectCell: function(e){
@@ -171,18 +172,26 @@ var Table = module.exports = View.extend({
   inputKeypress: function(e){
     var code = (e.keyCode ? e.keyCode : e.which);
     //return unless code is 'enter' or 'tab' 
+    var UP    =-1;
+    var LEFT  =-1;
+    var DOWN  = 1;
+    var RIGHT = 1;
+    var NONE  = 0;
     if(code != 13 && code != 9) return;
     if(code == 13){
-      this.moveCell(e,1,0);
+      this.moveSelection(e,DOWN,NONE);
     }
     if(code == 9){
-      this.moveCell(e,0,1);
+      this.moveSelection(e,NONE,RIGHT);
     }
   },
 
-  moveCell: function(e, row_offset, col_offset){
-    this.changeCell(e);
-    var old_cell = $(e.currentTarget);
+  moveSelection: function(e, row_offset, col_offset){
+    var cell = this.getSelections().getLocal().getCells()[0];
+    console.log('cell',cell);
+    var old_cell = $('#' + cell.row_id + '-' + cell.col_id + '-input' );
+    console.log('old_cell',old_cell);
+    this.getSheet().commitCell(cell.row_id.toString(), cell.col_id.toString(), cell.value);
     var rows = this.getSheet().rows;
     var cols = this.getSheet().cols;
     var new_col_idx = _.indexOf(cols,old_cell.attr('data-col_id')) + col_offset;
@@ -195,7 +204,11 @@ var Table = module.exports = View.extend({
 
   onUpdateCell: function(cell){
     var $el = $('#'+cell.row_id+'-'+cell.col_id);
+    var input =$('#' + $el.attr('id') + '-input');
     $el.text(cell.cell_display);
+    if(input.length > 0){
+      input.val(cell.cell_display);
+    }
   },  
 
   onCommitCell: function(cell){
