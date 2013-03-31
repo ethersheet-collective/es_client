@@ -70,8 +70,7 @@ var Selection = module.exports = ESModel.extend({
       id: this.id,
       sheet_id: this.sheet_id,
       user_id: this.user_id,
-      cells: this.cells,
-      color: this.color
+      cells: this.cells
     }
   },
 

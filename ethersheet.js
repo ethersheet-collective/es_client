@@ -3,6 +3,7 @@ define( function(require,exports,module) {
 
 var $ = require('jquery');
 
+var config = require('es_client/config');
 var UserCollection = require('es_client/models/user_collection');
 var SheetCollection = require('es_client/models/sheet_collection');
 var SelectionCollection = require('es_client/models/selection_collection');
@@ -29,7 +30,10 @@ Ethersheet.prototype.initializeData = function(o){
   this.data.selection = new SelectionCollection([],{sheet_collection: this.data.sheet});
   this.data.user = new UserCollection([],{selection_collection:this.data.selection});
   this.data.user.createCurrentUser(o.user);
-  this.data.selection.createLocal({user_id:this.data.user.getCurrentUser().id});
+  this.data.selection.createLocal({
+    user_id:this.data.user.getCurrentUser().id,
+    color:config.DEFAULT_LOCAL_SELECTION_COLOR
+  });
 };
 
 Ethersheet.prototype.initializeSocket = function(o){

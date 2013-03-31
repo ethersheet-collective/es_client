@@ -136,12 +136,13 @@ var Table = module.exports = View.extend({
   },
 
   createCellInput: function(e){
+    var s = this.getSelections().getLocal();
     var $el = $(e.currentTarget);
     var x = $el.offset().left;
     var y = $el.offset().top;
     var width = $el.width();
     var height = $el.height() - 2;
-    var color = "#ffaa99";
+    var color = s.getColor();
     var row_id = $el.data().row_id.toString();
     var col_id = $el.data().col_id.toString();
     var cell_value = this.getSheet().getDisplayFormula(row_id,col_id);
