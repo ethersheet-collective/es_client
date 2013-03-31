@@ -10,10 +10,10 @@
 .es-table-view{
 position:absolute;
 overflow:hidden;
-top:2%;
-left:1%;
-height:95%;
-width:97%;
+top:0;
+left:0;
+height:100%;
+width:100%;
 border: 1px solid #888888;
 }
 .es-table{

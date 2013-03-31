@@ -74,7 +74,7 @@ Ethersheet.prototype.initializeDisplay = function(o){
       selections: es.data.selection.getLocal(),
     }).render();*/
     es.table = new TableView({
-      el: $(table_container, es.$el),
+      el: $('#es-table-container', es.$el),
       sheet: es.data.sheet.first(),
       selections: es.data.selection
     }).render();

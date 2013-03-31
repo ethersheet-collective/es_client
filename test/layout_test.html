@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Ethersheet</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <!--Ethersheet-->
+    <link rel="stylesheet" type="text/css" href="/es_client/styles/table.css" />
+    <link rel="stylesheet" type="text/css" href="/es_client/styles/es_container.css" />
+    <script src="/es_client/vendor/require.js"></script>
+    <script src="/es_client/boot.js"></script>
+
+    <style>
+      html,body{
+        height:100%;
+      }
+      #ethersheet{
+        height:100%;
+      }
+      #es-container{
+        background:#eee
+      }
+      #es-expression-editor-container
+      {
+        background:#cfd;
+      }
+      #es-expression-editor-container:before
+      {
+        content:"Expression Editor"
+      }
+      #es-table-container
+      {
+        background:#cdf;
+      }
+      #es-table-container:before
+      {
+        content:"Table View"
+      }
+    </style>
+
+    <script type="text/javascript">
+
+      // global namespace
+      var view;
+
+      // create a new ethersheet
+      require(['es_client/views/ethersheet_container'], function(EthersheetContainerView){
+        view  = new EthersheetContainerView({
+          el: '#ethersheet'
+        }).render();
+      });
+
+    </script>
+      
+  </head>
+  <body>
+    <div id="ethersheet"></div>
+  </body>
+</html>
+
