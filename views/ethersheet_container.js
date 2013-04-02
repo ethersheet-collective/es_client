@@ -26,13 +26,15 @@ var EthersheetContainer = module.exports = View.extend({
     $(this.el).html(t.es_container);
     this.$expression = $("#es-expression-editor-container",this.$el);
     this.$table = $("#es-table-container",this.$el);
+    this.$menu = $("#es-menu-container",this.$el);
     this.is_rendered = true;
     this.resize();
     return this;
   },
+
   resize: function(){
     if(!this.is_rendered) return;
-    var table_height = this.$el.innerHeight() - this.$expression.outerHeight(true);
+    var table_height = this.$el.innerHeight() - this.$expression.outerHeight(true) - this.$menu.outerHeight(true);
     this.$table.height(table_height);
   }
 });

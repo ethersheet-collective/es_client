@@ -79,6 +79,9 @@ var Sheet = module.exports = ESModel.extend({
   rowAt: function(index){
     return this.rows[index];
   },
+  indexForRow: function(row_id){
+    return _.indexOf(this.rows,row_id);
+  },
   /* takes a column identifier ('A') and converts it to an array index */
   identifierToIndex: function(letters){
     var scale = 1;
@@ -137,6 +140,9 @@ var Sheet = module.exports = ESModel.extend({
   },
   colAt: function(index){
     return this.cols[index];
+  },
+  indexForCol: function(col_id){
+    return _.indexOf(this.cols,col_id);
   },
   insertCol: function(position, id){
     var new_id = id || uid();

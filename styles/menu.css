@@ -1,0 +1,14 @@
+#es-menu-list{
+list-style:none;
+margin:0;
+padding:0;
+}
+#es-menu-list li{
+float:left;
+margin:4px 4px 4px 0;
+}
+.es-menu-button{
+border:1px solid #999;
+cursor:pointer;
+padding:4px;
+}

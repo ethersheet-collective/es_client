@@ -5,6 +5,9 @@ height:100%;
 #es-expression-editor-container{
 height:50px;
 }
+#es-menu-container{
+height:30px
+}
 #es-table-container{
 position:relative;
 }

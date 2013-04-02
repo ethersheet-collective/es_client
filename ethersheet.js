@@ -4,14 +4,19 @@ define( function(require,exports,module) {
 var $ = require('jquery');
 
 var config = require('es_client/config');
+var Socket = require('es_client/lib/socket');
+var Command = require('es_command');
+
+// models
 var UserCollection = require('es_client/models/user_collection');
 var SheetCollection = require('es_client/models/sheet_collection');
 var SelectionCollection = require('es_client/models/selection_collection');
+
+// views
 var TableView = require('es_client/views/table');
 //var ExpressionEditorView = require('es_client/views/expression_editor');
 var EthersheetContainerView = require('es_client/views/ethersheet_container');
-var Socket = require('es_client/lib/socket');
-var Command = require('es_command');
+var MenuView = require('es_client/views/menu');
 
 var Ethersheet = module.exports = function(o) {
   if(!o.target) throw Error('el or target required');
@@ -75,6 +80,11 @@ Ethersheet.prototype.initializeDisplay = function(o){
     }).render();*/
     es.table = new TableView({
       el: $('#es-table-container', es.$el),
+      sheet: es.data.sheet.first(),
+      selections: es.data.selection
+    }).render();
+    es.menu = new MenuView({
+      el: $('#es-menu-container', es.$el),
       sheet: es.data.sheet.first(),
       selections: es.data.selection
     }).render();
