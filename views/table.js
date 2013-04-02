@@ -23,13 +23,14 @@ var Table = module.exports = View.extend({
   events: {
     'click .es-table-cell': 'cellClicked',
     'change .es-table-cell-input': 'changeCell',
-    'keypress': 'inputKeypress'
+    'keydown': 'inputKeypress'
   },
 
   initialize: function(o){
     this.models = new RefBinder(this);
     this.setSheet(o.sheet || null);
     this.setSelections(o.selections || null);
+    this.setLocalSelection(o.local_selection || null);
   },
 
   setSheet: function(sheet){
@@ -45,9 +46,16 @@ var Table = module.exports = View.extend({
 
   setSelections: function(selections){
     this.models.set('selections',selections,{
-      'add_cell': 'onAddCell',
+      'add_cell': 'onRemoteAddCell',
       'clear': 'onClear'
     }); 
+  },
+
+  setLocalSelection: function(local_selection){
+    this.models.set('local_selection',local_selection,{
+      'add_cell': 'onLocalAddCell',
+      'clear': 'onClear'
+    });
   },
 
   paintCell: function(cell){
@@ -55,8 +63,17 @@ var Table = module.exports = View.extend({
     $cell.css('background-color', cell.color);
   },
     
-  onAddCell: function(cell){
+  onRemoteAddCell: function(cell){
     this.paintCell(cell);
+  },
+
+  onLocalAddCell: function(cell){
+    var $cell = $('#'+cell.row_id+'-'+cell.col_id, this.el);
+    var e = {currentTarget: $cell};
+
+    this.paintCell($cell);
+    this.removeCellInputs();
+    this.createCellInput(e);
   },
 
   onClear: function(cells){
@@ -73,6 +90,10 @@ var Table = module.exports = View.extend({
 
   getSelections: function(){
     return this.models.get('selections');
+  },
+
+  getLocalSelection: function(){
+    return this.models.get('local_selection');
   },
 
   getId: function(){
@@ -117,9 +138,7 @@ var Table = module.exports = View.extend({
   },
 
   cellClicked: function(e){
-    this.removeCellInputs();
     this.selectCell(e);
-    this.createCellInput(e);
   },
 
   removeCellInputs: function(){
@@ -128,7 +147,7 @@ var Table = module.exports = View.extend({
   },
 
   selectCell: function(e){
-    var s = this.getSelections().getLocal();
+    var s = this.getLocalSelection();
     var data = $(e.currentTarget).data();
     s.clear();
     s.addCell(this.getSheet().id,data.row_id.toString(),data.col_id.toString());
@@ -169,36 +188,39 @@ var Table = module.exports = View.extend({
   },
 
   inputKeypress: function(e){
-    var code = (e.keyCode ? e.keyCode : e.which);
     //return unless code is 'enter' or 'tab' 
+    var code = (e.keyCode ? e.keyCode : e.which);
+    if(code != 13 && code != 9) return;
+    
     var UP    =-1;
     var LEFT  =-1;
     var DOWN  = 1;
     var RIGHT = 1;
     var NONE  = 0;
-    if(code != 13 && code != 9) return;
+
+    var cell = this.getLocalSelection().getCells()[0];
+    this.getSheet().commitCell(cell.row_id.toString(), cell.col_id.toString());
     if(code == 13){
       this.moveSelection(e,DOWN,NONE);
     }
     if(code == 9){
       this.moveSelection(e,NONE,RIGHT);
     }
+    return false;
   },
 
   moveSelection: function(e, row_offset, col_offset){
-    var cell = this.getSelections().getLocal().getCells()[0];
-    console.log('cell',cell);
-    var old_cell = $('#' + cell.row_id + '-' + cell.col_id + '-input' );
-    console.log('old_cell',old_cell);
-    this.getSheet().commitCell(cell.row_id.toString(), cell.col_id.toString(), cell.value);
+    var selection = this.getLocalSelection();
+    var old_cell = selection.getCells()[0];
     var rows = this.getSheet().rows;
     var cols = this.getSheet().cols;
-    var new_col_idx = _.indexOf(cols,old_cell.attr('data-col_id')) + col_offset;
+    var new_col_idx = _.indexOf(cols,old_cell.col_id) + col_offset;
     var new_col = cols[new_col_idx];
-    var new_row_idx = _.indexOf(rows,old_cell.attr('data-row_id')) + row_offset;
+    var new_row_idx = _.indexOf(rows,old_cell.row_id) + row_offset;
     var new_row = rows[new_row_idx];
-    var new_cell = $('#' + new_row + '-' + new_col);
-    this.cellClicked({currentTarget: new_cell});
+    selection.clear();
+    selection.addCell(this.getSheet().id, new_row, new_col);
+
   },
 
   onUpdateCell: function(cell){

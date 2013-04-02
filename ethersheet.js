@@ -34,6 +34,7 @@ Ethersheet.prototype.initializeData = function(o){
     user_id:this.data.user.getCurrentUser().id,
     color:config.DEFAULT_LOCAL_SELECTION_COLOR
   });
+  this.data.selection.getLocal().addCell(o.sheet.id, o.sheet.rows[0], o.sheet.cols[0]);
 };
 
 Ethersheet.prototype.initializeSocket = function(o){
@@ -76,7 +77,8 @@ Ethersheet.prototype.initializeDisplay = function(o){
     es.table = new TableView({
       el: $('#es-table-container', es.$el),
       sheet: es.data.sheet.first(),
-      selections: es.data.selection
+      selections: es.data.selection,
+      local_selection: es.data.selection.getLocal()
     }).render();
     $('#table_container').css('width', $(window).width() + 'px');
     $('#table_container').css('height', $(window).height() - 50 + 'px');
