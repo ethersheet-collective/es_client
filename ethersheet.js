@@ -14,7 +14,7 @@ var SelectionCollection = require('es_client/models/selection_collection');
 
 // views
 var TableView = require('es_client/views/table');
-//var ExpressionEditorView = require('es_client/views/expression_editor');
+var ExpressionEditorView = require('es_client/views/expression_editor');
 var EthersheetContainerView = require('es_client/views/ethersheet_container');
 var MenuView = require('es_client/views/menu');
 
