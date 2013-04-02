@@ -69,7 +69,7 @@ Ethersheet.prototype.initializeDisplay = function(o){
       el: es.$el
     }).render();
     es.expression_editor = new ExpressionEditorView({
-      el: $(expression_editor_container, es.$el),
+      el: $('#es-expression-editor-container', es.$el),
       sheet: es.data.sheet.first(),
       selections: es.data.selection.getLocal(),
     }).render();
