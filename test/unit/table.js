@@ -33,7 +33,8 @@ describe('TableView', function(){
     table = new TableView({
       el: $el,
       sheet: sheet,
-      selections: selections
+      selections: selections,
+      local_selection: selection
     });
     table.render();
   }
