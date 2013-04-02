@@ -5,7 +5,7 @@
   src: local('Source Code Pro'), local('SourceCodePro-Regular'), url(/es_client/styles/sourcecodepro.woff) format('woff');
 }
 body{
-  background: #222;
+  background: #666;
 }
 #es-container{
 font-family: 'Source Code Pro', Ariel, Sans-Serif;
