@@ -90,7 +90,7 @@ var MenuView = module.exports = View.extend({
   addCol:function(col_id){
     var col_position = this.getSheet().indexForCol(col_id); 
     if(col_position == -1) return;
-    this.getSheet().insertRow(col_position);
+    this.getSheet().insertCol(col_position);
   },
 
   deleteCol:function(col_id){

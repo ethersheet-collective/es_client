@@ -11,4 +11,8 @@ margin:4px 4px 4px 0;
 border:1px solid #999;
 cursor:pointer;
 padding:4px;
+background: #eee;
+}
+.clear{
+  clear: both;
 }

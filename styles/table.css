@@ -15,6 +15,7 @@ left:0;
 height:100%;
 width:100%;
 border: 1px solid #888888;
+background: #EEE;
 }
 .es-table{
 border-collapse: collapse;
@@ -82,3 +83,25 @@ border:1px solid #888888;
   border: 0px;
   position: absolute;
 }
+.ExpressionEditor,#es-expression-editor-container{
+  float:left;
+  display:inline;
+  margin-right: 10px;
+}
+.ExpressionEditorContainer a {
+  float:left;
+  color:#fff;
+  font-size: 24px;
+  text-decoration: none;
+  font-style: italic;
+  font-weight: bold;
+  font-family: ariel;
+}
+.ExpressionEditor input{
+  height: 26px;
+  width: 24em;
+  font-size: 22px;
+font-family: 'Source Code Pro', Ariel, Sans-Serif;
+border: 1px solid #CCC;
+}
+

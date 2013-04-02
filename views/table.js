@@ -253,6 +253,10 @@ var Table = module.exports = View.extend({
   onUpdateCell: function(cell){
     var $el = $('#'+cell.row_id+'-'+cell.col_id);
     $el.text(cell.cell_display);
+    var input =$('#' + $el.attr('id') + '-input');
+    if(input.length > 0){
+      input.val(cell.cell_display);
+    }
     this.resizeRowHeader(cell.row_id);
   },  
 
