@@ -75,13 +75,6 @@ var Table = module.exports = View.extend({
     return this.models.get('selections');
   },
 
-  initializeElements: function(){
-    this.$table = $('#es-table-'+this.getId(),this.$el);
-    this.$grid = $('#es-grid-container-'+this.getId(),this.$el);
-    this.$table_col_headers = $('#es-column-headers-'+this.getId(),this.$el);
-    this.$table_row_headers = $('#es-row-headers-'+this.getId(),this.$el);
-  },
-
   getId: function(){
     return this.getSheet().cid;
   },
@@ -101,6 +94,13 @@ var Table = module.exports = View.extend({
     this.initializeElements();
     this.initializeScrolling();
     return this;
+  },
+
+  initializeElements: function(){
+    this.$table = $('#es-table-'+this.getId(),this.$el);
+    this.$grid = $('#es-grid-container-'+this.getId(),this.$el);
+    this.$table_col_headers = $('#es-column-headers-'+this.getId(),this.$el);
+    this.$table_row_headers = $('#es-row-headers-'+this.getId(),this.$el);
   },
 
   initializeScrolling: function(){
@@ -136,19 +136,18 @@ var Table = module.exports = View.extend({
   createCellInput: function(e){
     var s = this.getSelections().getLocal();
     var $el = $(e.currentTarget);
-    var x = $el.offset().left;
-    var y = $el.offset().top;
+    var x = $el.position().left + this.$grid.scrollLeft();
+    var y = $el.position().top + this.$grid.scrollTop();;
     var width = $el.width();
     var height = $el.height() - 2;
     var color = s.getColor();
     var row_id = $el.data().row_id.toString();
     var col_id = $el.data().col_id.toString();
     var cell_value = this.getSheet().getDisplayFormula(row_id,col_id);
-    
 
     var $input = $("<input id='"+$el.attr('id')+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' class='es-table-cell-input' value='"+cell_value+"' style='left: "+x+"px; top: "+y+"px; width: "+width+"px; height: "+height+"px; background-color: "+color+";' />");
     
-    this.$el.append($input);
+    this.$grid.append($input);
     $input.focus();
     var timer = null;
     var sheet = this.getSheet();
