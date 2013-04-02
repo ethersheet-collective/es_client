@@ -77,6 +77,7 @@ var ExpressionEditor = module.exports = View.extend({
 
   inputKeypress: function(e){
     $input = $(e.currentTarget)
+<<<<<<< HEAD
     //return unless code is 'enter' or 'tab' 
     var code = (e.keyCode ? e.keyCode : e.which);
     if(code == 13){
@@ -87,6 +88,9 @@ var ExpressionEditor = module.exports = View.extend({
       this.handleTabKeypress();
       return false;
     };
+=======
+    console.log('keypress!', $input.val());
+>>>>>>> 75ad3ba224382eb3bbd5e3d2fc98ab18b198bca0
     this.getSheet().updateCell(this.currentCell.row_id, this.currentCell.col_id, $input.val()); 
   },
 

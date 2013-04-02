@@ -189,7 +189,15 @@ var Table = module.exports = View.extend({
 
   inputKeypress: function(e){
     //return unless code is 'enter' or 'tab' 
+<<<<<<< HEAD
     var code = (e.keyCode ? e.keyCode : e.which);
+=======
+    var UP    =-1;
+    var LEFT  =-1;
+    var DOWN  = 1;
+    var RIGHT = 1;
+    var NONE  = 0;
+>>>>>>> 75ad3ba224382eb3bbd5e3d2fc98ab18b198bca0
     if(code != 13 && code != 9) return;
     
     var UP    =-1;
@@ -210,8 +218,16 @@ var Table = module.exports = View.extend({
   },
 
   moveSelection: function(e, row_offset, col_offset){
+<<<<<<< HEAD
     var selection = this.getLocalSelection();
     var old_cell = selection.getCells()[0];
+=======
+    var cell = this.getSelections().getLocal().getCells()[0];
+    console.log('cell',cell);
+    var old_cell = $('#' + cell.row_id + '-' + cell.col_id + '-input' );
+    console.log('old_cell',old_cell);
+    this.getSheet().commitCell(cell.row_id.toString(), cell.col_id.toString(), cell.value);
+>>>>>>> 75ad3ba224382eb3bbd5e3d2fc98ab18b198bca0
     var rows = this.getSheet().rows;
     var cols = this.getSheet().cols;
     var new_col_idx = _.indexOf(cols,old_cell.col_id) + col_offset;
