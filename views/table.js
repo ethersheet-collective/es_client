@@ -80,17 +80,19 @@ var Table = module.exports = View.extend({
   },
 
   render: function(){
+    this.$el.empty();
+    this.$el.append($(t.sheet_table({id:this.getId()})));
 
-    var $el = this._$el = $(t.sheet_table({id:this.getId()}));
-
-    $('#es-data-table-'+this.getId(),$el)
+    $('#es-data-table-'+this.getId(),this.$el)
       .html(t.table({sheet:this.getSheet()}));
-    $('#es-column-headers-'+this.getId(),$el)
-      .html(t.table_col_headers({num_col:this.getSheet().colCount()}));
-    $('#es-row-headers-'+this.getId(),$el)
-      .html(t.table_row_headers({num_row:this.getSheet().rowCount()}));
 
-    this.swapElement();
+    $('#es-column-headers-'+this.getId(),this.$el)
+      .html(t.table_col_headers({
+        num_col:this.getSheet().colCount()
+      }));
+   
+    this.drawRowHeaders();
+
     this.initializeElements();
     this.initializeScrolling();
     return this;
@@ -112,8 +114,34 @@ var Table = module.exports = View.extend({
     });
   },
 
-  swapElement: function(){
-    this.$el.html(this._$el);
+  drawRowHeaders: function()
+  {
+    var view = this;
+    var html = '';
+    var row_name = '';
+    var height = null;
+    
+    _.each(this.getSheet().rowIds(), function(row_id,index){
+      row_name = index+1;
+      height = view.heightForRow(row_id);
+      html +='<tr id="es-header-'+row_id+'" style="height:'+height+'px;"><th class="es-row-header">'+row_name+'</th></tr>'
+    });
+
+    $('#es-row-headers-'+this.getId(),this.$el).html(html);
+  },
+
+  heightForRow: function(row_id)
+  {
+    var row_el = document.getElementById(row_id);
+    return row_el.offsetHeight;
+  },
+
+  resizeRowHeader: function(row_id)
+  {
+    var header = document.getElementById("es-header-"+row_id);
+    var height = this.heightForRow(row_id);
+    if(!header || !height) return;
+    header.style.height = height+"px";
   },
 
   cellClicked: function(e){
@@ -195,6 +223,7 @@ var Table = module.exports = View.extend({
   onUpdateCell: function(cell){
     var $el = $('#'+cell.row_id+'-'+cell.col_id);
     $el.text(cell.cell_display);
+    this.resizeRowHeader(cell.row_id);
   },  
 
   onCommitCell: function(cell){
