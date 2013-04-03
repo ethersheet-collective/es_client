@@ -116,6 +116,8 @@ var Table = module.exports = View.extend({
 
     this.initializeElements();
     this.initializeScrolling();
+    setTimeout(this.resizeRowHeaders.bind(this),100);
+    setTimeout(this.resizeRowHeaders.bind(this),300);
     return this;
   },
 
@@ -151,10 +153,16 @@ var Table = module.exports = View.extend({
     $('#es-row-headers-'+this.getId(),this.$el).html(html);
   },
 
-  heightForRow: function(row_id)
-  {
+  heightForRow: function(row_id){
     var row_el = document.getElementById(row_id);
     return row_el.offsetHeight;
+  },
+
+  resizeRowHeaders: function(row_id){
+    var view = this;
+    _.each(this.getSheet().rowIds(), function(row_id){
+      view.resizeRowHeader(row_id);
+    });
   },
 
   resizeRowHeader: function(row_id)
