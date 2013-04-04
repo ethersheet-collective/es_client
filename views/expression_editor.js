@@ -23,7 +23,8 @@ var ExpressionEditor = module.exports = View.extend({
     'keyup .ExpressionEditor input': 'inputKeypress',
     'keydown': 'inputKeydown',
     'blur .ExpressionEditor input': 'inputOnBlur',
-    'focus .ExpressionEditor input': 'inputOnFocus'
+    'focus .ExpressionEditor input': 'inputOnFocus',
+    'click #expression-wizard': 'showExpressionWizard'
   },
 
   initialize: function(o){
@@ -125,6 +126,11 @@ var ExpressionEditor = module.exports = View.extend({
     if(!s || cell.row_id != s.row_id || cell.col_id != s.col_id) return;
     var $form = $('.ExpressionEditor input');
     $form.val(this.getSheet().getDisplayValue(cell.row_id, cell.col_id));
+  },
+
+  showExpressionWizard: function(){
+    $('#es-modal-box').html("<div id='es-modal-close'>[close]</div><h2>List of Ethersheet Functions</h2><p>=SUM(cell1, cell2 ...) - returns sum of cells</p>");
+    $('#es-modal-overlay').show();
   }
 });
 

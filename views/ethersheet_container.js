@@ -21,6 +21,10 @@ var EthersheetContainer = module.exports = View.extend({
     this.is_rendered = false;
     $(window).resize(this.resize.bind(this));
   },
+  events: {
+    'click #es-modal-overlay': 'closeModal',
+    'click #es-modal-close': 'closeModal'
+  },
 
   render: function(){
     $(this.el).html(t.es_container);
@@ -36,6 +40,10 @@ var EthersheetContainer = module.exports = View.extend({
     if(!this.is_rendered) return;
     var table_height = this.$el.innerHeight() - this.$expression.outerHeight(true);
     this.$table.height(table_height);
+  },
+
+  closeModal: function(){
+    $("#es-modal-overlay").hide()
   }
 });
 

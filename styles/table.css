@@ -96,6 +96,7 @@ overflow:hidden;
   font-style: italic;
   font-weight: bold;
   font-family: ariel;
+  cursor: pointer;
 }
 .ExpressionEditor input{
   height: 26px;

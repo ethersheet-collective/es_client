@@ -21,3 +21,27 @@ height:50px
 #es-table-container{
 position:relative;
 }
+#es-modal-overlay{
+display: none;
+width: 100%;
+height: 100%;
+top: 0;
+right: 0;
+position: absolute;
+background: rgba(0,0,0,0.5);
+z-index: 1000;
+}
+#es-modal-box{
+  min-height: 400px;
+  width: 600px;
+  border: 2px solid #333;
+  background: #FFF;
+  margin: 100px auto;
+  padding: 15px;
+  z-index: 1001;
+}
+#es-modal-close{
+  cursor: pointer;
+  float: right;
+  font-size: 12px;
+}
