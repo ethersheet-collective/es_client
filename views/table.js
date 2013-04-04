@@ -70,7 +70,7 @@ var Table = module.exports = View.extend({
   onLocalAddCell: function(cell){
     var $cell = $('#'+cell.row_id+'-'+cell.col_id, this.el);
     var e = {currentTarget: $cell};
-
+    
     this.paintCell($cell);
     this.removeCellInputs();
     this.createCellInput(e);
@@ -116,11 +116,17 @@ var Table = module.exports = View.extend({
 
     this.initializeElements();
     this.initializeScrolling();
+    this.initializeSelections();
     setTimeout(this.resizeRowHeaders.bind(this),100);
     setTimeout(this.resizeRowHeaders.bind(this),300);
     return this;
   },
-
+  initializeSelections: function(){
+    var sheet = this.getSheet();
+    this.getSelections().each(function(s){
+      s.redraw();
+    });
+  },
   initializeElements: function(){
     this.$table = $('#es-table-'+this.getId(),this.$el);
     this.$grid = $('#es-grid-container-'+this.getId(),this.$el);

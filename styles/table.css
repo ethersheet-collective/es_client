@@ -100,7 +100,7 @@ overflow:hidden;
 }
 .ExpressionEditor input{
   height: 26px;
-  width: 24em;
+  width: 20em;
   font-size: 22px;
 font-family: 'Source Code Pro', Ariel, Sans-Serif;
 border: 1px solid #CCC;

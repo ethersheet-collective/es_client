@@ -97,6 +97,12 @@ var Selection = module.exports = ESModel.extend({
       params: [sheet_id,row_id,col_id]
     });
   },
+  redraw: function(){
+    var self = this;
+    _.each(this.cells, function(c){
+      self.trigger('add_cell',c);
+    });
+  },
 
   addCells: function(cells){
     var selection = this;
