@@ -26,6 +26,17 @@ var SelectionCollection = module.exports = ESCollection.extend({
     });
   },
 
+  addSelection: function(data){
+    console.log(data);
+    this.add(data);
+    var selection = this.get(data.id)
+    this.send({
+      type:'selection',
+      action:'addSelection',
+      params:[selection.getData()]
+    });
+  },
+
 // ## Local Selection
 
   createLocal: function(o){
@@ -50,28 +61,27 @@ var SelectionCollection = module.exports = ESCollection.extend({
   },
 
 // ## Replication
-
-  requestReplication: function(){
-    var s = this.getLocal();
-    this.send({
+  
+  replicateSelection: function(id){
+    var selection = this.get(id);
+    if(!selection) return;
+    this.alwaysSend({
       type:'selection',
-      action:'replicateSelection',
-      params:[s.getData()]
+      action:'addSelection',
+      params:[selection.getData()]
     });
   },
 
-  replicateSelection: function(data){
-    /*if we don't already have the selection in our stores, this must be a new 
-    * client in which case we should send them our selection object.  
-    * The better way to do this would be to send the client our selection 
-    * directly when a new client connects */
-    if(!this.get(data.id)){
-      this.enableSend();
-      this.requestReplication();
-      this.disableSend();
-    }
-    this.add(data);
-    this.get(data.id).addCells(data.cells);
+  replicateLocalSelection: function(){
+    var selection = this.getLocal();
+    this.replicateSelection(selection.id);
+  },
+
+  requestReplicateLocalSelection: function(){
+    this.alwaysSend({
+      type:'selection',
+      action:'replicateLocalSelection'
+    });
   },
 
 // ## Sheet Collection

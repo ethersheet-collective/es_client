@@ -39,7 +39,6 @@ Ethersheet.prototype.initializeData = function(o){
     user_id:this.data.user.getCurrentUser().id,
     color:config.DEFAULT_LOCAL_SELECTION_COLOR
   });
-  this.data.selection.getLocal().addCell(o.sheet.id, o.sheet.rows[0], o.sheet.cols[0]);
 };
 
 Ethersheet.prototype.initializeSocket = function(o){
@@ -48,10 +47,10 @@ Ethersheet.prototype.initializeSocket = function(o){
   this.socket = new Socket(o.channel,this.data.user.getCurrentUser().id,o.socket);
 
   this.socket.onOpen(function(e){
-    var current_user = es.data.user.getCurrentUser();
     es.data.user.replicateCurrentUser();
     es.data.user.requestReplicateCurrentUser();
-    es.data.selection.requestReplication();
+    es.data.selection.replicateLocalSelection();
+    es.data.selection.requestReplicateLocalSelection();
     es.connect();
   });
 

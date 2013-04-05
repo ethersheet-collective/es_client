@@ -134,45 +134,64 @@ describe('Selection', function(){
   });
 
   describe('Replication',function(){
-    describe('requestReplication',function(){
+    describe('replicateLocalSelection',function(){
       it('should send a copy of the local selection',function(done){
         initializeSelection();
         selection.addCell(sheet.id,'123','abc');
         var test_msg = {
           type: 'selection',
-          action: 'replicateSelection',
+          action: 'addSelection',
           params:[selection.getData()]
         }
         selections.on('send',function(msg){
           expect(msg).to.deep.equal(test_msg);
           done();
         });
-        selections.requestReplication();
+        selections.replicateLocalSelection();
 
       });
     })
 
-    describe('replicateSelection',function(){
-      var rep_data, rep_selection;
+    describe('addSelection',function(){
+      var rep_data, rep_selection, send_msg;
 
-      beforeEach(function(){
+      beforeEach(function(done){
         initializeSelection();
-        rep_data = {id:'test_selection',color:'000000', cells:[{sheet_id:sheet.id,row_id:'foo',col_id:'foo'}]};
-        selections.replicateSelection(rep_data);
-        rep_selection = selections.get('test_selection')
-      });
+        rep_data = {
+          id:'test_selection',
+          color:'000000', 
+          cells:[
+            {sheet_id:sheet.id,row_id:'foo',col_id:'foo'}
+          ]
+        };
 
-      it('should create a copy of the selection',function(){
-        expect(rep_selection.id).to.equal(rep_data.id);
-      });
-
-      it('replicated data should be correct',function(){
-        rep_selection.getColor().should.equal('000000');
+        selections.on('send',function(msg){
+          send_msg = msg; 
+          done();
+        });
+        selections.addSelection(rep_data);
       });
       
-      it('should call add cell for for each cell in the replication', function(){
-        rep_selection.getCells().should.not.be.empty
+      it('should send a addSelection event',function(){
+        rep_selection = selections.get('test_selection')
+        var test_msg = {
+          type: 'selection',
+          action: 'addSelection',
+          params:[rep_selection.getData()]
+        }
+        expect(send_msg).to.deep.equal(test_msg);
       });
+
+      it('replicated data should be correct',function(done){
+        rep_selection = selections.get('test_selection')
+        expect(rep_selection.id).to.equal(rep_data.id);
+        rep_selection.getColor().should.equal('000000');
+        setTimeout(function(){
+          rep_selection.getCells().should.not.be.empty;
+          done();
+        },0);
+      });
+      
     });
   });
 });

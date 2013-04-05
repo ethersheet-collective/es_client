@@ -23,6 +23,7 @@ var uid = require('es_client/helpers/uid');
 var Selection = module.exports = ESModel.extend({
   initialize: function(o){
     o = o || {};
+    var selection = this;
     this.id = o.id||uid();
     this.cells = [];
     this.send_enabled  = true;
@@ -31,6 +32,9 @@ var Selection = module.exports = ESModel.extend({
     this.color = o.color || config.DEFAULT_SELECTION_COLOR;
 
     if(o.sheet_id) this.setSheet(o.sheet_id);
+    setTimeout(function(){
+     if(o.cells) selection.addCells(o.cells);
+    },0);
   },
 
   clear: function(silent){
