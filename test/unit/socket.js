@@ -145,7 +145,7 @@ describe('Socket', function(){
   it('should call method on collection when no id attribute is present', function(){
     var msg ={
       type: 'selection',
-      action:'replicateSelection', 
+      action:'addSelection', 
       params:[{id:'test_selection',color:'000000'}]
     };
     socket.message({
