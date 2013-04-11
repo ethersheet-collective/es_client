@@ -4,6 +4,7 @@ define(function (require) {
 var assert = require('chai').assert;
 var EventTrap = require('../event_trap');
 var Ethersheet = require('es_client/ethersheet');
+var Sheet = require('es_client/models/sheet');
 var $ = require('jquery');
 
 var $container = $('<div id="ethersheet-container" style="display:none;"></div').appendTo('body');
@@ -17,11 +18,12 @@ describe('Ethersheet Client', function(){
     es = new Ethersheet({
       target:'#ethersheet-container',
       channel:'test_channel',
+      sheet: new Sheet('test_channel'),
       user:{
         id: 'test_user'
       }
     });
-    es.data.user.on('all',user_trap.eventHandler);
+    //es.data.user.on('all',user_trap.eventHandler);
     es.onConnect(done);
   });
 

@@ -320,7 +320,7 @@ describe('TableView', function(){
       });
 
       it("should move selection down a cell when enter is pressed", function(done){
-        var e = $.Event("keypress");
+        var e = $.Event("keydown");
         e.which = 13; 
         e.keyCode = 13;
         $('#'+$clicked_cell.attr('id')+'-input').length.should.equal(1);
@@ -333,7 +333,7 @@ describe('TableView', function(){
       });
 
       it("should move selection over a cell when tab is pressed",function(done){
-        var ev = $.Event("keypress");
+        var ev = $.Event("keydown");
         var $the_cell = $('.es-table-cell').first()
         var $newCell = $('td#0-1');
         $the_cell.click()
@@ -354,7 +354,7 @@ describe('TableView', function(){
         $newCell.click();
         var $input_new = $('#'+$newCell.attr('id')+'-input');
         $input_new.val('=1+3');
-        var e = $.Event("keypress");
+        var e = $.Event("keydown");
         e.which = 13; 
         e.keyCode = 13;
         $input_new.trigger(e);
@@ -370,7 +370,7 @@ describe('TableView', function(){
         $newCell.click();
         var $input_new = $('#'+$newCell.attr('id')+'-input');
         $input_new.val('=A1');
-        var e = $.Event("keypress");
+        var e = $.Event("keydown");
         e.which = 13; 
         e.keyCode = 13;
         $input_new.trigger(e);

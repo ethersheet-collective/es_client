@@ -3,6 +3,7 @@ define(function (require) {
 
 var Ethersheet = require('es_client/ethersheet');
 var SheetCollection = require('es_client/models/sheet_collection');
+var Sheet = require('es_client/models/sheet');
 var SelectionCollection = require('es_client/models/selection_collection');
 var config = require('es_client/config');
 var expect = require('chai').expect;
@@ -22,6 +23,7 @@ describe('Socket', function(){
       target:'#ethersheet-container',
       channel:'test_channel',
       socket: fake_websocket,
+      sheet: new Sheet(),
       user:{
         id: 'test_user'
       }

@@ -161,7 +161,11 @@ var Table = module.exports = View.extend({
 
   heightForRow: function(row_id){
     var row_el = document.getElementById(row_id);
-    return row_el.offsetHeight;
+    if(row_el){
+      return row_el.offsetHeight;
+    }
+    return undefined;
+
   },
 
   resizeRowHeaders: function(row_id){

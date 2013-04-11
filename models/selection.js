@@ -83,6 +83,7 @@ var Selection = module.exports = ESModel.extend({
   },
 
   addCell: function(sheet_id,row_id,col_id){
+
     this.setSheet(sheet_id);
     var sheet = this.collection.getSheet(sheet_id);
     var cell = {
@@ -121,10 +122,12 @@ var Selection = module.exports = ESModel.extend({
 
   setSheet: function(sheet_id){
     if(this.sheet_id == sheet_id) return;
+    console.log('setting sheet', sheet_id);
     
     this.unsetSheet();
     
     var sheet = this.collection.getSheet(sheet_id);
+    if(!sheet) return;
     sheet.on('update_cell',this.updateCell,this);
     sheet.on('delete_col',this.removeCol,this);
     sheet.on('delete_row',this.removeRow,this);
