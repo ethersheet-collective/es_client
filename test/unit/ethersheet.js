@@ -23,7 +23,7 @@ describe('Ethersheet Client', function(){
         id: 'test_user'
       }
     });
-    //es.data.user.on('all',user_trap.eventHandler);
+    es.data.user.on('all',user_trap.eventHandler);
     es.onConnect(done);
   });
 
