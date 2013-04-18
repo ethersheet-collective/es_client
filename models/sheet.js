@@ -277,7 +277,11 @@ var Sheet = module.exports = ESModel.extend({
   parseValue: function(value){
     if(value.charAt(0) != '=') return value;
     this.collection.setParserSheet(this);
-    var parsed = this.collection.parser.parse(value.slice(1));
+    try{
+      var parsed = this.collection.parser.parse(value.slice(1));
+    } catch (e) {
+      return this.collection.expressionHelpers.handleError(e);
+    }
     return parsed;
   },
   getCell: function(row_id,col_id){
