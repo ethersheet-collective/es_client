@@ -217,11 +217,7 @@ var Table = module.exports = View.extend({
     var timer = null;
     var sheet = this.getSheet();
     $input.on('keyup', function(){
-      this.old_val = this.old_val || '';
-      if($input.val() != this.old_val){
-        sheet.updateCell(row_id, col_id, $input.val(), $el.text()); 
-        this.old_val = $input.val() || this.old_val;
-      }
+      sheet.updateCell(row_id, col_id, $input.val()); 
     });
     return $input;
   },
