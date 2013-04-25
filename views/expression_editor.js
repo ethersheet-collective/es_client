@@ -17,6 +17,7 @@ var _ = require('underscore');
 var t = require('es_client/templates');
 var RefBinder = require('ref-binder');
 var View = require('backbone').View;
+var ExpressionHelpers = require('es_client/lib/expression_helpers');
 
 var ExpressionEditor = module.exports = View.extend({
   events: {
@@ -129,7 +130,14 @@ var ExpressionEditor = module.exports = View.extend({
   },
 
   showExpressionWizard: function(){
-    $('#es-modal-box').html("<div id='es-modal-close'>[close]</div><h2>List of Ethersheet Functions</h2><p>=SUM(cell1, cell2 ...) - returns sum of cells</p>");
+    var eh = new ExpressionHelpers();
+    var output = "<div id='es-modal-close'>[close]</div><h2>List of Ethersheet Functions</h2><div id='es-func-list'>";
+    _.each(eh.userFunctions,function(func){
+      if(!func || !func.def){ return };
+      output += "<p>" + func.def + " - " + func.desc + "</p>";
+    });
+    output += "</div></div>";
+    $('#es-modal-box').html(output);
     $('#es-modal-overlay').show();
   }
 });
