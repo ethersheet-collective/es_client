@@ -14,10 +14,10 @@ define( function(require,exports,module){
 
 var $ = require('jquery');
 var _ = require('underscore');
-var t = require('es_client/templates');
+var t = require('../templates');
 var RefBinder = require('ref-binder');
 var View = require('backbone').View;
-var ExpressionHelpers = require('es_client/lib/expression_helpers');
+var ExpressionHelpers = require('../lib/expression_helpers');
 
 var ExpressionEditor = module.exports = View.extend({
   events: {

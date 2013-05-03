@@ -18,8 +18,8 @@ define(function (require,exports,module){
 
 var _ = require('underscore');
 var ESModel = require('./es_model');
-var config = require('es_client/config');
-var uid = require('es_client/helpers/uid');
+var config = require('../config');
+var uid = require('../helpers/uid');
 
 var CELL_ROW_ID = 0;
 var CELL_COL_ID = 1;
@@ -106,6 +106,11 @@ var Sheet = module.exports = ESModel.extend({
       type: 'sheet',
       action: 'insertRow',
       params:[position, new_id]
+    },{
+      id: this.id,
+      type: 'sheet',
+      action: 'deleteRow',
+      params:[new_id]
     });
     return new_id;
   },
@@ -123,6 +128,11 @@ var Sheet = module.exports = ESModel.extend({
       type: 'sheet',
       action: 'deleteRow',
       params:[row_id]
+    },{
+      id: this.id,
+      type: 'sheet',
+      action: 'insertRow',
+      params:[row_pos, row_id]
     });
     return true;
   },
@@ -156,6 +166,11 @@ var Sheet = module.exports = ESModel.extend({
       type: 'sheet',
       action: 'insertCol',
       params:[position, new_id]
+    },{
+      id: this.id,
+      type: 'sheet',
+      action: 'deleteCol',
+      params:[new_id]
     });
     return new_id;
   },
@@ -178,6 +193,11 @@ var Sheet = module.exports = ESModel.extend({
       type: 'sheet',
       action: 'deleteCol',
       params:[col_id]
+    },{
+      id: this.id,
+      type: 'sheet',
+      action: 'insertCol',
+      params:[col_pos, col_id]
     });
     return true;
   },
@@ -192,20 +212,30 @@ var Sheet = module.exports = ESModel.extend({
    *}
    **************************************************/
   updateCell: function(row_id,col_id,value){
+    var old_value = this.getCellValue(row_id,col_id);
     var cell = {value: value, type:'new'};
+    if( old_value == value) return false;
+
     this.addCell(row_id, col_id, cell, this.cells);
+    
     this.trigger('update_cell',{
       id:this.id,
       row_id:row_id,
       col_id:col_id,
       cell_display:value
     });
-    this.send({
+    this.send('update_cell',{
       id: this.id,
       type: 'sheet',
       action: 'updateCell',
       params:[row_id,col_id,value]
+    },{
+      id: this.id,
+      type: 'sheet',
+      action: 'updateCell',
+      params:[row_id,col_id,old_value]
     });
+
     return true;
   },
 

@@ -10,7 +10,7 @@ define( function(require,exports,module){
 */
 
 var $ = require('jquery');
-var t = require('es_client/templates');
+var t = require('../templates');
 var RefBinder = require('ref-binder');
 var View = require('backbone').View;
 

@@ -8,7 +8,7 @@ define(function (require,exports,module) {
 */
 
 var ESModel = require('./es_model');
-var uid = require('es_client/helpers/uid');
+var uid = require('../helpers/uid');
 
 var User = module.exports = ESModel.extend({
   initialize: function(o){

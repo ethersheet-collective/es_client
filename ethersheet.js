@@ -3,20 +3,24 @@ define( function(require,exports,module) {
 
 var $ = require('jquery');
 
-var config = require('es_client/config');
-var Socket = require('es_client/lib/socket');
+var config = require('./config');
+var Socket = require('./lib/socket');
 var Command = require('es_command');
+var UndoQ = require('./lib/undo');
 
 // models
-var UserCollection = require('es_client/models/user_collection');
-var SheetCollection = require('es_client/models/sheet_collection');
-var SelectionCollection = require('es_client/models/selection_collection');
+var UserCollection = require('./models/user_collection');
+var SheetCollection = require('./models/sheet_collection');
+var SelectionCollection = require('./models/selection_collection');
 
 // views
-var TableView = require('es_client/views/table');
-var ExpressionEditorView = require('es_client/views/expression_editor');
-var EthersheetContainerView = require('es_client/views/ethersheet_container');
-var MenuView = require('es_client/views/menu');
+var TableView = require('./views/table');
+var ExpressionEditorView = require('./views/expression_editor');
+var EthersheetContainerView = require('./views/ethersheet_container');
+var MenuView = require('./views/menu');
+
+// inputs
+var keyboardEvents = require('./views/keyboard');
 
 var Ethersheet = module.exports = function(o) {
   if(!o.target) throw Error('el or target required');
@@ -24,10 +28,13 @@ var Ethersheet = module.exports = function(o) {
   this.connection_handler = function(){};
   this.data = {};
   this.socket = null;
+  this.undoQ = new UndoQ();
+  this.keyboard = keyboardEvents();
 
   this.initializeData(o);
   this.initializeSocket(o);
   this.initializeDisplay(o);
+  this.initializeCommands(o);
 };
 
 Ethersheet.prototype.initializeData = function(o){
@@ -57,10 +64,7 @@ Ethersheet.prototype.initializeSocket = function(o){
   this.socket.onMessage(function(e){
     var data_string = e.data;
     var c = new Command(data_string);
-    var model = es.getModel(c.getDataType(),c.getDataId());
-    model.disableSend();
-    c.execute(model);
-    model.enableSend();
+    es.executeCommand(c);
   });
 
   this.bindDataToSocket();
@@ -92,7 +96,6 @@ Ethersheet.prototype.initializeDisplay = function(o){
   });
 };
 
-
 Ethersheet.prototype.onConnect = function(handler){
   this.connection_handler = handler;
 };
@@ -101,19 +104,56 @@ Ethersheet.prototype.connect = function(){
   this.connection_handler();
 };
 
+Ethersheet.prototype.initializeCommands = function(o){
+  var es = this;
+  this.keyboard.on('meta_90',this.undoCommand.bind(this));
+  this.keyboard.on('meta_88',this.redoCommand.bind(this));
+
+};
+
+Ethersheet.prototype.executeCommand = function(c){
+  var model = this.getModel(c.getDataType(),c.getDataId());
+  model.disableSend();
+  c.execute(model);
+  model.enableSend();
+};
+
+Ethersheet.prototype.undoCommand = function(){
+  var msg = this.undoQ.undo();
+  console.log('undo',msg);
+  if(!msg) return;
+  var c = new Command(msg);
+  this.executeCommand(c);
+};
+
+Ethersheet.prototype.redoCommand = function(){
+  var msg = this.undoQ.do();
+  console.log('redo',msg);
+  if(!msg) return;
+  var c = new Command(msg);
+  this.executeCommand(c);
+};
+
 Ethersheet.prototype.getModel = function(type,id){
   var collection = this.data[type];
-  if(!collection) return false
+  if(!collection) return false;
   if(!id) return collection;
   return collection.get(id);
 };
 
-
 Ethersheet.prototype.bindDataToSocket = function(){
   var es = this;
   for(var type in this.data){
-    this.data[type].on('send',function(msg){
-      es.socket.send(Command.serialize(msg));
+    this.data[type].on('send',function(do_cmd,undo_cmd){
+      if(do_cmd.getSerializedMessage){
+        es.socket.send(do_cmd.getSerializedMessage());
+      } else {
+        es.socket.send(Command.serialize(do_cmd));
+      }
+      if(undo_cmd){
+        console.log('command',do_cmd,undo_cmd);
+        es.undoQ.push(do_cmd,undo_cmd);
+      }
     });
   }
 };
