@@ -224,7 +224,7 @@ var Sheet = module.exports = ESModel.extend({
       col_id:col_id,
       cell_display:value
     });
-    this.send('update_cell',{
+    this.send({
       id: this.id,
       type: 'sheet',
       action: 'updateCell',
