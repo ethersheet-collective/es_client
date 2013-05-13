@@ -18,6 +18,8 @@ var t = require('../templates');
 var RefBinder = require('ref-binder');
 var View = require('backbone').View;
 var _ = require('underscore');
+var h = require('es_client/helpers');
+
 var Table = module.exports = View.extend({
 
   events: {
@@ -106,19 +108,22 @@ var Table = module.exports = View.extend({
 
     $('#es-data-table-'+this.getId(),this.$el)
       .html(t.table({sheet:this.getSheet()}));
-
+/*
     $('#es-column-headers-'+this.getId(),this.$el)
       .html(t.table_col_headers({
         num_col:this.getSheet().colCount()
       }));
-   
+  */ 
     this.drawRowHeaders();
+    this.drawColHeaders();
 
     this.initializeElements();
     this.initializeScrolling();
     this.initializeSelections();
     setTimeout(this.resizeRowHeaders.bind(this),100);
     setTimeout(this.resizeRowHeaders.bind(this),300);
+    setTimeout(this.resizeColHeaders.bind(this),100);
+    setTimeout(this.resizeColHeaders.bind(this),300);
     return this;
   },
   initializeSelections: function(){
@@ -128,7 +133,7 @@ var Table = module.exports = View.extend({
     });
   },
   initializeElements: function(){
-    this.$table = $('#es-table-'+this.getId(),this.$el);
+    this.$table = $('#es-grid-'+this.getId(),this.$el);
     this.$grid = $('#es-grid-container-'+this.getId(),this.$el);
     this.$table_col_headers = $('#es-column-headers-'+this.getId(),this.$el);
     this.$table_row_headers = $('#es-row-headers-'+this.getId(),this.$el);
@@ -140,6 +145,18 @@ var Table = module.exports = View.extend({
     this.$grid.scroll(function(e){
       view.$table_col_headers.css('left',(0-grid_el.scrollLeft)+"px");
       view.$table_row_headers.css('top',(0-grid_el.scrollTop)+"px");
+    });
+
+    this.$table.colResizable({
+      liveDrag:true,
+      onResize:function(e){
+        // console.log('onResize',arguments);
+      },
+      onDrag:function(e){
+        // console.log('onDrag',arguments);
+        view.resizeColHeaders();
+        view.resizeRowHeaders();
+      },
     });
   },
 
@@ -168,7 +185,7 @@ var Table = module.exports = View.extend({
 
   },
 
-  resizeRowHeaders: function(row_id){
+  resizeRowHeaders: function(){
     var view = this;
     _.each(this.getSheet().rowIds(), function(row_id){
       view.resizeRowHeader(row_id);
@@ -181,6 +198,48 @@ var Table = module.exports = View.extend({
     var height = this.heightForRow(row_id);
     if(!header || !height) return;
     header.style.height = height+"px";
+  },
+
+  drawColHeaders: function()
+  {
+    var view = this;
+    var html = '';
+
+    var width = null;
+
+    _.each(this.getSheet().colIds(), function(col_id,index){
+      width = view.widthForCol(col_id);
+      html +='<th id="es-col-header-'+col_id+'" class="es-column-header" style="width:'+width+'px;">'
+              +h.columnIndexToName(index)
+              +'</th>';
+    });
+
+    $('#es-column-headers-'+this.getId(),this.$el).html(html);
+  },
+
+  widthForCol: function(col_id){
+    var row_id = this.getSheet().rowAt(0);
+    var col_el = document.getElementById(row_id+'-'+col_id);
+    if(col_el){
+      return col_el.clientWidth;
+    }
+    return undefined;
+
+  },
+
+  resizeColHeaders: function(col_id){
+    var view = this;
+    _.each(this.getSheet().colIds(), function(col_id){
+      view.resizeColHeader(col_id);
+    });
+  },
+
+  resizeColHeader: function(col_id)
+  {
+    var header = document.getElementById("es-col-header-"+col_id);
+    var width = this.widthForCol(col_id);
+    if(!header || !width) return;
+    header.style.width = width+"px";
   },
 
   cellClicked: function(e){
