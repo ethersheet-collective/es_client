@@ -169,10 +169,17 @@
   */
   var syncCols = function(t,i,isOver){
     var inc = drag.x-drag.l, c = t.c[i], c2 = t.c[i+1];       
-    var w = c.w + inc;  var w2= c2.w- inc;  //their new width is obtained         
-    c.width( w + PX); c2.width(w2 + PX);  //and set 
-    t.cg.eq(i).width( w + PX); t.cg.eq(i+1).width( w2 + PX);
-    if(isOver){c.w=w; c2.w=w2;}
+    var w = c.w + inc;  
+    var w2= c2.w- inc;  //their new width is obtained         
+    c.width( w + PX); 
+    t.cg.eq(i).width( w + PX); 
+// do not resize second element    
+//    c2.width(w2 + PX);  
+//    t.cg.eq(i+1).width( w2 + PX);
+    if(isOver){
+      c.w=w; 
+//      c2.w=w2;
+    }
   };
 
   
