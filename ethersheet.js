@@ -21,7 +21,7 @@ var EthersheetContainerView = require('./views/ethersheet_container');
 var MenuView = require('./views/menu');
 
 // inputs
-var keyboardEvents = require('./views/keyboard');
+var keyboardEvents = require('./lib/keyboard');
 
 var Ethersheet = module.exports = function(o) {
   if(!o.target) throw Error('el or target required');
