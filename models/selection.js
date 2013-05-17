@@ -49,11 +49,6 @@ var Selection = module.exports = ESModel.extend({
       type: 'selection',
       action: 'clear',
       params: [false]
-    },{
-      id: this.id,
-      type: 'selection',
-      action: 'addCells',
-      params: [cleared_cells]
     });
   },
 
@@ -105,11 +100,6 @@ var Selection = module.exports = ESModel.extend({
       type: 'selection',
       action: 'addCell',
       params: [sheet_id,row_id,col_id]
-    },{
-      id: this.id,
-      type: 'selection',
-      action: 'clear',
-      params: [false]
     });
   },
   redraw: function(){

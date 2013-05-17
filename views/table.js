@@ -253,6 +253,7 @@ var Table = module.exports = View.extend({
   },
 
   createCellInput: function(e){
+    if(e.currentTarget.length == 0) return;
     var s = this.getSelections().getLocal();
     var $el = $(e.currentTarget);
     var x = $el.position().left + this.$grid.scrollLeft();

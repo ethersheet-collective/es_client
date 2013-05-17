@@ -117,7 +117,6 @@ var Sheet = module.exports = ESModel.extend({
   deleteRow: function(row_id){
     var row_pos = _.indexOf(this.rows,row_id);
     if(row_pos === -1) return false;
-    this.cells[row_id] = {};
     this.rows.splice(row_pos,1);
     this.trigger('delete_row',{
       row_id:row_id,
@@ -178,11 +177,6 @@ var Sheet = module.exports = ESModel.extend({
     var es = this;
     var col_pos = _.indexOf(es.cols,col_id);
     if(col_pos === -1) return false;
-    _.each(es.rows,function(row_id){
-      if(es.cells[row_id]){
-         delete es.cells[row_id][col_id];
-      }
-    });
     es.cols.splice(col_pos,1);
     es.trigger('delete_col',{
       col_id:col_id,
