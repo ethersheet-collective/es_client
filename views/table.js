@@ -108,12 +108,7 @@ var Table = module.exports = View.extend({
 
     $('#es-data-table-'+this.getId(),this.$el)
       .html(t.table({sheet:this.getSheet()}));
-/*
-    $('#es-column-headers-'+this.getId(),this.$el)
-      .html(t.table_col_headers({
-        num_col:this.getSheet().colCount()
-      }));
-  */ 
+
     this.drawRowHeaders();
     this.drawColHeaders();
 
