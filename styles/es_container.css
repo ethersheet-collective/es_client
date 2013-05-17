@@ -12,11 +12,21 @@ font-family: 'Source Code Pro', Ariel, Sans-Serif;
 width:100%;
 height:100%;
 }
+.es-panel{
+  height: 100%;
+}
+#es-panel-0{
+  width: 200px;
+  float: left;
+}
+#es-panel-1{
+  margin-left: 200px;
+}
 #es-expression-editor-container{
 height:50px;
 }
 #es-menu-container{
-height:50px
+margin-right: 12px;
 }
 #es-table-container{
 position:relative;

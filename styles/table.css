@@ -1,11 +1,11 @@
 ::-webkit-scrollbar {
-    -webkit-appearance: none;
-    width: 7px;
+-webkit-appearance: none;
+width: 7px;
 }
 ::-webkit-scrollbar-thumb {
-    border-radius: 4px;
-    background-color: rgba(0,0,0,.5);
-    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+border-radius: 4px;
+background-color: rgba(0,0,0,.5);
+-webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
 .es-table-view{
 position:absolute;
@@ -14,7 +14,6 @@ top:0;
 left:0;
 height:100%;
 width:100%;
-border: 1px solid #888888;
 background: #EEE;
 }
 .es-table{
@@ -26,7 +25,7 @@ width: 0;
 position:absolute;
 }
 .es-column-headers{
-margin-left:8%;
+margin-left:3%;
 left:0px;
 top:0px;
 height:18px;
@@ -35,14 +34,14 @@ background:#eeeeee;
 .es-row-headers{
 left:0px;
 top:0px;
-width:8%;
+width:3%;
 margin-top:18px;
 background:#eeeeee;
 }
 .es-grid-container{
-left:8%;
+left:3%;
 top:0;
-width:92%;
+width:97%;
 height:97%;
 margin-top:18px;
 overflow:scroll;
@@ -56,18 +55,25 @@ font-size:14px;
 line-height:12px;
 }
 .es-table-corner{
-background: #cccccc;
-width:8%;
+width:3%;
 height:18px;
 position:absolute;
 top:0;
 left:0;
+background: #444;
+color: #eee;
+text-align: center;
+}
+.es-logo{
+margin-top: 2px;
+font-size: 12px;
 }
 .es-table th.es-column-header{
 border:1px solid #666666;
 border-top:none;
 border-bottom:none;
 height:100%;
+line-height: 19px;
 }
 .es-row-header{
 border:1px solid #666666;
@@ -80,32 +86,51 @@ border:1px solid #888888;
 overflow:hidden;
 }
 .es-table-cell-input{
-  border: 0px;
-  position: absolute;
+border: 0px;
+position: absolute;
 }
-.ExpressionEditor,#es-expression-editor-container{
-  float:left;
-  display:inline;
-  margin-right: 10px;
+.ExpressionEditor{
+margin-left: 6%;
+position: absolute;
+width: 94%;
+right: 5px;
+}
+#es-expression-editor-container{
+position: relative;
 }
 .ExpressionEditorContainer a {
-  float:left;
-  color:#fff;
-  font-size: 24px;
-  text-decoration: none;
-  font-style: italic;
-  font-weight: bold;
-  font-family: ariel;
-  cursor: pointer;
+float:left;
+color:#fff;
+font-size: 24px;
+text-decoration: none;
+font-style: italic;
+font-weight: bold;
+font-family: ariel;
+cursor: pointer;
+margin-right: 6px;
 }
 .ExpressionEditor input{
-  height: 26px;
-  width: 20em;
-  font-size: 22px;
+height: 26px;
+width: 20em;
+font-size: 22px;
 font-family: 'Source Code Pro', Ariel, Sans-Serif;
-border: 1px solid #CCC;
+width:100%;
 }
 #es-func-list{
-  height:350px;
-  overflow:scroll;
+height:350px;
+overflow:scroll;
+}
+
+@media (max-width: 1024px) {
+  .ExpressionEditor{
+  margin-left: 10%;
+  width: 90%;
+  }
+}
+
+@media (max-width: 720px) {
+  .ExpressionEditor{
+  margin-left: 16%;
+  width: 84%;
+  }
 }

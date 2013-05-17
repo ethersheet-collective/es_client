@@ -1,17 +1,20 @@
+#es-menu-container h2{
+  margin-top: 0;
+}
 #es-menu-list{
 list-style:none;
 margin:0;
 padding:0;
 }
 #es-menu-list li{
-float:left;
-margin:4px 4px 4px 0;
+margin:4px 0;
+background: #fff;
+padding: 0;
 }
 .es-menu-button{
-border:1px solid #999;
 cursor:pointer;
-padding:4px;
-background: #eee;
+padding:6px;
+display: block;
 }
 .clear{
   clear: both;
