@@ -8,19 +8,19 @@ var expect = require('chai').expect;
 describe('UndoQ', function(){
   var undoQ,cmd,undo_cmd;
 
-  cmd =  new Command({
+  cmd =  new Command(JSON.stringify({
     id: this.id,
     type: 'sheet',
     action: 'deleteRow',
     params:[123]
-  });
+  }));
 
-  undo_cmd =  new Command({
+  undo_cmd =  new Command(JSON.stringify({
     id: this.id,
     type: 'sheet',
     action: 'addRow',
     params:[{id:123,index:3}]
-  });
+  }));
 
   beforeEach(function(){
     undoQ = new UndoQ();
