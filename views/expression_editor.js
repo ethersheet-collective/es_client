@@ -126,7 +126,7 @@ var ExpressionEditor = module.exports = View.extend({
     var s = this.getSelections().getCells()[0];
     if(!s || cell.row_id != s.row_id || cell.col_id != s.col_id) return;
     var $form = $('.ExpressionEditor input');
-    $form.val(this.getSheet().getDisplayValue(cell.row_id, cell.col_id));
+    $form.val(this.getSheet().getCellDisplayById(cell.row_id, cell.col_id));
   },
 
   showExpressionWizard: function(){

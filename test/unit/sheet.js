@@ -478,25 +478,25 @@ describe('Sheet', function(){
     });
     it('should display an error when the function does not exist', function(){
       addCell('0','0', '=KITTENS(123)');
-      sheet.getDisplayValue('0','0').should.equal('ERR: No such function.');
+      sheet.getCellDisplayById('0','0').should.equal('ERR: No such function.');
     });
     it('should not care about capitalization', function(){
       addCell('0','0', '=sum(2,2,4)');
-      sheet.getDisplayValue('0','0').should.equal(8);
+      sheet.getCellDisplayById('0','0').should.equal(8);
       addCell('0','0', '=SuM(2,2,4)');
-      sheet.getDisplayValue('0','0').should.equal(8);
+      sheet.getCellDisplayById('0','0').should.equal(8);
     });
     it('should have SUM(...)', function(){
       addCell('0','0', '=SUM(2,2,4)');
-      sheet.getDisplayValue('0','0').should.equal(8);
+      sheet.getCellDisplayById('0','0').should.equal(8);
       addCell('0', '1', '=SUM(A1,2)');
-      sheet.getDisplayValue('0','1').should.equal(10);
+      sheet.getCellDisplayById('0','1').should.equal(10);
     });
     it('should typecast arguments', function(){
       addCell('0', '0', '123');
       addCell('0', '1', '123');
       addCell('0', '2', '=SUM(A1,B1)');
-      sheet.getDisplayValue('0','2').should.equal(246);
+      sheet.getCellDisplayById('0','2').should.equal(246);
     });
   });
 });

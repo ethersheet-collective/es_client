@@ -338,9 +338,11 @@ var Sheet = module.exports = ESModel.extend({
     //this is where we can do formatting
     return value;
   },
-  //overloaded getCellDisplay so that we can just pass a row and col
-  //TODO:rename this to getCellDisplayById
   getDisplayValue: function(row_id, col_id){
+    console.warn("sheet.getDisplayValue() is deprecated, please call getCellDisplayById instead");
+    return this.getCellDisplayById(row_id,col_id);
+  },
+  getCellDisplayById: function(row_id, col_id){
     var cell = this.getCell(row_id,col_id);
     return this.getCellDisplay(cell);
   },
