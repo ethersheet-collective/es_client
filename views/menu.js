@@ -74,6 +74,9 @@ var MenuView = module.exports = View.extend({
       case 'remove_row':
         this.deleteRow(cell.row_id);
         break;
+      case 'import_csv':
+        this.importCSV();
+        break;
     };
   },
 
@@ -96,6 +99,11 @@ var MenuView = module.exports = View.extend({
   deleteCol:function(col_id){
     this.getSheet().deleteCol(col_id);
   },
+  importCSV:function(){
+    console.log($('#es-modal-box'));
+    $('#es-modal-box').html(t.import_dialog({sheet_id: this.getSheet().id}));
+    $('#es-modal-overlay').show();
+  }
 });
 
 });

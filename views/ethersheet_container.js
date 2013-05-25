@@ -22,10 +22,8 @@ var EthersheetContainer = module.exports = View.extend({
     $(window).resize(this.resize.bind(this));
   },
   events: {
-    'click #es-modal-overlay': 'closeModal',
     'click #es-modal-close': 'closeModal'
   },
-
   render: function(){
     $(this.el).html(t.es_container);
     this.$expression = $("#es-expression-editor-container",this.$el);
