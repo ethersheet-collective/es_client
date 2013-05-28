@@ -114,6 +114,7 @@ var Table = module.exports = View.extend({
 
     this.initializeElements();
     this.initializeScrolling();
+    this.initializeResizing();
     this.initializeSelections();
     setTimeout(this.resizeRowHeaders.bind(this),100);
     setTimeout(this.resizeRowHeaders.bind(this),300);
@@ -121,12 +122,14 @@ var Table = module.exports = View.extend({
     setTimeout(this.resizeColHeaders.bind(this),300);
     return this;
   },
+
   initializeSelections: function(){
     var sheet = this.getSheet();
     this.getSelections().each(function(s){
       s.redraw();
     });
   },
+
   initializeElements: function(){
     this.$table = $('#es-grid-'+this.getId(),this.$el);
     this.$grid = $('#es-grid-container-'+this.getId(),this.$el);
@@ -141,14 +144,16 @@ var Table = module.exports = View.extend({
       view.$table_col_headers.css('left',(0-grid_el.scrollLeft)+"px");
       view.$table_row_headers.css('top',(0-grid_el.scrollTop)+"px");
     });
+  },
 
+  initializeResizing: function(){
+    var view = this;
     this.$table.colResizable({
       liveDrag:true,
       onResize:function(e){
-        // console.log('onResize',arguments);
+        
       },
       onDrag:function(e){
-        // console.log('onDrag',arguments);
         view.resizeColHeaders();
         view.resizeRowHeaders();
       },
