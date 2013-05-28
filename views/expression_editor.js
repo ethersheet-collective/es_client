@@ -21,11 +21,11 @@ var ExpressionHelpers = require('../lib/expression_helpers');
 
 var ExpressionEditor = module.exports = View.extend({
   events: {
-    'keyup .ExpressionEditor input': 'inputKeypress',
+    'keyup  .es-expression-editor-input': 'inputKeypress',
     'keydown': 'inputKeydown',
-    'blur .ExpressionEditor input': 'inputOnBlur',
-    'focus .ExpressionEditor input': 'inputOnFocus',
-    'click #expression-wizard': 'showExpressionWizard'
+    'blur .es-expression-editor-input': 'inputOnBlur',
+    'focus .es-expression-editor-input': 'inputOnFocus',
+    'click #es-expression-wizard': 'showExpressionWizard'
   },
 
   initialize: function(o){
@@ -35,7 +35,7 @@ var ExpressionEditor = module.exports = View.extend({
   },
 
   render: function(){
-    var $el = this._$el = $('<div class="ExpressionEditorContainer">');
+    var $el = this._$el = $('<div class="es-expression-editor">');
     $el.html(t.expression_editor);
     this.swapElement();
     return this;
@@ -46,7 +46,7 @@ var ExpressionEditor = module.exports = View.extend({
   },
 
   onAddCell: function(cell){
-    var $form = $('.ExpressionEditor input');
+    var $form = $('.es-expression-editor-input');
     this.currentCell = cell;
     $form.val(this.getSheet().getDisplayFormula(cell.row_id,cell.col_id));
 

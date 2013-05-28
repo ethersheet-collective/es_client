@@ -17,8 +17,28 @@
 
 */
 
-(function($){   
-  
+(function($){
+
+  var defaults = {
+    //attributes:
+    draggingClass: 'JCLRgripDrag',  //css-class used when a grip is being dragged (for visual feedback purposes)
+    gripInnerHtml: '',        //if it is required to use a custom grip it can be done using some custom HTML        
+    liveDrag: false,        //enables table-layout updaing while dragging     
+    minWidth: 15,           //minimum width value in pixels allowed for a column 
+    headerOnly: false,        //specifies that the size of the the column resizing anchors will be bounded to the size of the first row 
+    hoverCursor: "e-resize",      //cursor to be used on grip hover
+    dragCursor: "e-resize",     //cursor to be used while dragging
+    postbackSafe: false,      //when it is enabled, table layout can persist after postback. It requires browsers with sessionStorage support (it can be emulated with sessionStorage.js). Some browsers ony 
+    flush: false,           //when postbakSafe is enabled, and it is required to prevent layout restoration after postback, 'flush' will remove its associated layout data 
+    marginLeft: null,       //in case the table contains any margins, colResizable needs to know the values used, e.g. "10%", "15em", "5px" ...
+    marginRight: null,        //in case the table contains any margins, colResizable needs to know the values used, e.g. "10%", "15em", "5px" ...
+    disable: false,         //disables all the enhancements performed in a previously colResized table  
+    
+    //events:
+    onDrag: null,           //callback function to be fired during the column resizing process if liveDrag is enabled
+    onResize: null          //callback function fired when the dragging process is over
+  };
+
   var d = $(document);    //window object
   var h = $("head");      //head object
   var drag = null;      //reference to the current grip that is being dragged
@@ -276,32 +296,12 @@
    * The plugin is added to the jQuery library
    * @param {Object} options -  an object containg some basic customization values 
    */
-    $.fn.extend({  
-        colResizable: function(options) {           
-            var defaults = {
-      
-        //attributes:
-                draggingClass: 'JCLRgripDrag',  //css-class used when a grip is being dragged (for visual feedback purposes)
-        gripInnerHtml: '',        //if it is required to use a custom grip it can be done using some custom HTML        
-        liveDrag: false,        //enables table-layout updaing while dragging     
-        minWidth: 15,           //minimum width value in pixels allowed for a column 
-        headerOnly: false,        //specifies that the size of the the column resizing anchors will be bounded to the size of the first row 
-        hoverCursor: "e-resize",      //cursor to be used on grip hover
-        dragCursor: "e-resize",     //cursor to be used while dragging
-        postbackSafe: false,      //when it is enabled, table layout can persist after postback. It requires browsers with sessionStorage support (it can be emulated with sessionStorage.js). Some browsers ony 
-        flush: false,           //when postbakSafe is enabled, and it is required to prevent layout restoration after postback, 'flush' will remove its associated layout data 
-        marginLeft: null,       //in case the table contains any margins, colResizable needs to know the values used, e.g. "10%", "15em", "5px" ...
-        marginRight: null,        //in case the table contains any margins, colResizable needs to know the values used, e.g. "10%", "15em", "5px" ...
-        disable: false,         //disables all the enhancements performed in a previously colResized table  
-        
-        //events:
-        onDrag: null,           //callback function to be fired during the column resizing process if liveDrag is enabled
-        onResize: null          //callback function fired when the dragging process is over
-            }     
+  $.fn.extend({  
+    colResizable: function(options) {
       var options =  $.extend(defaults, options);     
-            return this.each(function() {       
-              init( this, options);             
-            });
-        }
-    });
+      return this.each(function(){
+        init( this, options);         
+      });
+    }
+  });
 })(jQuery);

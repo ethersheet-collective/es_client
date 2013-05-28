@@ -22,13 +22,17 @@ var EthersheetContainer = module.exports = View.extend({
     $(window).resize(this.resize.bind(this));
   },
   events: {
-    'click #es-modal-close': 'closeModal'
+    'click #es-modal-overlay': 'closeModal',
+    'click #es-modal-close': 'closeModal',
+    'click .es-sidebar-toggle': 'toggleSidebar',
   },
   render: function(){
     $(this.el).html(t.es_container);
     this.$expression = $("#es-expression-editor-container",this.$el);
     this.$table = $("#es-table-container",this.$el);
     this.$menu = $("#es-menu-container",this.$el);
+    this.$panel_0 = $("#es-panel-0", this.$el);
+    this.$panel_1 = $("#es-panel-1", this.$el);
     this.is_rendered = true;
     this.resize();
     return this;
@@ -42,6 +46,20 @@ var EthersheetContainer = module.exports = View.extend({
 
   closeModal: function(){
     $("#es-modal-overlay").hide()
+  },
+
+  toggleSidebar: function(){
+    var speed = 400;
+    if(this.$panel_0.width() == 0){
+      this.$menu.animate({'right':'0px'},speed);
+      this.$panel_0.animate({'width':'200px'},speed);
+      this.$panel_1.animate({'margin-left':'200px'},speed);
+    }else{
+      this.$menu.animate({'right':'200px'},speed);
+      this.$panel_0.animate({'width':'0'},speed);
+      this.$panel_1.animate({'margin-left':'0'},speed);
+    }
+    
   }
 });
 
