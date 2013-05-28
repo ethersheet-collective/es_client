@@ -108,7 +108,7 @@ Ethersheet.prototype.connect = function(){
 Ethersheet.prototype.initializeCommands = function(o){
   var es = this;
   this.keyboard.on('meta_90',this.undoCommand.bind(this));
-  this.keyboard.on('meta_88',this.redoCommand.bind(this));
+  this.keyboard.on('shift_meta_90',this.redoCommand.bind(this));
 
 };
 
