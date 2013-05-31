@@ -19,6 +19,7 @@ var RefBinder = require('ref-binder');
 var View = require('backbone').View;
 var _ = require('underscore');
 var h = require('es_client/helpers');
+var colResizable = require('col_resizable');
 
 var Table = module.exports = View.extend({
 
@@ -120,6 +121,7 @@ var Table = module.exports = View.extend({
     setTimeout(this.resizeRowHeaders.bind(this),300);
     setTimeout(this.resizeColHeaders.bind(this),100);
     setTimeout(this.resizeColHeaders.bind(this),300);
+    //setTimeout(this.initializeResizing.bind(this),400);
     return this;
   },
 
@@ -148,7 +150,7 @@ var Table = module.exports = View.extend({
 
   initializeResizing: function(){
     var view = this;
-    this.$table.colResizable({
+    colResizable(this.$table,{
       liveDrag:true,
       onResize:function(e){
         
