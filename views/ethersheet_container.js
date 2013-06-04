@@ -22,7 +22,6 @@ var EthersheetContainer = module.exports = View.extend({
     $(window).resize(this.resize.bind(this));
   },
   events: {
-    'click #es-modal-overlay': 'closeModal',
     'click #es-modal-close': 'closeModal',
     'click .es-sidebar-toggle': 'toggleSidebar',
   },
