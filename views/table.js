@@ -307,10 +307,12 @@ var Table = module.exports = View.extend({
       var height = e.pageY - this.draggedCell.offset().top;
       this.resizeRow(this.draggedCell.data('row_id'),height);
       this.resizeRowHeader(this.draggedCell.data('row_id'));
+      this.resizeColHeader(this.draggedCell.data('col_id'));
       return false;
     } else if (this.draggingCol){
       var width = e.pageX - this.draggedCell.offset().left;
       this.resizeCol(this.draggedCell.data('col_id'),width);
+      this.resizeRowHeader(this.draggedCell.data('row_id'));
       this.resizeColHeader(this.draggedCell.data('col_id'));
       return false;
     }
