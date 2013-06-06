@@ -19,11 +19,16 @@ var RefBinder = require('ref-binder');
 var View = require('backbone').View;
 var _ = require('underscore');
 var h = require('es_client/helpers');
-var colResizable = require('col_resizable');
+
+var MIN_CELL_WIDTH = 22;
+var MIN_CELL_HEIGHT = 22;
 
 var Table = module.exports = View.extend({
 
   events: {
+    'mousedown .es-table-cell': 'cellMouseDown',
+    'mousemove .es-table-cell': 'cellMouseMove',
+    'mouseup .es-table-cell': 'cellMouseUp',
     'click .es-table-cell': 'cellClicked',
     'change .es-table-cell-input': 'changeCell',
     'keydown': 'inputKeypress'
@@ -31,6 +36,9 @@ var Table = module.exports = View.extend({
 
   initialize: function(o){
     this.models = new RefBinder(this);
+    this.draggedCell = null;
+    this.draggingRow = false;
+    this.draggingCol = false;
     this.setSheet(o.sheet || null);
     this.setSelections(o.selections || null);
     this.setLocalSelection(o.local_selection || null);
@@ -115,13 +123,11 @@ var Table = module.exports = View.extend({
 
     this.initializeElements();
     this.initializeScrolling();
-    this.initializeResizing();
     this.initializeSelections();
     setTimeout(this.resizeRowHeaders.bind(this),100);
     setTimeout(this.resizeRowHeaders.bind(this),300);
     setTimeout(this.resizeColHeaders.bind(this),100);
     setTimeout(this.resizeColHeaders.bind(this),300);
-    //setTimeout(this.initializeResizing.bind(this),400);
     return this;
   },
 
@@ -145,20 +151,6 @@ var Table = module.exports = View.extend({
     this.$grid.scroll(function(e){
       view.$table_col_headers.css('left',(0-grid_el.scrollLeft)+"px");
       view.$table_row_headers.css('top',(0-grid_el.scrollTop)+"px");
-    });
-  },
-
-  initializeResizing: function(){
-    var view = this;
-    colResizable(this.$table,{
-      liveDrag:true,
-      onResize:function(e){
-        
-      },
-      onDrag:function(e){
-        view.resizeColHeaders();
-        view.resizeRowHeaders();
-      },
     });
   },
 
@@ -194,16 +186,21 @@ var Table = module.exports = View.extend({
     });
   },
 
-  resizeRowHeader: function(row_id)
-  {
+  resizeRowHeader: function(row_id){
     var header = document.getElementById("es-header-"+row_id);
     var height = this.heightForRow(row_id);
     if(!header || !height) return;
     header.style.height = height+"px";
   },
 
-  drawColHeaders: function()
-  {
+  resizeRow: function(row_id,height){
+    var row_el = document.getElementById(row_id);
+    if(!row_el || !height) return;
+    if(height < MIN_CELL_HEIGHT) height = MIN_CELL_HEIGHT;
+    row_el.style.height = height+"px";
+  },
+
+  drawColHeaders: function(){
     var view = this;
     var html = '';
 
@@ -236,16 +233,95 @@ var Table = module.exports = View.extend({
     });
   },
 
-  resizeColHeader: function(col_id)
-  {
+  resizeColHeader: function(col_id){
     var header = document.getElementById("es-col-header-"+col_id);
     var width = this.widthForCol(col_id);
     if(!header || !width) return;
     header.style.width = width+"px";
   },
 
+  resizeCol: function(col_id,width){
+    var row_id = this.getSheet().rowAt(0);
+    var col_el = document.getElementById(row_id+'-'+col_id);
+    if(!col_el) return;
+    if(width < MIN_CELL_WIDTH) width = MIN_CELL_WIDTH;
+    col_el.style.width = width+"px";
+  },
+
+  isDraggingCell: function(){
+    if (this.draggedCell) return true;
+    return false;
+  },
+
+  isOverRowDragHandle: function($cell,y){
+    var distance_from_cell_bottom = $cell.offset().top + $cell.height() - y;
+    if(distance_from_cell_bottom < 4) return true;
+    return false;
+  },
+
+  isOverColDragHandle: function($cell,x){
+    var distance_from_cell_right = $cell.offset().left + $cell.width() - x;
+    if(distance_from_cell_right < 4) return true;
+    return false;
+  },
+
+  setCellDragTarget: function(e){
+    if (this.draggedCell) return this.draggedCell;
+    var $cell = $(e.currentTarget);
+    if(this.isOverRowDragHandle($cell,e.pageY)){
+      this.draggedCell = $cell;
+      this.draggingRow = true;
+      this.draggingCol = false;
+    } else if(this.isOverColDragHandle($cell,e.pageX)) {
+      this.draggedCell = $cell;
+      this.draggingRow = false;
+      this.draggingCol = true;
+    } else {
+      this.draggedCell = null;
+    }
+  },
+
   cellClicked: function(e){
+    if (this.isDraggingCell()) return;
     this.selectCell(e);
+  },
+  
+  cellMouseDown: function(e){
+    this.setCellDragTarget(e);
+    if (this.isDraggingCell()){
+      return false;
+    }
+  },
+
+  cellMouseMove: function(e){
+    if(!this.isDraggingCell()){
+      var $cell = $(e.currentTarget);
+      if(this.isOverRowDragHandle($cell,e.pageY)){
+        this.$table.css("cursor","ns-resize");
+      } else if(this.isOverColDragHandle($cell,e.pageX)){
+        this.$table.css("cursor","ew-resize");
+      } else {
+        this.$table.css("cursor","pointer");
+      }
+    } else if (this.draggingRow){
+      var height = e.pageY - this.draggedCell.offset().top;
+      this.resizeRow(this.draggedCell.data('row_id'),height);
+      this.resizeRowHeader(this.draggedCell.data('row_id'));
+      return false;
+    } else if (this.draggingCol){
+      var width = e.pageX - this.draggedCell.offset().left;
+      this.resizeCol(this.draggedCell.data('col_id'),width);
+      this.resizeColHeader(this.draggedCell.data('col_id'));
+      return false;
+    }
+  },
+
+  cellMouseUp: function(e){
+    if(!this.isDraggingCell()) return;
+    this.draggedCell = null;
+    this.draggingRow = false;
+    this.draggingCol = false;
+    return false;
   },
 
   removeCellInputs: function(){
