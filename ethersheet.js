@@ -119,12 +119,21 @@ Ethersheet.prototype.executeCommand = function(c){
   model.enableSend();
 };
 
+Ethersheet.prototype.sendCommand = function(c){
+  if(c.getSerializedMessage){
+    this.socket.send(c.getSerializedMessage());
+  } else {
+    this.socket.send(Command.serialize(c));
+  }
+};
+
 Ethersheet.prototype.undoCommand = function(){
   var msg = this.undoQ.undo();
   console.log('undo',msg);
   if(!msg) return;
   var c = new Command(msg);
   this.executeCommand(c);
+  this.sendCommand(c);
 };
 
 Ethersheet.prototype.redoCommand = function(){
@@ -133,6 +142,7 @@ Ethersheet.prototype.redoCommand = function(){
   if(!msg) return;
   var c = new Command(msg);
   this.executeCommand(c);
+  this.sendCommand(c);
 };
 
 Ethersheet.prototype.getModel = function(type,id){
@@ -146,11 +156,8 @@ Ethersheet.prototype.bindDataToSocket = function(){
   var es = this;
   for(var type in this.data){
     this.data[type].on('send',function(do_cmd,undo_cmd){
-      if(do_cmd.getSerializedMessage){
-        es.socket.send(do_cmd.getSerializedMessage());
-      } else {
-        es.socket.send(Command.serialize(do_cmd));
-      }
+      es.sendCommand(do_cmd);
+
       if(undo_cmd){
         console.log('command',do_cmd,undo_cmd);
         es.undoQ.push(do_cmd,undo_cmd);
