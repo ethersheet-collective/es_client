@@ -42,21 +42,15 @@ describe('Socket', function(){
       id: sheet.id,
       type: 'sheet',
       action:'updateCell', 
-      params:[sheet.rowAt(0),sheet.colAt(0),1]
+      params:[sheet.rowAt(0),sheet.colAt(0),{value:1,type:"number"}]
     }));
 
     sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),1);
     mock.verify();
   });
 
-  it('should trigger data event when cell is committed', function(){
+  it('should not trigger data event when cell is committed', function(){
     var mock = sinon.mock(socket);
-    mock.expects('send').withArgs(JSON.stringify({
-      id: sheet.id,
-      type: 'sheet',
-      action:'commitCell', 
-      params:[sheet.rowAt(0),sheet.colAt(0),{value:1, type:'number'}]
-    }));
 
     sheet.disableSend();
     sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),1);

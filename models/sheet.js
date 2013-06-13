@@ -205,29 +205,38 @@ var Sheet = module.exports = ESModel.extend({
    *    styles: ["bg-red","fg-white", "us_dollar"], //list of styles used for formatting cell
    *}
    **************************************************/
-  updateCell: function(row_id,col_id,value){
-    var old_value = this.getCellValue(row_id,col_id);
-    var cell = {value: value, type:'new'};
-    if( old_value == value) return false;
+  updateCell: function(row_id,col_id,cell){
+    var value;
+    var old_cell = this.getCell(row_id,col_id);
 
-    this.addCell(row_id, col_id, cell, this.cells);
+    if(_.isObject(cell) && _.has(cell,"value")){
+      value = cell.value;
+    } else {
+      value = cell;
+    }
     
+    if( _.isObject(old_cell) && old_cell.value == value) return false;
+
+    this.addCell(row_id, col_id, value);
+
+    cell = this.getCell(row_id,col_id);
+
     this.trigger('update_cell',{
       id:this.id,
       row_id:row_id,
       col_id:col_id,
-      cell_display:value
+      cell_display:value || ""
     });
     this.send({
       id: this.id,
       type: 'sheet',
       action: 'updateCell',
-      params:[row_id,col_id,value]
+      params:[row_id,col_id,cell]
     },{
       id: this.id,
       type: 'sheet',
       action: 'updateCell',
-      params:[row_id,col_id,old_value]
+      params:[row_id,col_id,old_cell]
     });
 
     return true;
@@ -251,7 +260,7 @@ var Sheet = module.exports = ESModel.extend({
       id: this.id,
       type: 'sheet',
       action: 'commitCell',
-      params:[row_id,col_id,cell]
+      params:[row_id,col_id]
     });
     this.refreshCells();
     return true;
@@ -319,10 +328,19 @@ var Sheet = module.exports = ESModel.extend({
     if(!cell) return '';
     return cell.value;
   },
-  addCell: function(row_id,col_id,cell){
+  addCell: function(row_id,col_id,value){
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
+    if(_.isNull(value) || _.isUndefined(value)){
+      delete this.cells[row_id][col_id];
+      return true;
+    }
+
+    var cell = {
+      value:  value,
+      type:   this.getCellType(value)
+    }
     this.cells[row_id][col_id] = cell;
     return true;
   },

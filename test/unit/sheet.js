@@ -146,14 +146,14 @@ describe('Sheet', function(){
     });
 
     it('should create a new object in cells if none exists', function(){
-      _.size(sheet.cells[row_id]).should.equal(1);
-      sheet.cells[row_id][col_id].value.should.equal(new_value);
+      var cell = sheet.getCell(row_id,col_id);
+      cell.value.should.equal(new_value);
     });
 
     it('should upate object in modified cells if it already exists', function(){
       sheet.updateCell(row_id,col_id,8);
-      _.size(sheet.cells[row_id]).should.equal(1);
-      sheet.cells[row_id][col_id].value.should.equal(8);
+      var cell = sheet.getCell(row_id,col_id);
+      cell.value.should.equal(8);
     });
 
     it('should trigger an update_cell and send event',function(){
