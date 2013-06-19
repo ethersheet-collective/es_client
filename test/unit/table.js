@@ -66,6 +66,7 @@ describe('TableView', function(){
       $('#ethersheet .es-row-header').length.should.equal(ES.DEFAULT_ROW_COUNT)
       $("#ethersheet .es-row-header").last().text().should.equal('100');
     });
+
     it('should have empty cells', function(){
       $('td',$el).each(function(){
         $(this).text().should.equal('');
@@ -391,6 +392,22 @@ describe('TableView', function(){
       });*/
     });
 
+  });
+  
+  describe('formatting cells', function(){
+    beforeEach(function(){
+      initializeTable();
+      value = 5;
+      row_id = sheet.rowAt(0);
+      col_id = sheet.colAt(0);
+    });
+    it('should apply formatting classes to the display of a cell if they exist', function(){
+      sheet.updateCell('0', '0', '4');
+      selection.addCell(sheet.id, '0','0');
+      selection.addFormat('bg-red');
+      var $selected_cell = $('.es-table-cell').first()
+      $selected_cell.hasClass('bg-red').should.be.true;
+    });
   });
 
 });

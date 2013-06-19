@@ -155,7 +155,7 @@ var Selection = module.exports = ESModel.extend({
         changed = true;
         return false;
       }
-      return true;
+      return trueadd_format;
     });
     if(changed) this.trigger('change');
   },
@@ -176,7 +176,23 @@ var Selection = module.exports = ESModel.extend({
 
   onDestroy: function(){
     this.unsetSheet();
-  }
+  },
+
+  addFormat: function(format, selection_id){
+    var self = this;
+    this.trigger('add_format', format); 
+    this.send({
+      id: this.id,
+      type: 'selection',
+      action: 'addFormat',
+      params: [format, selection_id]
+    });
+    console.log('this cells', this.cells);
+    _.each(this.cells, function(cell){
+      console.log('sheet', self.collection.getSheet());
+      self.collection.getSheet(cell.sheet_id).addFormatToCell(cell.row_id, cell.col_id, format);
+    });
+  },
 });
 
 });

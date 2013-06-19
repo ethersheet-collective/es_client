@@ -472,6 +472,20 @@ describe('Sheet', function(){
       sheet.getCellDisplay(sheet.getCell('0','2')).should.equal(test_val * 2);
     });
   });
+  describe('add formatting to cell', function(){
+    before(function(){
+      initializeSheet();
+    });
+    it('should add a formatting class to the cell', function(){
+      var row_id = sheet.rowAt(0);
+      var col_id = sheet.colAt(0);
+      var cls = 'bg-red';
+      sheet.addCell(row_id,col_id,{value:'1', type:'new'});
+      sheet.addFormatToCell(row_id,col_id,cls);
+      sheet.cells[row_id][col_id].formatting.length.should.equal(1);
+      sheet.cells[row_id][col_id].formatting[0].should.equal(cls);
+    });
+  });
   describe('userland functions', function(){
     before(function(){
       initializeSheet();
@@ -499,6 +513,7 @@ describe('Sheet', function(){
       sheet.getCellDisplayById('0','2').should.equal(246);
     });
   });
+
 });
 
 });

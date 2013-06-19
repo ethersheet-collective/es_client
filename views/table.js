@@ -51,10 +51,14 @@ var Table = module.exports = View.extend({
       'insert_col': 'render',
       'delete_col': 'render',
       'insert_row': 'render',
-      'delete_row': 'render'
+      'delete_row': 'render',
+      'add_format_to_cell': 'updateCellClass'
     });
   },
-
+  updateCellClass: function(row_id,col_id, cls){
+    var $cell = $('#'+row_id+'-'+col_id, this.el);
+    $cell.addClass(cls);
+  },
   setSelections: function(selections){
     this.models.set('selections',selections,{
       'add_cell': 'onRemoteAddCell',
@@ -73,6 +77,10 @@ var Table = module.exports = View.extend({
     var $cell = $('#'+cell.row_id+'-'+cell.col_id, this.el);
     $cell.css('background-color', cell.color);
   },
+  unpaintCell: function(cell){
+    var $cell = $('#'+cell.row_id+'-'+cell.col_id, this.el);
+    $cell.css('background-color', '');
+  },
     
   onRemoteAddCell: function(cell){
     this.paintCell(cell);
@@ -90,8 +98,7 @@ var Table = module.exports = View.extend({
   onClear: function(cells){
     var table = this;
     _.each(cells, function(cell){
-      cell.color = '#ffffff';
-      table.paintCell(cell);
+      table.unpaintCell(cell);
     });
   },
 

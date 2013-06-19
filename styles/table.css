@@ -88,6 +88,7 @@ padding: 0;
 .es-table-cell{
 border:1px solid #888888;
 overflow:hidden;
+background: #fff;
 }
 .es-table-cell-input{
 border: 0px;
@@ -116,4 +117,19 @@ display: block;
 #es-func-list{
 height:350px;
 overflow:scroll;
+}
+.bg-red{
+  background: #ff0000;
+}
+.fg-white{
+  color: #FFF;
+}
+.bold{
+  font-weight: bold;
+}
+.underline{
+  text-decoration: underline;
+}
+.italic{
+  font-style: italic;
 }

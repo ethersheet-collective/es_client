@@ -92,7 +92,26 @@ describe('Selection', function(){
     });
 
   });
-  
+
+  describe('add formatting',function(){
+    before(function(){
+      initializeSelection();
+      sheet.updateCell(row_id,col_id,'test');
+      selection.addCell(sheet.id,row_id,col_id);
+      clearEvents();
+      console.log('selcol', selection.collection);
+      selection.addFormat('bg-red');
+    });
+    it('should emit an add_format event', function(){
+      events.length.should.equal(2);
+      events[0].name.should.equal('add_format');
+    });
+    it('should emit a send event', function(){
+      events.length.should.equal(2);
+      events[1].name.should.equal('send');
+    });
+  }); 
+
   describe('update cell', function(){
     before(function(){
       initializeSelection();
