@@ -122,7 +122,6 @@ var Selection = module.exports = ESModel.extend({
 
   setSheet: function(sheet_id){
     if(this.sheet_id == sheet_id) return;
-    console.log('setting sheet', sheet_id);
     
     this.unsetSheet();
     
@@ -187,9 +186,7 @@ var Selection = module.exports = ESModel.extend({
       action: 'addFormat',
       params: [format, selection_id]
     });
-    console.log('this cells', this.cells);
     _.each(this.cells, function(cell){
-      console.log('sheet', self.collection.getSheet());
       self.collection.getSheet(cell.sheet_id).addFormatToCell(cell.row_id, cell.col_id, format);
     });
   },

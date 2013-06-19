@@ -250,7 +250,6 @@ var Sheet = module.exports = ESModel.extend({
       cell.value = this.collection.expressionHelpers.preprocessFormula(cell.value, this.collection, this.cid);
     }
     cell_display = this.getCellDisplay(cell);
-    console.log('commit cell', cell);
     this.trigger('commit_cell', _.extend(_.clone(cell),{
       id:this.id,
       row_id:row_id,
@@ -393,11 +392,9 @@ var Sheet = module.exports = ESModel.extend({
   },
 
   addFormatToCell: function(row_id,col_id,cls){
-    console.log('format');
     var cell = this.cells[row_id][col_id];
     cell.formatting = cell.formatting || [];
     cell.formatting.push(cls);
-    console.log('adding format to cell', cell);
     this.trigger('add_format_to_cell', row_id,col_id, cls); 
     this.commitCell(row_id, col_id);
   }

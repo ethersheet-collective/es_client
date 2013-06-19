@@ -129,7 +129,6 @@ Ethersheet.prototype.sendCommand = function(c){
 
 Ethersheet.prototype.undoCommand = function(){
   var msg = this.undoQ.undo();
-  console.log('undo',msg);
   if(!msg) return;
   var c = new Command(msg);
   this.executeCommand(c);
@@ -138,7 +137,6 @@ Ethersheet.prototype.undoCommand = function(){
 
 Ethersheet.prototype.redoCommand = function(){
   var msg = this.undoQ.do();
-  console.log('redo',msg);
   if(!msg) return;
   var c = new Command(msg);
   this.executeCommand(c);
@@ -159,7 +157,6 @@ Ethersheet.prototype.bindDataToSocket = function(){
       es.sendCommand(do_cmd);
 
       if(undo_cmd){
-        console.log('command',do_cmd,undo_cmd);
         es.undoQ.push(do_cmd,undo_cmd);
       }
     });

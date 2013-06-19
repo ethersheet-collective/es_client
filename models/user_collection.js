@@ -49,13 +49,11 @@ var UserCollection = module.exports = ESCollection.extend({
   },
 
   replicateCurrentUser: function(){
-    console.log('repuser');
     var user = this.getCurrentUser();
     this.replicateUser(user.id);
   },
 
   requestReplicateCurrentUser: function(){
-    console.log('reqrepuser');
     this.alwaysSend({
       type:'user',
       action:'replicateCurrentUser'

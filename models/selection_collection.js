@@ -27,7 +27,6 @@ var SelectionCollection = module.exports = ESCollection.extend({
   },
 
   addSelection: function(data){
-    console.log(data);
     this.add(data);
     var selection = this.get(data.id)
     this.send({

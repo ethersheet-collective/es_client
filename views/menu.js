@@ -100,7 +100,6 @@ var MenuView = module.exports = View.extend({
     this.getSheet().deleteCol(col_id);
   },
   importCSV:function(){
-    console.log($('#es-modal-box'));
     $('#es-modal-box').html(t.import_dialog({sheet_id: this.getSheet().id}));
     $('#es-modal-overlay').show();
   }
