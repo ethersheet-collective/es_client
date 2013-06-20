@@ -300,6 +300,10 @@ var Sheet = module.exports = ESModel.extend({
     });
     return display_value;
   },
+  refreshSheet: function(row_id,col_id){
+    alert('refreshing the window because the underlying sheet has changed');
+    location.reload();
+  },
   getCellType: function(cell_value){
     if(_.isNumber(cell_value)) return 'number';
     if(cell_value.charAt(0) == '=') return 'formula';
