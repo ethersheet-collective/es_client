@@ -1,8 +1,14 @@
 <% var _ = require('underscore'); %>
-<% _.each(sheet.rowIds(), function(row_id){ %>
-  <tr id="<%= row_id %>" class="es-table-row" data-row_id="<%= row_id %>">
-    <% _.each(sheet.colIds(), function(col_id){ %>
-      <td id="<%= row_id %>-<%= col_id %>" class="<%= sheet.getCellFormatString(row_id,col_id) %>" data-row_id="<%= row_id %>" data-col_id="<%= col_id %>" data-value="<%= sheet.getCellValue(row_id,col_id)%>"><%= sheet.getCellDisplayById(row_id,col_id) %></td>
-    <% }) %>
+<% _.each(sheet.rowIds(), function(row_id,i){ %>
+  <tr id="<%= row_id %>" class="es-table-row" data-row_id="<%= row_id %>" style="height:<%= sheet.getRowHeight(row_id) %>px;">
+    <% if(i == 0) { %>
+      <% _.each(sheet.colIds(), function(col_id){ %>
+        <td id="<%= row_id %>-<%= col_id %>" style="width:<%= sheet.getColWidth(col_id) %>px;" class="<%= sheet.getCellFormatString(row_id,col_id) %>" data-row_id="<%= row_id %>" data-col_id="<%= col_id %>" data-value="<%= sheet.getCellValue(row_id,col_id)%>"><%= sheet.getCellDisplayById(row_id,col_id) %></td>
+      <% }) %>
+    <% } else { %>
+      <% _.each(sheet.colIds(), function(col_id){ %>
+        <td id="<%= row_id %>-<%= col_id %>" class="<%= sheet.getCellFormatString(row_id,col_id) %>" data-row_id="<%= row_id %>" data-col_id="<%= col_id %>" data-value="<%= sheet.getCellValue(row_id,col_id)%>"><%= sheet.getCellDisplayById(row_id,col_id) %></td>
+      <% }) %>
+    <% } %>
   </tr>
 <% }) %>

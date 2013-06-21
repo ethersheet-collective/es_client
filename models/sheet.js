@@ -33,13 +33,16 @@ var Sheet = module.exports = ESModel.extend({
     o = o||{};
     this.id = o.id||uid();
     this.send_enabled = true;
+    
+    this.row_heights = o.row_heights || {};
+    this.col_widths = o.col_widths || {};
+
     this.initializeRows(o.rows);
     this.initializeCols(o.cols);
     this.initializeCells(o.cells);
-    this.modifiedCells = {};
-    
   },
   initializeRows: function(rows){
+    
     if(_.isArray(rows)){
       this.rows = rows;
       return;
@@ -273,6 +276,37 @@ var Sheet = module.exports = ESModel.extend({
       params:[row_id,col_id]
     });
     this.refreshCells();
+    return true;
+  },
+
+  getRowHeight: function(row_id,height){
+    return this.row_heights[row_id] || 22;
+  },
+
+  setRowHeight: function(row_id,height){
+    this.row_heights[row_id] = height;
+  },
+
+  getColWidth: function(col_id){
+    return this.col_widths[col_id] || 100;
+  },
+
+  setColWidth: function(col_id,width){
+    this.col_widths[col_id] = width;
+  },
+
+  resizeCell: function(row_id,col_id,width,height){
+    if(height) this.setRowHeight(row_id,height);
+    if(width) this.setColWidth(col_id,width);
+
+    this.trigger('resize_cell',row_id,col_id,width,height);
+    this.send({
+      id: this.id,
+      type: 'sheet',
+      action: 'resizeCell',
+      params:[row_id,col_id,width,height]
+    });
+
     return true;
   },
 

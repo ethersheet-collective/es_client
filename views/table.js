@@ -25,6 +25,9 @@ var MIN_CELL_HEIGHT = 22;
 
 var Table = module.exports = View.extend({
 
+
+// ## DOM BINDING
+
   events: {
     'mousedown .es-table-cell': 'cellMouseDown',
     'mousemove .es-table-cell': 'cellMouseMove',
@@ -33,6 +36,9 @@ var Table = module.exports = View.extend({
     'change .es-table-cell-input': 'changeCell',
     'keydown': 'inputKeypress'
   },
+
+
+// ## LIFECYCLE
 
   initialize: function(o){
     this.models = new RefBinder(this);
@@ -47,10 +53,20 @@ var Table = module.exports = View.extend({
     }, this);
   },
 
+  destroy: function(){
+    this.remove();
+    this.models.unsetAll();
+    this.models = null;
+  },
+
+
+// ## MODEL SETTERS
+
   setSheet: function(sheet){
     this.models.set('sheet',sheet,{
       'update_cell': 'onUpdateCell',
       'commit_cell': 'onCommitCell',
+      'resize_cell': 'resizeCell',
       'insert_col': 'render',
       'delete_col': 'render',
       'insert_row': 'render',
@@ -90,10 +106,13 @@ var Table = module.exports = View.extend({
     });
   },
 
-  paintCell: function(cell){
-    var $cell = $('#'+cell.row_id+'-'+cell.col_id, this.el);
-    $cell.css('background-color', cell.color);
+
+// ## MODEL GETTERS
+
+  getSheet: function(){
+    return this.models.get('sheet');
   },
+  
   unpaintCell: function(cell){
     var $cell = $('#'+cell.row_id+'-'+cell.col_id, this.el);
     $cell.css('background-color', '');
@@ -101,26 +120,6 @@ var Table = module.exports = View.extend({
     
   onRemoteAddCell: function(cell){
     this.paintCell(cell);
-  },
-
-  onLocalAddCell: function(cell){
-    var $cell = $('#'+cell.row_id+'-'+cell.col_id, this.el);
-    var e = {currentTarget: $cell};
-    
-    this.paintCell($cell);
-    this.removeCellInputs();
-    this.createCellInput(e);
-  },
-
-  onClear: function(cells){
-    var table = this;
-    _.each(cells, function(cell){
-      table.unpaintCell(cell);
-    });
-  },
-
-  getSheet: function(){
-    return this.models.get('sheet');
   },
 
   getSelections: function(){
@@ -133,6 +132,54 @@ var Table = module.exports = View.extend({
 
   getId: function(){
     return this.getSheet().cid;
+  },
+
+
+// ## SELECTION EVENTS
+
+  onLocalAddCell: function(cell){
+    var $cell = $('#'+cell.row_id+'-'+cell.col_id, this.el);
+    var e = {currentTarget: $cell};
+    
+    this.paintCell($cell);
+    this.removeCellInputs();
+    this.createCellInput(e);
+  },
+  
+  onRemoteAddCell: function(cell){
+    this.paintCell(cell);
+  },
+
+  onClear: function(cells){
+    var table = this;
+    _.each(cells, function(cell){
+      table.unpaintCell(cell);
+    });
+  },
+
+
+// ## SHEET EVENTS
+
+  onUpdateCell: function(cell){
+    var $el = $('#'+cell.row_id+'-'+cell.col_id);
+    $el.text(cell.cell_display);
+    var input =$('#' + $el.attr('id') + '-input');
+    if(input.length > 0){
+      input.val(cell.cell_display);
+    }
+    this.resizeRowHeader(cell.row_id);
+  },  
+
+  onCommitCell: function(cell){
+    this.onUpdateCell(cell);
+  },
+
+
+// ## RENDERING
+
+  paintCell: function(cell){
+    var $cell = $('#'+cell.row_id+'-'+cell.col_id, this.el);
+    $cell.css('background-color', cell.color);
   },
 
   render: function(){
@@ -156,9 +203,10 @@ var Table = module.exports = View.extend({
   },
 
   initializeSelections: function(){
-    var sheet = this.getSheet();
-    this.getSelections().each(function(s){
-      s.redraw();
+    this
+    .getSelections()
+    .each(function(selection){
+      selection.redraw();
     });
   },
 
@@ -178,6 +226,9 @@ var Table = module.exports = View.extend({
     });
   },
 
+
+// ## ROW METHODS
+
   drawRowHeaders: function()
   {
     var view = this;
@@ -187,20 +238,11 @@ var Table = module.exports = View.extend({
     
     _.each(this.getSheet().rowIds(), function(row_id,index){
       row_name = index+1;
-      height = view.heightForRow(row_id);
+      height = view.getSheet().getRowHeight(row_id);
       html +='<tr id="es-header-'+row_id+'" style="height:'+height+'px;"><th class="es-row-header">'+row_name+'</th></tr>'
     });
 
     $('#es-row-headers-'+this.getId(),this.$el).html(html);
-  },
-
-  heightForRow: function(row_id){
-    var row_el = document.getElementById(row_id);
-    if(row_el){
-      return row_el.offsetHeight;
-    }
-    return undefined;
-
   },
 
   resizeRowHeaders: function(){
@@ -212,7 +254,7 @@ var Table = module.exports = View.extend({
 
   resizeRowHeader: function(row_id){
     var header = document.getElementById("es-header-"+row_id);
-    var height = this.heightForRow(row_id);
+    var height = this.getSheet().getRowHeight(row_id);
     if(!header || !height) return;
     header.style.height = height+"px";
   },
@@ -224,6 +266,9 @@ var Table = module.exports = View.extend({
     row_el.style.height = height+"px";
   },
 
+
+// ## COLUMN METHODS
+
   drawColHeaders: function(){
     var view = this;
     var html = '';
@@ -231,23 +276,13 @@ var Table = module.exports = View.extend({
     var width = null;
 
     _.each(this.getSheet().colIds(), function(col_id,index){
-      width = view.widthForCol(col_id);
+      width = view.getSheet().getColWidth(col_id);
       html +='<th id="es-col-header-'+col_id+'" class="es-column-header" style="width:'+width+'px;">'
               +h.columnIndexToName(index)
               +'</th>';
     });
 
     $('#es-column-headers-'+this.getId(),this.$el).html(html);
-  },
-
-  widthForCol: function(col_id){
-    var row_id = this.getSheet().rowAt(0);
-    var col_el = document.getElementById(row_id+'-'+col_id);
-    if(col_el){
-      return col_el.clientWidth;
-    }
-    return undefined;
-
   },
 
   resizeColHeaders: function(col_id){
@@ -259,7 +294,7 @@ var Table = module.exports = View.extend({
 
   resizeColHeader: function(col_id){
     var header = document.getElementById("es-col-header-"+col_id);
-    var width = this.widthForCol(col_id);
+    var width = this.getSheet().getColWidth(col_id);
     if(!header || !width) return;
     header.style.width = width+"px";
   },
@@ -271,6 +306,89 @@ var Table = module.exports = View.extend({
     if(width < MIN_CELL_WIDTH) width = MIN_CELL_WIDTH;
     col_el.style.width = width+"px";
   },
+
+
+// ## CELL EVENTS
+
+  cellClicked: function(e){
+    if (this.isDraggingCell()) return;
+    this.selectCell(e);
+  },
+  
+  cellMouseDown: function(e){
+    this.setCellDragTarget(e);
+    if (this.isDraggingCell()){
+      return false;
+    }
+  },
+
+  cellMouseMove: function(e){
+
+    if(!this.isDraggingCell()){
+      var $cell = $(e.currentTarget);
+      if(this.isOverRowDragHandle($cell,e.pageY)){
+        this.$table.css("cursor","ns-resize");
+      } else if(this.isOverColDragHandle($cell,e.pageX)){
+        this.$table.css("cursor","ew-resize");
+      } else {
+        this.$table.css("cursor","pointer");
+      }
+    } else if(this.draggingRow){
+      var height = e.pageY - this.draggedCell.offset().top;
+      var width = null;
+      var row_id = this.draggedCell.data('row_id');
+      var col_id = this.draggedCell.data('col_id');
+      this.getSheet().disableSend();
+      this.getSheet().resizeCell(row_id,col_id,width,height);
+      this.getSheet().enableSend();
+      return false;
+    } else if(this.draggingCol){
+      var height = null;
+      var width = e.pageX - this.draggedCell.offset().left;
+      var row_id = this.draggedCell.data('row_id');
+      var col_id = this.draggedCell.data('col_id');
+
+            this.getSheet().disableSend();
+      this.getSheet().resizeCell(row_id,col_id,width,height);
+      this.getSheet().enableSend();
+      return false;
+    }
+  },
+
+  cellMouseUp: function(e){
+    if(!this.isDraggingCell()) return;
+
+    if(this.draggingRow){
+      var height = e.pageY - this.draggedCell.offset().top;
+      var width = null;
+      var row_id = this.draggedCell.data('row_id');
+      var col_id = this.draggedCell.data('col_id');
+
+      this.getSheet().resizeCell(row_id,col_id,width,height);
+    } else if(this.draggingCol){
+      var height = null;
+      var width = e.pageX - this.draggedCell.offset().left;
+      var row_id = this.draggedCell.data('row_id');
+      var col_id = this.draggedCell.data('col_id');
+
+      this.getSheet().resizeCell(row_id,col_id,width,height);
+    }
+
+    this.draggedCell = null;
+    this.draggingRow = false;
+    this.draggingCol = false;
+    return false;
+  },
+
+  resizeCell: function(row_id,col_id,width,height)
+  {
+    if(height) this.resizeRow(row_id,height);
+    if(width) this.resizeCol(col_id,width);
+    this.resizeRowHeader(row_id);
+    this.resizeColHeader(col_id);
+  },
+
+// ## CELL DRAGGING
 
   isDraggingCell: function(){
     if (this.draggedCell) return true;
@@ -305,61 +423,8 @@ var Table = module.exports = View.extend({
     }
   },
 
-  cellClicked: function(e){
-    if (this.isDraggingCell()) return;
-    this.selectCell(e);
-  },
-  
-  cellMouseDown: function(e){
-    this.setCellDragTarget(e);
-    if (this.isDraggingCell()){
-      return false;
-    }
-  },
 
-  cellMouseMove: function(e){
-    if(!this.isDraggingCell()){
-      var $cell = $(e.currentTarget);
-      if(this.isOverRowDragHandle($cell,e.pageY)){
-        this.$table.css("cursor","ns-resize");
-      } else if(this.isOverColDragHandle($cell,e.pageX)){
-        this.$table.css("cursor","ew-resize");
-      } else {
-        this.$table.css("cursor","pointer");
-      }
-    } else if (this.draggingRow){
-      var height = e.pageY - this.draggedCell.offset().top;
-      this.resizeRow(this.draggedCell.data('row_id'),height);
-      this.resizeRowHeader(this.draggedCell.data('row_id'));
-      this.resizeColHeader(this.draggedCell.data('col_id'));
-      return false;
-    } else if (this.draggingCol){
-      var width = e.pageX - this.draggedCell.offset().left;
-      this.resizeCol(this.draggedCell.data('col_id'),width);
-      this.resizeRowHeader(this.draggedCell.data('row_id'));
-      this.resizeColHeader(this.draggedCell.data('col_id'));
-      return false;
-    }
-  },
-
-  cellMouseUp: function(e){
-    if(!this.isDraggingCell()) return;
-    this.draggedCell = null;
-    this.draggingRow = false;
-    this.draggingCol = false;
-    return false;
-  },
-
-  removeCellInputs: function(){
-    $('.es-table-cell-input').remove();
-  },
-
-  selectCell: function(e){
-    var s = this.getLocalSelection();
-    var data = $(e.currentTarget).data();
-    s.clear();
-    s.addCell(this.getSheet().id,data.row_id.toString(),data.col_id.toString());
-  },
+// ## CELL INPUT FIELD
 
   createCellInput: function(e){
     if(e.currentTarget.length == 0) return;
@@ -386,10 +451,8 @@ var Table = module.exports = View.extend({
     return $input;
   },
 
-  changeCell: function(e){
-    var $el = $(e.currentTarget);
-    var data = $el.data();
-    this.getSheet().commitCell(data.row_id.toString(), data.col_id.toString());
+  removeCellInputs: function(){
+    $('.es-table-cell-input').remove();
   },
 
   inputKeypress: function(e){
@@ -414,6 +477,22 @@ var Table = module.exports = View.extend({
     return false;
   },
 
+  changeCell: function(e){
+    var $el = $(e.currentTarget);
+    var data = $el.data();
+    this.getSheet().commitCell(data.row_id.toString(), data.col_id.toString());
+  },
+
+
+// ## CELL SELECTIONS
+
+  selectCell: function(e){
+    var s = this.getLocalSelection();
+    var data = $(e.currentTarget).data();
+    s.clear();
+    s.addCell(this.getSheet().id,data.row_id.toString(),data.col_id.toString());
+  },
+
   moveSelection: function(e, row_offset, col_offset){
     var selection = this.getLocalSelection();
     var old_cell = selection.getCells()[0];
@@ -426,26 +505,8 @@ var Table = module.exports = View.extend({
     selection.clear();
     selection.addCell(this.getSheet().id, new_row, new_col);
 
-  },
-
-  onUpdateCell: function(cell){
-    var $el = $('#'+cell.row_id+'-'+cell.col_id);
-    $el.text(cell.cell_display);
-    var input =$('#' + $el.attr('id') + '-input');
-    if(input.length > 0){
-      input.val(cell.cell_display);
-    }
-    this.resizeRowHeader(cell.row_id);
-  },  
-
-  onCommitCell: function(cell){
-    this.onUpdateCell(cell);
-  },  
-
-  destroy: function(){
-    this.remove();
-    this.models.unsetAll();
   }
+
 });
 
 });
