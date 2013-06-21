@@ -238,11 +238,19 @@ var Table = module.exports = View.extend({
     
     _.each(this.getSheet().rowIds(), function(row_id,index){
       row_name = index+1;
-      height = view.getSheet().getRowHeight(row_id);
+      height = view.heightForRow(row_id);
       html +='<tr id="es-header-'+row_id+'" style="height:'+height+'px;"><th class="es-row-header">'+row_name+'</th></tr>'
     });
 
     $('#es-row-headers-'+this.getId(),this.$el).html(html);
+  },
+
+  heightForRow: function(row_id){
+    var row_el = document.getElementById(row_id);
+    if(row_el){
+      return row_el.offsetHeight;
+    }
+    return undefined;
   },
 
   resizeRowHeaders: function(){
@@ -254,7 +262,7 @@ var Table = module.exports = View.extend({
 
   resizeRowHeader: function(row_id){
     var header = document.getElementById("es-header-"+row_id);
-    var height = this.getSheet().getRowHeight(row_id);
+    var height = this.heightForRow(row_id);
     if(!header || !height) return;
     header.style.height = height+"px";
   },
@@ -276,7 +284,7 @@ var Table = module.exports = View.extend({
     var width = null;
 
     _.each(this.getSheet().colIds(), function(col_id,index){
-      width = view.getSheet().getColWidth(col_id);
+      width = view.widthForCol(col_id);
       html +='<th id="es-col-header-'+col_id+'" class="es-column-header" style="width:'+width+'px;">'
               +h.columnIndexToName(index)
               +'</th>';
@@ -285,6 +293,16 @@ var Table = module.exports = View.extend({
     $('#es-column-headers-'+this.getId(),this.$el).html(html);
   },
 
+  widthForCol: function(col_id){
+    var row_id = this.getSheet().rowAt(0);
+    var col_el = document.getElementById(row_id+'-'+col_id);
+    if(col_el){
+      return col_el.clientWidth;
+    }
+    return undefined;
+
+  },
+  
   resizeColHeaders: function(col_id){
     var view = this;
     _.each(this.getSheet().colIds(), function(col_id){
@@ -294,7 +312,7 @@ var Table = module.exports = View.extend({
 
   resizeColHeader: function(col_id){
     var header = document.getElementById("es-col-header-"+col_id);
-    var width = this.getSheet().getColWidth(col_id);
+    var width = this.widthForCol(col_id);
     if(!header || !width) return;
     header.style.width = width+"px";
   },
