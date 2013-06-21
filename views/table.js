@@ -42,6 +42,9 @@ var Table = module.exports = View.extend({
     this.setSheet(o.sheet || null);
     this.setSelections(o.selections || null);
     this.setLocalSelection(o.local_selection || null);
+    _.defer(function(caller){
+      caller.onRefreshCells(); 
+    }, this);
   },
 
   setSheet: function(sheet){
@@ -52,12 +55,26 @@ var Table = module.exports = View.extend({
       'delete_col': 'render',
       'insert_row': 'render',
       'delete_row': 'render',
+      'refresh_cells': 'onRefreshCells',
       'add_format_to_cell': 'updateCellClass'
     });
   },
   updateCellClass: function(row_id,col_id, cls){
     var $cell = $('#'+row_id+'-'+col_id, this.el);
     $cell.addClass(cls);
+  },
+  onRefreshCells: function(){
+    console.log('refreshing!');
+    var sheet = this.getSheet();
+    $('.es-usd').each(function(idx, el){
+      $el = $(el);
+      var cell = sheet.getCell($el.data('row_id'), $el.data('col_id'));
+      console.log(cell.type);
+      if(cell.type != 'number'){ return; }
+      console.log('its a number');
+      var cell_display = sheet.getCellDisplay(cell);
+      $el.text('$' + parseFloat(cell_display).toFixed(2));
+    });
   },
   setSelections: function(selections){
     this.models.set('selections',selections,{

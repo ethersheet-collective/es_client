@@ -118,18 +118,28 @@ display: block;
 height:350px;
 overflow:scroll;
 }
-.bg-red{
+.es-bg-red{
   background: #ff0000;
 }
-.fg-white{
+.es-bg-black{
+  background: #000;
+}
+.es-bg-white{
+  background: #fff;
+}
+
+.es-fg-white{
   color: #FFF;
 }
-.bold{
+.es-fg-black{
+  color: #000;
+}
+.es-bold{
   font-weight: bold;
 }
-.underline{
+.es-underline{
   text-decoration: underline;
 }
-.italic{
+.es-italic{
   font-style: italic;
 }

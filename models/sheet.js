@@ -207,20 +207,30 @@ var Sheet = module.exports = ESModel.extend({
    **************************************************/
   updateCell: function(row_id,col_id,cell){
     var value;
+    var format;
     var old_cell = this.getCell(row_id,col_id);
+    if( _.isObject(old_cell) && 
+        _.isObject(cell) &&
+        old_cell.value == cell.value && 
+        old_cell.formatting == cell.formatting){
+      return false;}
 
     if(_.isObject(cell) && _.has(cell,"value")){
       value = cell.value;
     } else {
       value = cell;
     }
+    if(_.isObject(cell) && _.has(cell,'formatting')){
+      formatting = cell.formatting;
+    } else {
+      formatting = old_cell.formatting;
+    }
     
-    if( _.isObject(old_cell) && old_cell.value == value) return false;
 
-    this.addCell(row_id, col_id, value);
+    this.addCell(row_id, col_id, value, formatting);
 
     cell = this.getCell(row_id,col_id);
-
+    console.log('updating cell', cell);
     this.trigger('update_cell',{
       id:this.id,
       row_id:row_id,
@@ -268,6 +278,7 @@ var Sheet = module.exports = ESModel.extend({
 
   refreshCells: function(){
     var self = this;
+    this.trigger('refresh_cells', this.id);
     _.each(self.getFormulaCells(), function(cell_id){
       self.refreshCell(cell_id[CELL_ROW_ID],cell_id[CELL_COL_ID]);
     });
@@ -337,7 +348,7 @@ var Sheet = module.exports = ESModel.extend({
     if(!cell) return '';
     return cell.value;
   },
-  addCell: function(row_id,col_id,value){
+  addCell: function(row_id,col_id,value,formatting){
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
     if(!this.cells[row_id]) this.cells[row_id] = {};
@@ -345,10 +356,10 @@ var Sheet = module.exports = ESModel.extend({
       delete this.cells[row_id][col_id];
       return true;
     }
-
     var cell = {
       value:  value,
-      type:   this.getCellType(value)
+      type:   this.getCellType(value),
+      formatting: formatting
     }
     this.cells[row_id][col_id] = cell;
     return true;
@@ -400,7 +411,7 @@ var Sheet = module.exports = ESModel.extend({
     cell.formatting = cell.formatting || [];
     cell.formatting.push(cls);
     this.trigger('add_format_to_cell', row_id,col_id, cls); 
-    this.commitCell(row_id, col_id);
+    this.updateCell(row_id, col_id, cell);
   }
 
 });
