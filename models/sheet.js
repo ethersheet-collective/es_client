@@ -489,6 +489,7 @@ var Sheet = module.exports = ESModel.extend({
     cell.formatting.push(cls);
     this.trigger('add_format_to_cell', row_id,col_id, cls); 
     this.updateCell(row_id, col_id, cell);
+    this.commitCell(row_id, col_id);
   }
 
 });

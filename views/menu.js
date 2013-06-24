@@ -60,6 +60,7 @@ var MenuView = module.exports = View.extend({
 
   onButtonClick: function(e){
     var cell = this.getCurrentCell();
+    var selection = this.getSelection();
     var action = $(e.currentTarget).data('action');
     switch(action){
       case 'add_column':
@@ -76,6 +77,9 @@ var MenuView = module.exports = View.extend({
         break;
       case 'sort_rows':
         this.sortRows(cell.col_id);
+        break;
+      case 'format_cell':
+        this.formatCell(selection);
         break;
       case 'import_csv':
         this.importCSV();
@@ -95,6 +99,16 @@ var MenuView = module.exports = View.extend({
 
   sortRows:function(col_id){
     this.getSheet().sortRows(col_id);
+  },
+
+  formatCell:function(selection){
+    $('#es-modal-box').html(t.cell_format_dialog({selection: selection}));
+    $('#es-modal-overlay').show();
+    $('.es-format-toggle').click(function(){
+      var format_string = $(this)[0].id;
+      console.log('format string', format_string);
+      selection.addFormat(format_string);
+    });
   },
 
   addCol:function(col_id){
