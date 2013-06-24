@@ -83,7 +83,6 @@ var Selection = module.exports = ESModel.extend({
   },
 
   addCell: function(sheet_id,row_id,col_id){
-
     this.setSheet(sheet_id);
     var sheet = this.collection.getSheet(sheet_id);
     var cell = {
@@ -103,6 +102,23 @@ var Selection = module.exports = ESModel.extend({
     });
   },
   
+  addRow: function(sheet_id,row_id){
+    var self = this;
+    this.setSheet(sheet_id);
+    var sheet = this.collection.getSheet(sheet_id);
+    this.disableSend();
+    _.each(sheet.cols, function(col_id){
+      self.addCell(sheet_id,row_id,col_id);
+    });
+    this.enableSend();
+    this.send({
+      id: this.id,
+      type: 'selection',
+      action: 'addRow',
+      params: [sheet_id,row_id]
+    });
+  },
+
   redraw: function(){
     var self = this;
     _.each(this.cells, function(c){

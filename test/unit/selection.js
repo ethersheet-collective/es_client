@@ -93,6 +93,26 @@ describe('Selection', function(){
 
   });
 
+  describe('add row', function(){
+    before(function(){
+      initializeSelection();
+      sheet.updateCell('0','0','test');
+      sheet.commitCell('0','0');
+      sheet.updateCell('0','1','test');
+      sheet.commitCell('0','1');
+      clearEvents();
+      selection.addRow(sheet.id,row_id);
+    });
+    it('should increase the size of the selection',function(){
+      console.log('getting row', row_id);
+      selection.getCells().length.should.equal(sheet.cols.length);
+    });
+    it('should emit an add_cell event for each cell in the row', function(){
+      events.length.should.equal(sheet.cols.length + 1);
+      events.pop().name.should.equal('send');
+    });
+  });
+
   describe('add formatting',function(){
     before(function(){
       initializeSelection();

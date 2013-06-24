@@ -33,6 +33,7 @@ var Table = module.exports = View.extend({
     'mousemove .es-table-cell': 'cellMouseMove',
     'mouseup .es-table-cell': 'cellMouseUp',
     'click .es-table-cell': 'cellClicked',
+    'click .es-row-header': 'selectRow',
     'change .es-table-cell-input': 'changeCell',
     'keydown': 'inputKeypress'
   },
@@ -510,6 +511,16 @@ var Table = module.exports = View.extend({
     var data = $(e.currentTarget).data();
     s.clear();
     s.addCell(this.getSheet().id,data.row_id.toString(),data.col_id.toString());
+  },
+
+  selectRow: function(e){
+    var sel = this.getLocalSelection();
+    var sheet = this.getSheet();
+    var row_pos = $(e.currentTarget).text();
+    console.log('row_pos', row_pos);
+    var row_id = sheet.rowAt(row_pos - 1);
+    sel.clear();
+    sel.addRow(sheet.id, row_id);
   },
 
   moveSelection: function(e, row_offset, col_offset){

@@ -152,7 +152,11 @@ var Sheet = module.exports = ESModel.extend({
       if (value_b === "") return -1;
 
       // default sort
-      return value_a.localeCompare(value_b);
+       if (typeof value_a === "string" && "".localeCompare) {
+         return value_a.localeCompare(value_b);
+       }
+        
+       return value_a === value_b ? 0 : value_a > value_b ? 1 : -1;
     });
     
     this.rows = rows;
