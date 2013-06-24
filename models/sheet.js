@@ -138,6 +138,33 @@ var Sheet = module.exports = ESModel.extend({
     });
     return true;
   },
+  sortRows: function(col_id){
+    var sheet = this;
+    var rows = _.clone(this.rows);
+
+    rows.sort(function compareRows(row_a,row_b){
+      var value_a = sheet.getCellValue(row_a,col_id).toString().trim();
+      var value_b = sheet.getCellValue(row_b,col_id).toString().trim();
+      
+      // blanks go last
+      if (value_a === "" && value_b === "") return 0;
+      if (value_a === "") return 1;
+      if (value_b === "") return -1;
+
+      // default sort
+      return value_a.localeCompare(value_b);
+    });
+    
+    this.rows = rows;
+
+    this.trigger('sort_rows',{});
+    this.send({
+      id: this.id,
+      type: 'sheet',
+      action: 'sortRows',
+      params:[col_id]
+    });
+  },
 
 // # Columns
 
@@ -210,22 +237,30 @@ var Sheet = module.exports = ESModel.extend({
    **************************************************/
   updateCell: function(row_id,col_id,cell){
     var value;
-    var format;
+    var formatting;
     var old_cell = this.getCell(row_id,col_id);
-    if( _.isObject(old_cell) && 
-        _.isObject(cell) &&
-        old_cell.value == cell.value && 
-        old_cell.formatting == cell.formatting){
-      return false;}
 
-    if(_.isObject(cell) && _.has(cell,"value")){
+    if( _.isObject(old_cell) 
+        && _.isObject(cell)
+        && old_cell.value == cell.value
+        && old_cell.formatting == cell.formatting
+    ){
+      return false;
+    }
+
+    if( _.isObject(cell) && _.has(cell,"value")){
       value = cell.value;
     } else {
       value = cell;
     }
-    if(_.isObject(cell) && _.has(cell,'formatting')){
+
+    if( _.isObject(cell) && _.has(cell,'formatting')
+    ){
       formatting = cell.formatting;
-    } else {
+    } 
+    else if(  _.isObject(old_cell) 
+              && _.has(old_cell,'formatting')
+    ){
       formatting = old_cell.formatting;
     }
     
@@ -279,6 +314,8 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
 
+// ## CELL SIZE
+
   getRowHeight: function(row_id,height){
     return this.row_heights[row_id] || 22;
   },
@@ -317,11 +354,11 @@ var Sheet = module.exports = ESModel.extend({
       self.refreshCell(cell_id[CELL_ROW_ID],cell_id[CELL_COL_ID]);
     });
   },
-
   getFormulaCells: function(){
     var formula_cells = [];
     _.each(this.cells, function(cols,row){
       _.each(cols, function(cell,col){
+        if(!_.isObject(cell)) return;
         if(cell.type == 'formula'){
           formula_cells.push([row,col]);
         }
@@ -351,10 +388,11 @@ var Sheet = module.exports = ESModel.extend({
   },
   getCellType: function(cell_value){
     if(_.isNumber(cell_value)) return 'number';
-    if(cell_value.charAt(0) == '=') return 'formula';
+    if(_.isString(cell_value) && cell_value.charAt(0) == '=') return 'formula';
     if(_.isString(cell_value) && _.isNaN(cell_value * 1)) return 'string';
     if(_.isString(cell_value) && _.isFinite(cell_value * 1)) return 'number';
-    throw 'Undefined Cell Type ' + cell_value;
+    debugger;
+    throw new Error('Undefined Cell Type ', cell_value);
   },
   parseValue: function(value){
     if(value.charAt(0) != '=') return value;
@@ -378,9 +416,11 @@ var Sheet = module.exports = ESModel.extend({
     return 'es-table-cell ' + cell.formatting.join(' ');
   },
   getCellValue: function(row_id,col_id){
-    cell = this.getCell(row_id,col_id);
-    if(!cell) return '';
-    return cell.value;
+    var cell = this.getCell(row_id,col_id);
+    if(!cell || _.isUndefined(cell) || _.isNull(cell)) return '';
+    var value = cell.value;
+    if(!value || _.isUndefined(value) || _.isNull(value)) return '';
+    return value;
   },
   addCell: function(row_id,col_id,value,formatting){
     if(!this.rowExists(row_id)) return false;
@@ -389,6 +429,9 @@ var Sheet = module.exports = ESModel.extend({
     if(_.isNull(value) || _.isUndefined(value)){
       delete this.cells[row_id][col_id];
       return true;
+    }
+    if(_.isObject(value) && _.has(value,"value")){
+      value = value.value;
     }
     var cell = {
       value:  value,

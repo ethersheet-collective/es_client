@@ -63,11 +63,6 @@ describe('Sheet', function(){
       var row_id = sheet.rowIds()[0];
       sheet.rowAt(0).should.equal(row_id);
     });
-    it('should be initialized with a modifiedCells array', function(){
-      
-      sheet.modifiedCells.should.be.instanceOf(Object);
-      sheet.modifiedCells.should.be.empty;
-    });
     it('letterToIndex should return an index of a given letter in the alphabet', function(){
       sheet.identifierToIndex('A').should.equal(0);
       sheet.identifierToIndex('a').should.equal(0);
@@ -244,7 +239,7 @@ describe('Sheet', function(){
     it('should emit a commit_cell event', function(){
       clearEvents();
       sheet.commitCell(row_id,col_id);
-      events.length.should.equal(3);
+      events.length.should.equal(4);
       events[0].name.should.equal('commit_cell');
       events[1].name.should.equal('send');
     });
@@ -328,7 +323,7 @@ describe('Sheet', function(){
     });
   });
 
-  describe('detele rows', function(){
+  describe('delete row', function(){
     var row_id, col_id, cell_id;
 
     before(function(){
@@ -354,6 +349,25 @@ describe('Sheet', function(){
       events[0].name.should.equal('delete_row');
       events[0].args[0].row_id.should.equal(row_id);
       events[0].args[0].sheet_id.should.equal(sheet.id);
+    });
+  });
+
+  describe('sort rows', function(){
+    var col_id;
+
+    before(function(){
+      initializeSheet();
+      col_id = sheet.colAt(0);
+      sheet.updateCell(sheet.rowAt(0),col_id,"c");
+      sheet.updateCell(sheet.rowAt(1),col_id,"a");
+      sheet.updateCell(sheet.rowAt(2),col_id,"b");
+      sheet.sortRows(col_id);
+    });
+    
+    it('should put the new row in the correct position', function(){
+      sheet.getCellValue(sheet.rowAt(0),col_id).should.equal("a");
+      sheet.getCellValue(sheet.rowAt(1),col_id).should.equal("b");
+      sheet.getCellValue(sheet.rowAt(2),col_id).should.equal("c");
     });
   });
 
@@ -383,7 +397,7 @@ describe('Sheet', function(){
     });
   });
 
-  describe('detele column', function(){
+  describe('delete column', function(){
     var row_id, col_id, cell_id;
 
     before(function(){

@@ -71,6 +71,7 @@ var Table = module.exports = View.extend({
       'delete_col': 'render',
       'insert_row': 'render',
       'delete_row': 'render',
+      'sort_rows':  'render', 
       'refresh_cells': 'onRefreshCells',
       'add_format_to_cell': 'updateCellClass'
     });
@@ -302,7 +303,7 @@ var Table = module.exports = View.extend({
     return undefined;
 
   },
-  
+
   resizeColHeaders: function(col_id){
     var view = this;
     _.each(this.getSheet().colIds(), function(col_id){
