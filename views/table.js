@@ -82,14 +82,11 @@ var Table = module.exports = View.extend({
     $cell.addClass(cls);
   },
   onRefreshCells: function(){
-    console.log('refreshing!');
     var sheet = this.getSheet();
     $('.es-usd').each(function(idx, el){
       $el = $(el);
       var cell = sheet.getCell($el.data('row_id'), $el.data('col_id'));
-      console.log(cell.type);
       if(cell.type != 'number'){ return; }
-      console.log('its a number');
       var cell_display = sheet.getCellDisplay(cell);
       $el.text('$' + parseFloat(cell_display).toFixed(2));
     });
@@ -517,7 +514,6 @@ var Table = module.exports = View.extend({
     var sel = this.getLocalSelection();
     var sheet = this.getSheet();
     var row_pos = $(e.currentTarget).text();
-    console.log('row_pos', row_pos);
     var row_id = sheet.rowAt(row_pos - 1);
     sel.clear();
     sel.addRow(sheet.id, row_id);

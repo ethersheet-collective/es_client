@@ -106,7 +106,6 @@ var MenuView = module.exports = View.extend({
     $('#es-modal-overlay').show();
     $('.es-format-toggle').click(function(){
       var format_string = $(this)[0].id;
-      console.log('format string', format_string);
       selection.addFormat(format_string);
     });
   },
