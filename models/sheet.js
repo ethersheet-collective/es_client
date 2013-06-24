@@ -272,7 +272,6 @@ var Sheet = module.exports = ESModel.extend({
     this.addCell(row_id, col_id, value, formatting);
 
     cell = this.getCell(row_id,col_id);
-    console.log('updating cell', cell);
     this.trigger('update_cell',{
       id:this.id,
       row_id:row_id,
@@ -488,7 +487,13 @@ var Sheet = module.exports = ESModel.extend({
   },
 
   addFormatToCell: function(row_id,col_id,cls){
-    var cell = this.cells[row_id][col_id];
+    var cell = _.clone(this.getCell(row_id,col_id));
+    if(!cell){
+      cell = {
+        value: '',
+        type: 'new'
+      };
+    };
     cell.formatting = cell.formatting || [];
     cell.formatting.push(cls);
     this.trigger('add_format_to_cell', row_id,col_id, cls); 
