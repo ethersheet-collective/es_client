@@ -82,7 +82,7 @@ var Selection = module.exports = ESModel.extend({
     return this.cells;
   },
 
-  addCell: function(sheet_id,row_id,col_id){
+  addCell: function(sheet_id,row_id,col_id,supress_triggers){
     this.setSheet(sheet_id);
     var sheet = this.collection.getSheet(sheet_id);
     var cell = {
@@ -93,30 +93,48 @@ var Selection = module.exports = ESModel.extend({
     };
     sheet.setColor(row_id, col_id, this.color);
     this.cells.push(cell);
-    this.trigger('add_cell',cell);
-    this.send({
-      id: this.id,
-      type: 'selection',
-      action: 'addCell',
-      params: [sheet_id,row_id,col_id]
-    });
+    if(!supress_triggers){
+      this.trigger('add_cell',cell);
+      this.send({
+        id: this.id,
+        type: 'selection',
+        action: 'addCell',
+        params: [sheet_id,row_id,col_id]
+      });
+    }
   },
   
   addRow: function(sheet_id,row_id){
     var self = this;
     this.setSheet(sheet_id);
     var sheet = this.collection.getSheet(sheet_id);
-    this.disableSend();
     _.each(sheet.cols, function(col_id){
-      self.addCell(sheet_id,row_id,col_id);
+      self.addCell(sheet_id,row_id,col_id,true);
     });
-    this.enableSend();
+    this.trigger('select_row',self.getCells());
     this.send({
       id: this.id,
       type: 'selection',
       action: 'addRow',
       params: [sheet_id,row_id]
     });
+  },
+
+  addColumn: function(sheet_id,col_id){
+    var self = this;
+    self.setSheet(sheet_id);
+    var sheet = this.collection.getSheet(sheet_id);
+    _.each(sheet.rows, function(row_id){
+      self.addCell(sheet_id,row_id,col_id,true);
+    });
+    this.trigger('select_col',self.getCells());
+    this.send({
+      id: this.id,
+      type: 'selection',
+      action: 'addColumn',
+      params: [sheet_id,col_id]
+    });
+    
   },
 
   redraw: function(){

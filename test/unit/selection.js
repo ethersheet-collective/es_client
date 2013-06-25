@@ -112,6 +112,21 @@ describe('Selection', function(){
       events.pop().name.should.equal('send');
     });
   });
+  
+  describe('add column', function(){
+    before(function(){
+      initializeSelection();
+      selection.addColumn(sheet.id,col_id);
+    });
+    it('should increase the size of the selection',function(){
+      console.log('getting col', col_id);
+      selection.getCells().length.should.equal(sheet.rows.length);
+    });
+    it('should emit an add_cell event for each cell in the row', function(){
+      events.length.should.equal(sheet.rows.length + 1);
+      events.pop().name.should.equal('send');
+    });
+  });
 
   describe('add formatting',function(){
     before(function(){

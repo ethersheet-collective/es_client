@@ -34,6 +34,7 @@ var Table = module.exports = View.extend({
     'mouseup .es-table-cell': 'cellMouseUp',
     'click .es-table-cell': 'cellClicked',
     'click .es-row-header': 'selectRow',
+    'click .es-column-header': 'selectCol',
     'change .es-table-cell-input': 'changeCell',
     'keydown': 'inputKeypress'
   },
@@ -94,6 +95,8 @@ var Table = module.exports = View.extend({
   setSelections: function(selections){
     this.models.set('selections',selections,{
       'add_cell': 'onRemoteAddCell',
+      'select_row': 'onRemoteAddCells',
+      'select_col': 'onRemoteAddCells',
       'clear': 'onClear'
     }); 
   },
@@ -101,6 +104,8 @@ var Table = module.exports = View.extend({
   setLocalSelection: function(local_selection){
     this.models.set('local_selection',local_selection,{
       'add_cell': 'onLocalAddCell',
+      'select_row': 'onLocalAddCells',
+      'select_col': 'onLocalAddCells',
       'clear': 'onClear'
     });
   },
@@ -135,16 +140,32 @@ var Table = module.exports = View.extend({
 
 
 // ## SELECTION EVENTS
+  onLocalAddCells: function(cells){
+    var self = this;
+    var first_cell = cells.shift();
+    self.onLocalAddCell(first_cell);
+    _.each(cells, function(cell){
+      self.paintCell(cell);
+    });
+    cells.unshift(first_cell);
+  },
 
   onLocalAddCell: function(cell){
     var $cell = $('#'+cell.row_id+'-'+cell.col_id, this.el);
     var e = {currentTarget: $cell};
-    
+     
     this.paintCell($cell);
     this.removeCellInputs();
     this.createCellInput(e);
   },
-  
+
+  onRemoteAddCells: function(cells){
+    var self = this;
+    _.each(cells, function(cell){
+      self.paintCell(cell);
+    });
+  },
+
   onRemoteAddCell: function(cell){
     this.paintCell(cell);
   },
@@ -517,6 +538,14 @@ var Table = module.exports = View.extend({
     var row_id = sheet.rowAt(row_pos - 1);
     sel.clear();
     sel.addRow(sheet.id, row_id);
+  },
+
+  selectCol: function(e){
+    var sel = this.getLocalSelection();
+    var sheet = this.getSheet();
+    var col_id = $(e.currentTarget).attr('id').replace('es-col-header-','');
+    sel.clear();
+    sel.addColumn(sheet.id, col_id);
   },
 
   moveSelection: function(e, row_offset, col_offset){
