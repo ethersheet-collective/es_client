@@ -107,9 +107,10 @@ describe('Selection', function(){
       console.log('getting row', row_id);
       selection.getCells().length.should.equal(sheet.cols.length);
     });
-    it('should emit an add_cell event for each cell in the row', function(){
-      events.length.should.equal(sheet.cols.length + 1);
+    it('should emit an add_row event and a send event', function(){
+      events.length.should.equal(2);
       events.pop().name.should.equal('send');
+      events.pop().name.should.equal('select_row');
     });
   });
   
@@ -123,8 +124,9 @@ describe('Selection', function(){
       selection.getCells().length.should.equal(sheet.rows.length);
     });
     it('should emit an add_cell event for each cell in the row', function(){
-      events.length.should.equal(sheet.rows.length + 1);
+      events.length.should.equal(2);
       events.pop().name.should.equal('send');
+      events.pop().name.should.equal('select_col');
     });
   });
 
@@ -138,11 +140,11 @@ describe('Selection', function(){
       selection.addFormat('bg-red');
     });
     it('should emit an add_format event', function(){
-      events.length.should.equal(2);
+      events.length.should.equal(3);
       events[0].name.should.equal('add_format');
     });
     it('should emit a send event', function(){
-      events.length.should.equal(2);
+      events.length.should.equal(3);
       events[1].name.should.equal('send');
     });
   }); 
