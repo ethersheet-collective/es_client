@@ -117,9 +117,13 @@ var ExpressionEditor = module.exports = View.extend({
 
   inputOnBlur: function(e){
     this.getSheet().commitCell(this.currentCell.row_id,this.currentCell.col_id);
+    $('.es-expression-editor-input').css('height','30px');
+    $('#es-expression-editor-container').css('height', '100px');
   },
 
   inputOnFocus: function(e){
+    $('.es-expression-editor-input').css('height','400px');
+    $('#es-expression-editor-container').css('height', '500px');
   },
 
   onUpdateCell: function(cell){

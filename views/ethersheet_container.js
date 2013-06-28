@@ -56,7 +56,7 @@ var EthersheetContainer = module.exports = View.extend({
     }else{
       this.$menu.animate({'right':'200px'},speed);
       this.$panel_0.animate({'width':'0'},speed);
-      this.$panel_1.animate({'margin-left':'0'},speed);
+      this.$panel_1.animate({'margin-left':'10px'},speed);
     }
     
   }

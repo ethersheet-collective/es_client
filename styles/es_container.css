@@ -20,14 +20,21 @@ overflow: hidden;
   position: relative;
 }
 #es-panel-0{
-  width: 200px;
+  width: 0;
+  margin-left: 10px;
   float: left;
 }
 #es-panel-1{
-  margin-left: 200px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 #es-expression-editor-container{
-height:280px;
+height:120px;
+width: 100%;
+display: inline;
+float: left;
+margin-top: 10px;
+margin-right: 10px;
 }
 #es-menu-container{
 margin-right: 12px;
@@ -61,4 +68,25 @@ color:#111111;
   cursor: pointer;
   float: right;
   font-size: 12px;
+}
+#es-menu-icon{
+  height: 30px;
+  width: 30px;
+  float: left;
+  display: inline;
+  cursor: pointer;
+}
+#es-logo{
+  display: inline;
+  float: left;
+}
+#es-logo h1{
+  margin: 0;
+  padding: 0 25px ;
+  display: inline;
+}
+#es-header{
+  margin-bottom: 10px;
+  background: black;
+  padding: 5px 10px;
 }
