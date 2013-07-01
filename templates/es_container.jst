@@ -5,11 +5,43 @@
     <div class='clear'></div>
   </div>
   <div id="es-panel-0" class="es-panel">
-    <div id="es-menu-container"></div>
+    <h1 style="margin-top:-6px;">EtherSheet</h1>
+    <fieldset style="margin-top:8px;">
+      <legend>DATA</legend>
+      <ul>
+        <li>Sheet 1</li>
+        <li>Sheet 2</li>
+        <li>Sheet 3</li>
+      </ul>
+    </fieldset>
+    <h3 style="margin-top:8px;">History</h3>
+    <div id="es-history-container"></div>
+  </div>
+  <div id="es-panel-2" class="es-panel">
+    <h3 style="margin:-6px 0 4px 0;">&#402;(x)</h3>
+    <div id="es-expression-editor-container"></div>
+    <fieldset style="margin-top:8px;">
+      <legend>TOOLKITS</legend>
+      <select id="es-toolkit-picker" 
+        style= "width: 100%;
+                background-color: #ffffff;
+                border: 1px solid #333;
+                height: 28px;
+                display: block;"
+      >
+        <option value="edit_sheet">
+            Edit Sheet
+        </option>
+        <option value="import_export">
+            Import/Export
+        </option>
+      </select>
+      <hr/>
+      <div id="es-menu-container"></div>
+    </fieldset>
   </div>
   <div id="es-panel-1" class="es-panel">
     <div id="es-table-container"></div>
-    <div id="es-expression-editor-container"></div>    
   </div>
   <div id="es-modal-overlay"><div id="es-modal-box"></div></div>
 </div>

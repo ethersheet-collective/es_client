@@ -39,7 +39,7 @@ var EthersheetContainer = module.exports = View.extend({
 
   resize: function(){
     if(!this.is_rendered) return;
-    var table_height = this.$el.innerHeight() - this.$expression.outerHeight(true);
+    var table_height = this.$el.innerHeight();
     this.$table.height(table_height);
   },
 

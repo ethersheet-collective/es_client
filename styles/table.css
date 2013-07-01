@@ -105,16 +105,15 @@ font-style: italic;
 font-weight: bold;
 font-family: ariel;
 cursor: pointer;
-margin-right: 10px;
-font-size: 24px;
-float: left;
 }
 .es-expression-editor-input{
-font-size: 22px;
+font-size: 14px;
 font-family: 'Source Code Pro', Ariel, Sans-Serif;
-width:70%;
-height: 30px;
-display: inline;
+display: block;
+margin: 0;
+padding: 0;
+width: 100%;
+resize:vertical;
 }
 #es-func-list{
 height:350px;
