@@ -18,6 +18,7 @@ var TableView = require('./views/table');
 var ExpressionEditorView = require('./views/expression_editor');
 var EthersheetContainerView = require('./views/ethersheet_container');
 var MenuView = require('./views/menu');
+var HistoryView = require('./views/history');
 
 // inputs
 var keyboardEvents = require('./lib/keyboard');
@@ -93,7 +94,18 @@ Ethersheet.prototype.initializeDisplay = function(o){
       sheet: es.data.sheet.first(),
       selections: es.data.selection
     }).render();
+    es.history = new HistoryView({
+      el: $('#es-history-container', es.$el),
+      undo_stack: es.undoQ
+    }).render();
   });
+};
+
+Ethersheet.prototype.initializeCommands = function(o){
+  var es = this;
+  this.keyboard.on('meta_90',this.undoCommand.bind(this));
+  this.keyboard.on('shift_meta_90',this.redoCommand.bind(this));
+
 };
 
 Ethersheet.prototype.onConnect = function(handler){
@@ -102,13 +114,6 @@ Ethersheet.prototype.onConnect = function(handler){
 
 Ethersheet.prototype.connect = function(){
   this.connection_handler();
-};
-
-Ethersheet.prototype.initializeCommands = function(o){
-  var es = this;
-  this.keyboard.on('meta_90',this.undoCommand.bind(this));
-  this.keyboard.on('shift_meta_90',this.redoCommand.bind(this));
-
 };
 
 Ethersheet.prototype.executeCommand = function(c){
