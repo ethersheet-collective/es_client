@@ -23,8 +23,7 @@ margin:0;
   position: relative;
 }
 #es-panel-0{
-  width: 0;
-  margin-left: 10px;
+  width: 200px;
   float: left;
   margin-right: 2%;
   height: 100%;
