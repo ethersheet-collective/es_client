@@ -47,9 +47,13 @@ var Table = module.exports = View.extend({
     this.draggedCell = null;
     this.draggingRow = false;
     this.draggingCol = false;
-    this.setSheet(o.sheet || null);
-    this.setSelections(o.selections || null);
-    this.setLocalSelection(o.local_selection || null);
+    console.log('args',arguments);
+    this.data = o.data;
+    this.setCurrentUser(o.data.user.getCurrentUser() || null);
+    var current_sheet_id = this.getCurrentUser().getCurrentSheetId();
+    this.setSheet(o.data.sheet.get(current_sheet_id) || null);
+    this.setSelections(o.data.selection || null);
+    this.setLocalSelection(o.data.selection.getLocal() || null);
     _.defer(function(caller){
       caller.onRefreshCells(); 
     }, this);
@@ -101,6 +105,10 @@ var Table = module.exports = View.extend({
     }); 
   },
 
+  setCurrentUser: function(current_user){
+    this.models.set('current_user', current_user, {});  
+  },
+
   setLocalSelection: function(local_selection){
     this.models.set('local_selection',local_selection,{
       'add_cell': 'onLocalAddCell',
@@ -115,6 +123,10 @@ var Table = module.exports = View.extend({
 
   getSheet: function(){
     return this.models.get('sheet');
+  },
+  
+  getCurrentUser: function(){
+    return this.models.get('current_user');
   },
   
   unpaintCell: function(cell){

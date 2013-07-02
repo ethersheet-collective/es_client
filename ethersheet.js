@@ -43,6 +43,9 @@ Ethersheet.prototype.initializeData = function(o){
   this.data.selection = new SelectionCollection([],{sheet_collection: this.data.sheet});
   this.data.user = new UserCollection([],{selection_collection:this.data.selection});
   this.data.user.createCurrentUser(o.user);
+  this.data.user
+    .getCurrentUser()
+    .setCurrentSheetId(this.data.sheet.first().id);
   this.data.selection.createLocal({
     user_id:this.data.user.getCurrentUser().id,
     color:config.DEFAULT_LOCAL_SELECTION_COLOR
@@ -85,9 +88,7 @@ Ethersheet.prototype.initializeDisplay = function(o){
     }).render();
     es.table = new TableView({
       el: $('#es-table-container', es.$el),
-      sheet: es.data.sheet.first(),
-      selections: es.data.selection,
-      local_selection: es.data.selection.getLocal()
+      es_data: es.data
     }).render();
     es.menu = new MenuView({
       el: $('#es-menu-container', es.$el),

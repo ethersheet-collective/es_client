@@ -163,6 +163,18 @@ describe('User', function(){
   });
 
 
+  describe('User#getCurrentSheetId',function(){
+    
+    beforeEach(function(){
+      users.createCurrentUser({id:'test_user'});
+      users.getCurrentUser().setCurrentSheetId('test_sheet');
+    });
+
+    it('returns the correct key',function(){
+      assert.equal(users.getCurrentUser().getCurrentSheetId(),'test_sheet');
+    });
+
+  });
 });
 
 });

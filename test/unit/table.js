@@ -10,7 +10,8 @@ var SheetCollection = require('es_client/models/sheet_collection');
 var SelectionCollection = require('es_client/models/selection_collection');
 var TableView = require('es_client/views/table');
 var ES = require('es_client/config');
-
+var data = require('es_client/test/fixtures');
+console.log('data', data);
 // setup dom attachment point
 var $container = $('<div id="ethersheet-container" style="display:none;"></div').appendTo('body');
 
@@ -22,19 +23,9 @@ describe('TableView', function(){
     $container.empty()
     $el = $('<div id="ethersheet"></div>').appendTo($container);
 
-    sheets = new SheetCollection();
-    sheet = new Sheet();
-    sheets.add(sheet);
-    selections = new SelectionCollection([],{sheet_collection:sheets});
-    selections.createLocal();
-    selection = selections.getLocal();
-    selections.add(selection);
-
     table = new TableView({
       el: $el,
-      sheet: sheet,
-      selections: selections,
-      local_selection: selection
+      data: data
     });
     table.render();
   }

@@ -14,12 +14,21 @@ var User = module.exports = ESModel.extend({
   initialize: function(o){
     o = o || {};
     this.id = o.id||uid();
+    this.current_sheet_id = null;
   },
 
   getData:function(){
     return {
       id: this.id
     }
+  },
+
+  getCurrentSheetId:function(){
+    return this.current_sheet_id;
+  },
+
+  setCurrentSheetId:function(sheet_id){
+    this.current_sheet_id = sheet_id;
   },
 
   onDestroy:function(){

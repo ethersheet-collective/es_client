@@ -125,6 +125,7 @@ describe('Sheet', function(){
       sheet.getCells().should.equal(data.cells);
     });
   });
+
   describe('sheet#updateCell', function(){
     var new_value,row_id, col_id, success;
 
