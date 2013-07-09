@@ -88,7 +88,7 @@ Ethersheet.prototype.initializeDisplay = function(o){
     }).render();
     es.table = new TableView({
       el: $('#es-table-container', es.$el),
-      es_data: es.data
+      data: es.data
     }).render();
     es.menu = new MenuView({
       el: $('#es-menu-container', es.$el),

@@ -294,13 +294,16 @@ var Sheet = module.exports = ESModel.extend({
   },
 
   commitCell: function(row_id,col_id){
+    console.log('committing cell');
     var cell = this.getCell(row_id,col_id);
     if(!cell) return false;
+    console.log('committing cell2', cell);
     cell.type = this.getCellType(cell.value); 
+    console.log('cell', cell);
     if(cell.type == 'formula'){
-      cell.value = this.collection.expressionHelpers.preprocessFormula(cell.value, this.collection, this.cid);
+      cell.value = this.collection.expressionHelpers.preprocessFormula(cell.value, this.collection, this.id);
     }
-    cell_display = this.getCellDisplay(cell);
+    var cell_display = this.getCellDisplay(cell);
     this.trigger('commit_cell', _.extend(_.clone(cell),{
       id:this.id,
       row_id:row_id,
@@ -310,8 +313,8 @@ var Sheet = module.exports = ESModel.extend({
     this.send({
       id: this.id,
       type: 'sheet',
-      action: 'commitCell',
-      params:[row_id,col_id]
+      action: 'updateCell',
+      params:[row_id,col_id,cell]
     });
     this.refreshCells();
     return true;
@@ -350,12 +353,18 @@ var Sheet = module.exports = ESModel.extend({
     return true;
   },
 
-  refreshCells: function(){
+  refreshCells: function(cb){
     var self = this;
     this.trigger('refresh_cells', this.id);
     _.each(self.getFormulaCells(), function(cell_id){
       self.refreshCell(cell_id[CELL_ROW_ID],cell_id[CELL_COL_ID]);
     });
+    if (typeof cb !== "function") {
+      cb = false;
+    }
+    if(cb){
+      cb();
+    }
   },
   getFormulaCells: function(){
     var formula_cells = [];

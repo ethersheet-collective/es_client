@@ -47,7 +47,6 @@ var Table = module.exports = View.extend({
     this.draggedCell = null;
     this.draggingRow = false;
     this.draggingCol = false;
-    console.log('args',arguments);
     this.data = o.data;
     this.setCurrentUser(o.data.user.getCurrentUser() || null);
     var current_sheet_id = this.getCurrentUser().getCurrentSheetId();
@@ -516,8 +515,13 @@ var Table = module.exports = View.extend({
     var RIGHT = 1;
     var NONE  = 0;
 
-    var cell = this.getLocalSelection().getCells()[0];
-    this.getSheet().commitCell(cell.row_id.toString(), cell.col_id.toString());
+    var cells = this.getLocalSelection().getCells();
+    console.log('keypress', cells);
+    _.each(cells, function(cell){
+      console.log('commit', this.getSheet(), cell.row_id.toString(), cell.col_id.toString());
+      this.getSheet().commitCell(cell.row_id.toString(), cell.col_id.toString());
+      console.log('commited');
+    }, this);
     if(code == 13){
       this.moveSelection(e,1,0);
     }
