@@ -20,9 +20,6 @@ var _ = require('underscore');
 var ESModel = require('./es_model');
 var config = require('../config');
 var uid = require('../helpers/uid');
-var ex = require('../vendor/es_expression'); //sets a global variable called expression
-var parser = ex || es_expression; //setting things up incase we are running in node mode
-var expressionHelpers = require('../lib/expression_helpers');
 
 var CELL_ROW_ID = 0;
 var CELL_COL_ID = 1;
@@ -43,10 +40,6 @@ var Sheet = module.exports = ESModel.extend({
     this.initializeRows(o.rows);
     this.initializeCols(o.cols);
     this.initializeCells(o.cells);
-
-    this.expressionHelpers = expressionHelpers;
-    this.parser = parser;
-    this.parser.yy = this.expressionHelpers;
   },
   initializeRows: function(rows){
     

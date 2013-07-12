@@ -21,7 +21,8 @@ var _ = require('underscore');
 var HistoryView = module.exports = View.extend({
 
   initialize: function(o){
-    this.undo_stack = o.undo_stack;
+    this.data = o.data
+    this.undo_stack = o.data.undo_stack;
     this.undo_stack.on('change',this.render.bind(this));
   },
 

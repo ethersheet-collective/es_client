@@ -43,7 +43,7 @@ Ethersheet.prototype.initializeData = function(o){
   this.data.selections = new SelectionCollection([],{sheet_collection: this.data.sheets});
   this.data.users = new UserCollection([],{selection_collection:this.data.selections});
   this.data.users.createCurrentUser(o.user);
-  this.data.undoStack = this.undoQ;
+  this.data.undo_stack = this.undoQ;
   this.data.current_user_id = this.data.users.getCurrentUser().id;
 
   this.data.users
@@ -86,8 +86,7 @@ Ethersheet.prototype.initializeDisplay = function(o){
     }).render();
     es.expression_editor = new ExpressionEditorView({
       el: $('#es-expression-editor-container', es.$el),
-      sheet: es.data.sheets.first(),
-      selections: es.data.selections.getLocal(),
+      data: es.data,
     }).render();
     es.table = new TableView({
       el: $('#es-table-container', es.$el),
@@ -95,12 +94,11 @@ Ethersheet.prototype.initializeDisplay = function(o){
     }).render();
     es.menu = new MenuView({
       el: $('#es-menu-container', es.$el),
-      sheet: es.data.sheets.first(),
-      selections: es.data.selections
+      data: es.data,
     }).render();
     es.history = new HistoryView({
       el: $('#es-history-container', es.$el),
-      undo_stack: es.undoQ
+      data: es.data
     }).render();
   });
 };

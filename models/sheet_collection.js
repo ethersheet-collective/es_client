@@ -7,6 +7,9 @@ define(function (require,exports,module) {
 
 var Backbone = require('backbone');
 var Sheet= require('./sheet');
+var ex = require('../vendor/es_expression'); //sets a global variable called expression
+var parser = ex || es_expression; //setting things up incase we are running in node mode
+var ExpressionHelpers = require('../lib/expression_helpers');
 
 var SheetCollection = module.exports = Backbone.Collection.extend({
 
@@ -14,7 +17,13 @@ var SheetCollection = module.exports = Backbone.Collection.extend({
 
   initialize: function(o){
     o = o || {};
+    this.expressionHelpers = new ExpressionHelpers(this);
+    this.parser = parser;
+    this.parser.yy = this.expressionHelpers;
   },
+  setParserSheet: function(sheet){
+    this.expressionHelpers.setSheet(sheet);
+  }
 });
 
 });

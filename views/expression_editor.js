@@ -30,8 +30,9 @@ var ExpressionEditor = module.exports = View.extend({
 
   initialize: function(o){
     this.models = new RefBinder(this);
-    this.setSheet(o.sheet || null);
-    this.setSelections(o.selections || null);
+    this.data = o.data
+    this.setSheet(o.data.sheets.first() || null);
+    this.setSelections(o.data.selections.getLocal() || null);
   },
 
   render: function(){

@@ -27,8 +27,9 @@ var MenuView = module.exports = View.extend({
 
   initialize: function(o){
     this.models = new RefBinder(this);
-    this.setSheet(o.sheet || null);
-    this.setSelection(o.selections.getLocal() || null);
+    this.data = o.data;
+    this.setSheet(o.data.sheets.first() || null);
+    this.setSelection(o.data.selections.getLocal() || null);
   },
 
   getSheet: function(){
