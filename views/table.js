@@ -48,11 +48,11 @@ var Table = module.exports = View.extend({
     this.draggingRow = false;
     this.draggingCol = false;
     this.data = o.data;
-    this.setCurrentUser(o.data.user.getCurrentUser() || null);
+    this.setCurrentUser(o.data.users.getCurrentUser() || null);
     var current_sheet_id = this.getCurrentUser().getCurrentSheetId();
-    this.setSheet(o.data.sheet.get(current_sheet_id) || null);
-    this.setSelections(o.data.selection || null);
-    this.setLocalSelection(o.data.selection.getLocal() || null);
+    this.setSheet(o.data.sheets.get(current_sheet_id) || null);
+    this.setSelections(o.data.selections || null);
+    this.setLocalSelection(o.data.selections.getLocal() || null);
     _.defer(function(caller){
       caller.onRefreshCells(); 
     }, this);
@@ -516,11 +516,8 @@ var Table = module.exports = View.extend({
     var NONE  = 0;
 
     var cells = this.getLocalSelection().getCells();
-    console.log('keypress', cells);
     _.each(cells, function(cell){
-      console.log('commit', this.getSheet(), cell.row_id.toString(), cell.col_id.toString());
       this.getSheet().commitCell(cell.row_id.toString(), cell.col_id.toString());
-      console.log('commited');
     }, this);
     if(code == 13){
       this.moveSelection(e,1,0);

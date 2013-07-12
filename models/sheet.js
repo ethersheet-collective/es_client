@@ -20,6 +20,9 @@ var _ = require('underscore');
 var ESModel = require('./es_model');
 var config = require('../config');
 var uid = require('../helpers/uid');
+var ex = require('../vendor/es_expression'); //sets a global variable called expression
+var parser = ex || es_expression; //setting things up incase we are running in node mode
+var expressionHelpers = require('../lib/expression_helpers');
 
 var CELL_ROW_ID = 0;
 var CELL_COL_ID = 1;
@@ -40,6 +43,10 @@ var Sheet = module.exports = ESModel.extend({
     this.initializeRows(o.rows);
     this.initializeCols(o.cols);
     this.initializeCells(o.cells);
+
+    this.expressionHelpers = expressionHelpers;
+    this.parser = parser;
+    this.parser.yy = this.expressionHelpers;
   },
   initializeRows: function(rows){
     
@@ -294,12 +301,9 @@ var Sheet = module.exports = ESModel.extend({
   },
 
   commitCell: function(row_id,col_id){
-    console.log('committing cell');
     var cell = this.getCell(row_id,col_id);
     if(!cell) return false;
-    console.log('committing cell2', cell);
     cell.type = this.getCellType(cell.value); 
-    console.log('cell', cell);
     if(cell.type == 'formula'){
       cell.value = this.collection.expressionHelpers.preprocessFormula(cell.value, this.collection, this.id);
     }
@@ -408,7 +412,6 @@ var Sheet = module.exports = ESModel.extend({
   },
   parseValue: function(value){
     if(value.charAt(0) != '=') return value;
-    this.collection.setParserSheet(this);
     try{
       var parsed = this.collection.parser.parse(value.slice(1));
     } catch (e) {

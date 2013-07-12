@@ -28,10 +28,10 @@ describe('Socket', function(){
         id: 'test_user'
       }
     });
-    sheets = es.data.sheet; 
+    sheets = es.data.sheets; 
     sheets.add({});
     sheet = sheets.first();
-    selections = es.data.selection; 
+    selections = es.data.selections; 
     socket = es.socket; 
     cell = {value:1,type:"number"};
   });

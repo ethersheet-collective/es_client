@@ -39,15 +39,18 @@ var Ethersheet = module.exports = function(o) {
 };
 
 Ethersheet.prototype.initializeData = function(o){
-  this.data.sheet = new SheetCollection([o.sheet]);
-  this.data.selection = new SelectionCollection([],{sheet_collection: this.data.sheet});
-  this.data.user = new UserCollection([],{selection_collection:this.data.selection});
-  this.data.user.createCurrentUser(o.user);
-  this.data.user
+  this.data.sheets = new SheetCollection([o.sheet]);
+  this.data.selections = new SelectionCollection([],{sheet_collection: this.data.sheets});
+  this.data.users = new UserCollection([],{selection_collection:this.data.selections});
+  this.data.users.createCurrentUser(o.user);
+  this.data.undoStack = this.undoQ;
+  this.data.current_user_id = this.data.users.getCurrentUser().id;
+
+  this.data.users
     .getCurrentUser()
-    .setCurrentSheetId(this.data.sheet.first().id);
-  this.data.selection.createLocal({
-    user_id:this.data.user.getCurrentUser().id,
+    .setCurrentSheetId(this.data.sheets.first().id);
+  this.data.selections.createLocal({
+    user_id:this.data.users.getCurrentUser().id,
     color:config.DEFAULT_LOCAL_SELECTION_COLOR
   });
 };
@@ -55,13 +58,13 @@ Ethersheet.prototype.initializeData = function(o){
 Ethersheet.prototype.initializeSocket = function(o){
   var es = this;
   
-  this.socket = new Socket(o.channel,this.data.user.getCurrentUser().id,o.socket);
+  this.socket = new Socket(o.channel,this.data.users.getCurrentUser().id,o.socket);
 
   this.socket.onOpen(function(e){
-    es.data.user.replicateCurrentUser();
-    es.data.user.requestReplicateCurrentUser();
-    es.data.selection.replicateLocalSelection();
-    es.data.selection.requestReplicateLocalSelection();
+    es.data.users.replicateCurrentUser();
+    es.data.users.requestReplicateCurrentUser();
+    es.data.selections.replicateLocalSelection();
+    es.data.selections.requestReplicateLocalSelection();
     es.connect();
   });
 
@@ -83,8 +86,8 @@ Ethersheet.prototype.initializeDisplay = function(o){
     }).render();
     es.expression_editor = new ExpressionEditorView({
       el: $('#es-expression-editor-container', es.$el),
-      sheet: es.data.sheet.first(),
-      selections: es.data.selection.getLocal(),
+      sheet: es.data.sheets.first(),
+      selections: es.data.selections.getLocal(),
     }).render();
     es.table = new TableView({
       el: $('#es-table-container', es.$el),
@@ -92,8 +95,8 @@ Ethersheet.prototype.initializeDisplay = function(o){
     }).render();
     es.menu = new MenuView({
       el: $('#es-menu-container', es.$el),
-      sheet: es.data.sheet.first(),
-      selections: es.data.selection
+      sheet: es.data.sheets.first(),
+      selections: es.data.selections
     }).render();
     es.history = new HistoryView({
       el: $('#es-history-container', es.$el),
@@ -149,15 +152,25 @@ Ethersheet.prototype.redoCommand = function(){
 };
 
 Ethersheet.prototype.getModel = function(type,id){
-  var collection = this.data[type];
+  var collection = this.data[this.pluralizeType(type)];
   if(!collection) return false;
   if(!id) return collection;
   return collection.get(id);
 };
 
+Ethersheet.prototype.pluralizeType = function(type){
+  if (type == 'user')       return 'users';
+  if (type == 'selection')  return 'selections';
+  if (type == 'sheet')      return 'sheets';
+  return type;
+};
+
 Ethersheet.prototype.bindDataToSocket = function(){
   var es = this;
   for(var type in this.data){
+    if(!(_.isFunction(this.data[type].on))){
+      continue;
+    }
     this.data[type].on('send',function(do_cmd,undo_cmd){
       es.sendCommand(do_cmd);
 

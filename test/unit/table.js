@@ -11,7 +11,6 @@ var SelectionCollection = require('es_client/models/selection_collection');
 var TableView = require('es_client/views/table');
 var ES = require('es_client/config');
 var data = require('es_client/test/fixtures');
-console.log('data', data);
 // setup dom attachment point
 var $container = $('<div id="ethersheet-container" style="display:none;"></div').appendTo('body');
 
@@ -28,7 +27,7 @@ describe('TableView', function(){
       data: data
     });
     sheet =  data.local_sheet;
-    selections = data.selection;
+    selections = data.selections;
     selection = data.local_selection;
     table.render();
   }
@@ -318,15 +317,21 @@ describe('TableView', function(){
       });
 
       it("should move selection down a cell when enter is pressed", function(done){
+        var $the_cell = $('.es-table-cell').first()
+        var $newCell = $('td#1-0');
+        $the_cell.click();
+
+        var $the_input = $('#'+$the_cell.attr('id')+'-input');
+        $the_input.length.should.equal(1);
+
         var e = $.Event("keydown");
         e.which = 13; 
         e.keyCode = 13;
-        $('#'+$clicked_cell.attr('id')+'-input').length.should.equal(1);
-        $input.trigger(e);
-        $('#'+$clicked_cell.attr('id')+'-input').length.should.equal(0);
-        var $newCell = $('td#1-0');
-        $input_new = $('#'+$newCell.attr('id')+'-input');
-        $input_new.length.should.equal(1);
+        $the_input.trigger(e);
+
+        $('#'+$the_cell.attr('id')+'-input').length.should.equal(0);
+        $('#'+$newCell.attr('id')+'-input').length.should.equal(1);
+
         done();
       });
 
@@ -352,7 +357,6 @@ describe('TableView', function(){
         $newCell.click();
         var $input_new = $('#'+$newCell.attr('id')+'-input');
         $input_new.val('=1+3');
-        console.log('this is the keydown');
         var e = $.Event("keydown");
         e.which = 13; 
         e.keyCode = 13;
@@ -365,7 +369,6 @@ describe('TableView', function(){
       });
 
       it("should display cell reference as integer if there is a cell reference", function(done){
-        console.log('in the test');
         sheet.updateCell('0','0','2');
         sheet.commitCell('0','0');
         sheet.updateCell('2','0', '=A1');
