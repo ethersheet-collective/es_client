@@ -20,6 +20,8 @@ var _ = require('underscore');
 var ESModel = require('./es_model');
 var config = require('../config');
 var uid = require('../helpers/uid');
+var ex = require('../vendor/es_expression'); //sets a global variable called expression
+var parser = ex || es_expression; //setting things up incase we are running in node mode
 
 var CELL_ROW_ID = 0;
 var CELL_COL_ID = 1;
@@ -40,6 +42,17 @@ var Sheet = module.exports = ESModel.extend({
     this.initializeRows(o.rows);
     this.initializeCols(o.cols);
     this.initializeCells(o.cells);
+    if(_.isObject(o.expressionHelpers)){
+      console.log('calling set', o.expressionHelpers);
+      this.setExpressionHelper(o.expressionHelpers);
+    }
+  },
+  setExpressionHelper: function(expressionHelper){
+    console.log('helper', expressionHelper);
+    this.expressionHelpers = expressionHelper;
+    console.log('helpers', this.expressionHelpers);
+    this.parser = parser;
+    this.parser.yy = this.expressionHelpers;
   },
   initializeRows: function(rows){
     
@@ -298,7 +311,7 @@ var Sheet = module.exports = ESModel.extend({
     if(!cell) return false;
     cell.type = this.getCellType(cell.value); 
     if(cell.type == 'formula'){
-      cell.value = this.collection.expressionHelpers.preprocessFormula(cell.value, this.collection, this.id);
+      cell.value = this.expressionHelpers.preprocessFormula(cell.value,this.id);
     }
     var cell_display = this.getCellDisplay(cell);
     this.trigger('commit_cell', _.extend(_.clone(cell),{
@@ -406,9 +419,9 @@ var Sheet = module.exports = ESModel.extend({
   parseValue: function(value){
     if(value.charAt(0) != '=') return value;
     try{
-      var parsed = this.collection.parser.parse(value.slice(1));
+      var parsed = this.parser.parse(value.slice(1));
     } catch (e) {
-      return this.collection.expressionHelpers.handleError(e);
+      return this.expressionHelpers.handleError(e);
     }
     return parsed;
   },
@@ -467,7 +480,7 @@ var Sheet = module.exports = ESModel.extend({
     var cell = this.getCell(row_id,col_id);
     if(!cell){return ''};
     var display_formula = cell.value;
-    display_formula = this.collection.expressionHelpers.xlRefToEsRef(display_formula);
+    display_formula = this.expressionHelpers.xlRefToEsRef(display_formula);
     return display_formula;
   },
   //just get the value without the formatting

@@ -19,6 +19,7 @@ var ExpressionEditorView = require('./views/expression_editor');
 var EthersheetContainerView = require('./views/ethersheet_container');
 var MenuView = require('./views/menu');
 var HistoryView = require('./views/history');
+var initializeExpressionHelpers = require('./lib/expression_helpers');
 
 // inputs
 var keyboardEvents = require('./lib/keyboard');
@@ -31,15 +32,22 @@ var Ethersheet = module.exports = function(o) {
   this.socket = null;
   this.undoQ = new UndoQ();
   this.keyboard = keyboardEvents();
-
+  this.expressionHelpers = initializeExpressionHelpers(this.data);
+console.log('exphelp', this.expressionHelpers);
   this.initializeData(o);
   this.initializeSocket(o);
   this.initializeDisplay(o);
   this.initializeCommands(o);
+
 };
 
 Ethersheet.prototype.initializeData = function(o){
   this.data.sheets = new SheetCollection([o.sheet]);
+
+  this.data.sheets.each(function(sheet){
+    sheet.setExpressionHelper(this.expressionHelpers);
+  }, this);
+
   this.data.selections = new SelectionCollection([],{sheet_collection: this.data.sheets});
   this.data.users = new UserCollection([],{selection_collection:this.data.selections});
   this.data.users.createCurrentUser(o.user);
