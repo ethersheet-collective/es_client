@@ -10,7 +10,7 @@ var SheetCollection = require('es_client/models/sheet_collection');
 var SelectionCollection = require('es_client/models/selection_collection');
 var TableView = require('es_client/views/table');
 var ES = require('es_client/config');
-var data = require('es_client/test/fixtures');
+var getData = require('es_client/test/fixtures');
 // setup dom attachment point
 var $container = $('<div id="ethersheet-container" style="display:none;"></div').appendTo('body');
 
@@ -19,6 +19,7 @@ describe('TableView', function(){
   var table, $el, sheet, selections;
 
   var initializeTable = function(){
+    var data = getData({});
     $container.empty()
     $el = $('<div id="ethersheet"></div>').appendTo($container);
 

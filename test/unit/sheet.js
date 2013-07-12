@@ -7,15 +7,17 @@ var config = require('es_client/config');
 var expect = require('chai').expect;
 var should = require('chai').should();
 var sinon = require('sinon');
+var getData = require('es_client/test/fixtures');
 
 describe('Sheet', function(){
   var sheet, events;
 
   var initializeSheet = function(o){
+    var o = o || {};
+    var data = getData(o);
     events = [];
-    sheet_collection = new SheetCollection(o);
-    sheet = new Sheet(o);
-    sheet_collection.add(sheet);
+    sheet_collection = data.sheets
+    sheet = data.local_sheet;
     sheet.on('all',function(){
       events.push({
         name: arguments[0],
@@ -90,7 +92,7 @@ describe('Sheet', function(){
           '4':{'a':default_cell('a4'),'b':default_cell('b4'),'c':default_cell('c4')}
         }
       };
-      initializeSheet(data);
+      initializeSheet({sheet_options:data});
     });
 
     it('rowCount should get row count', function(){
