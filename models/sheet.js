@@ -80,6 +80,16 @@ var Sheet = module.exports = ESModel.extend({
   initializeCells: function(cells){
     this.cells = cells || {};
   },
+  getData: function(){
+    return {
+      id: this.id,
+      rows: this.rows,
+      cols: this.cols,
+      cells: this.cells,
+      row_heights: this.row_heights,
+      col_widths: this.col_widths
+    }
+  },
 
 // # Rows
   
