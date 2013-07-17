@@ -42,7 +42,7 @@ console.log('exphelp', this.expressionHelpers);
 };
 
 Ethersheet.prototype.initializeData = function(o){
-  this.data.sheets = new SheetCollection([o.sheet]);
+  this.data.sheets = new SheetCollection(o.sheets);
 
   this.data.sheets.each(function(sheet){
     sheet.setExpressionHelper(this.expressionHelpers);
