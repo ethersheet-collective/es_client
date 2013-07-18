@@ -19,6 +19,7 @@ var ExpressionEditorView = require('./views/expression_editor');
 var EthersheetContainerView = require('./views/ethersheet_container');
 var MenuView = require('./views/menu');
 var HistoryView = require('./views/history');
+var SheetListView = require('./views/sheet_list');
 var initializeExpressionHelpers = require('./lib/expression_helpers');
 
 // inputs
@@ -105,6 +106,10 @@ Ethersheet.prototype.initializeDisplay = function(o){
     }).render();
     es.history = new HistoryView({
       el: $('#es-history-container', es.$el),
+      data: es.data
+    }).render();
+    es.sheet_list = new SheetListView({
+      el: $('#es-sheet-list-container', es.$el),
       data: es.data
     }).render();
   });
