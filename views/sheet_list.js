@@ -9,6 +9,10 @@ var _ = require('underscore');
 
 var SheetListView = module.exports = View.extend({
 
+  events: {
+    'click #es-add-sheet-button': 'onAddSheetClick'
+  },
+
   initialize: function(o){
     this.models = new RefBinder(this);
     this.data = o.data;
@@ -29,7 +33,11 @@ var SheetListView = module.exports = View.extend({
   render: function(){
     this.$el.empty();
     this.$el.html(t.sheet_list({sheets:this.getSheets()}));
-  }
+  },
+
+  onAddSheetClick: function(){
+    this.getSheets().addSheet();
+  },
 });
 
 });
