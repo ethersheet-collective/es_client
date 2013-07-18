@@ -33,7 +33,6 @@ var Ethersheet = module.exports = function(o) {
   this.undoQ = new UndoQ();
   this.keyboard = keyboardEvents();
   this.expressionHelpers = initializeExpressionHelpers(this.data);
-console.log('exphelp', this.expressionHelpers);
   this.initializeData(o);
   this.initializeSocket(o);
   this.initializeDisplay(o);
@@ -42,7 +41,7 @@ console.log('exphelp', this.expressionHelpers);
 };
 
 Ethersheet.prototype.initializeData = function(o){
-  this.data.sheets = new SheetCollection(o.sheets);
+  this.data.sheets = new SheetCollection(o.sheets, o);
 
   this.data.sheets.each(function(sheet){
     sheet.setExpressionHelper(this.expressionHelpers);
@@ -158,7 +157,12 @@ Ethersheet.prototype.redoCommand = function(){
 };
 
 Ethersheet.prototype.getModel = function(type,id){
-  var collection = this.data[this.pluralizeType(type)];
+  var collection = this.data[type];
+  if(collection){
+    return collection;
+  } else {
+    collection = this.data[this.pluralizeType(type)];
+  }
   if(!collection) return false;
   if(!id) return collection;
   return collection.get(id);

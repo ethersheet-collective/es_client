@@ -13,22 +13,24 @@ var SheetCollection = module.exports = ESCollection.extend({
 
   model: Sheet,
 
-  initialize: function(o){
+  initialize: function(models,o){
     o = o || {};
+    this.id = o.channel;
     this.send_enabled = true;
   },
+
   
   addSheet: function(o){
-    console.log('adding sheet', o);
     var sheet = new Sheet(o);
     this.add(sheet);
-    console.log('thissheet', sheet);
     this.send({
-      type: 'sheet',
+      id: this.id,
+      type: 'sheets',
       action: 'addSheet',
       params:[sheet.getData()]
     },{
-      type: 'sheet',
+      id: this.id,
+      type: 'sheets',
       action: 'deleteSheet',
       params:[sheet.id]
     });
