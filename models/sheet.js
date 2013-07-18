@@ -34,6 +34,7 @@ var Sheet = module.exports = ESModel.extend({
   initialize: function(o){
     o = o||{};
     this.id = o.id||uid();
+    this.meta = this.initializeMeta(o);
     this.send_enabled = true;
     
     this.row_heights = o.row_heights || {};
@@ -48,9 +49,7 @@ var Sheet = module.exports = ESModel.extend({
     }
   },
   setExpressionHelper: function(expressionHelper){
-    console.log('helper', expressionHelper);
     this.expressionHelpers = expressionHelper;
-    console.log('helpers', this.expressionHelpers);
     this.parser = parser;
     this.parser.yy = this.expressionHelpers;
   },
@@ -80,6 +79,15 @@ var Sheet = module.exports = ESModel.extend({
   initializeCells: function(cells){
     this.cells = cells || {};
   },
+
+  initializeMeta: function(o){
+    var meta = o.meta || {};
+    meta.title = meta.title || this.initializeTitle();
+    return meta;
+  },
+  initializeTitle: function(){
+    return "Sheet" + 1;
+  },
   getData: function(){
     return {
       id: this.id,
@@ -87,7 +95,8 @@ var Sheet = module.exports = ESModel.extend({
       cols: this.cols,
       cells: this.cells,
       row_heights: this.row_heights,
-      col_widths: this.col_widths
+      col_widths: this.col_widths,
+      meta: this.meta
     }
   },
 
