@@ -29,6 +29,7 @@ var User = module.exports = ESModel.extend({
 
   setCurrentSheetId:function(sheet_id){
     this.current_sheet_id = sheet_id;
+    this.trigger('change_current_sheet_id');
   },
 
   onDestroy:function(){

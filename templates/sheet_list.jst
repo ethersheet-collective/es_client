@@ -1,6 +1,6 @@
 <ul id='es-sheet-list'>
 <% var _ = require('underscore'); %>
 <% sheets.each(function(sheet){ %>
-<li><%=sheet.meta.title%></li>
+<li><a class='es-sheet-selector' id=<%=sheet.id%> > <%=sheet.meta.title%> </a></li>
 <%});%>
 <a id='es-add-sheet-button'>+ Add Sheet</a>

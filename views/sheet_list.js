@@ -10,7 +10,8 @@ var _ = require('underscore');
 var SheetListView = module.exports = View.extend({
 
   events: {
-    'click #es-add-sheet-button': 'onAddSheetClick'
+    'click #es-add-sheet-button': 'onAddSheetClick',
+    'click .es-sheet-selector': 'onSheetSelection'
   },
 
   initialize: function(o){
@@ -18,6 +19,7 @@ var SheetListView = module.exports = View.extend({
     this.data = o.data;
     this.$el = o.el
     this.setSheets(o.data.sheets || null);
+    this.setUsers(o.data.users || null);
   },
 
   getSheets: function(){
@@ -30,14 +32,27 @@ var SheetListView = module.exports = View.extend({
     });
   },
 
+  getUsers: function(){
+    return this.models.get('users');
+  },
+
+  setUsers: function(users){
+    this.models.set('users', users);
+  },
+
   render: function(){
     this.$el.empty();
     this.$el.html(t.sheet_list({sheets:this.getSheets()}));
   },
 
-  onAddSheetClick: function(){
+  onAddSheetClick: function(e){
     this.getSheets().addSheet();
   },
+  onSheetSelection: function(e){
+    $el = e.currentTarget;
+    console.log('setting sheet', $el.id);
+    this.getUsers().getCurrentUser().setCurrentSheetId($el.id);
+  }
 });
 
 });

@@ -51,6 +51,7 @@ var Table = module.exports = View.extend({
     this.setCurrentUser(o.data.users.getCurrentUser() || null);
     var current_sheet_id = this.getCurrentUser().getCurrentSheetId();
     this.setSheet(o.data.sheets.get(current_sheet_id) || null);
+    this.setSheets(o.data.sheets || null);
     this.setSelections(o.data.selections || null);
     this.setLocalSelection(o.data.selections.getLocal() || null);
     _.defer(function(caller){
@@ -81,6 +82,9 @@ var Table = module.exports = View.extend({
       'add_format_to_cell': 'updateCellClass'
     });
   },
+  setSheets: function(sheets){
+    this.models.set('sheets',sheets,{});
+  },
   updateCellClass: function(row_id,col_id, cls){
     var $cell = $('#'+row_id+'-'+col_id, this.el);
     $cell.addClass(cls);
@@ -105,7 +109,9 @@ var Table = module.exports = View.extend({
   },
 
   setCurrentUser: function(current_user){
-    this.models.set('current_user', current_user, {});  
+    this.models.set('current_user', current_user, {
+      'change_current_sheet_id': 'onChangeCurrentSheetId'
+    });  
   },
 
   setLocalSelection: function(local_selection){
@@ -124,6 +130,10 @@ var Table = module.exports = View.extend({
     return this.models.get('sheet');
   },
   
+  getSheets: function(){
+    return this.models.get('sheets');
+  },
+
   getCurrentUser: function(){
     return this.models.get('current_user');
   },
@@ -146,7 +156,8 @@ var Table = module.exports = View.extend({
   },
 
   getId: function(){
-    return this.getSheet().cid;
+    //userd to get cid
+    return this.getCurrentUser().getCurrentSheetId();
   },
 
 
@@ -573,6 +584,13 @@ var Table = module.exports = View.extend({
     selection.clear();
     selection.addCell(this.getSheet().id, new_row, new_col);
 
+  },
+
+  onChangeCurrentSheetId: function(e){
+    var sheet_id = this.getCurrentUser().getCurrentSheetId();
+    var sheet = this.getSheets().get(sheet_id);
+    this.setSheet(sheet);
+    this.render();
   }
 
 });
