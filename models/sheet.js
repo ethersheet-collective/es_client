@@ -326,6 +326,7 @@ var Sheet = module.exports = ESModel.extend({
   },
 
   commitCell: function(row_id,col_id){
+    console.log('commitng cell');
     var cell = this.getCell(row_id,col_id);
     if(!cell) return false;
     cell.type = this.getCellType(cell.value); 
@@ -342,9 +343,10 @@ var Sheet = module.exports = ESModel.extend({
     this.send({
       id: this.id,
       type: 'sheet',
-      action: 'updateCell',
-      params:[row_id,col_id,cell]
+      action: 'commitCell',
+      params:[row_id,col_id]
     });
+    console.log('refreshing cells');
     this.refreshCells();
     return true;
   },
