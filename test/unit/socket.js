@@ -23,7 +23,7 @@ describe('Socket', function(){
       target:'#ethersheet-container',
       channel:'test_channel',
       socket: fake_websocket,
-      sheet: new Sheet(),
+      sheets: new SheetCollection([new Sheet()], 'test_channel'),
       user:{
         id: 'test_user'
       }

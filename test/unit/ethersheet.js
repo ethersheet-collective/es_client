@@ -5,6 +5,7 @@ var assert = require('chai').assert;
 var EventTrap = require('../event_trap');
 var Ethersheet = require('es_client/ethersheet');
 var Sheet = require('es_client/models/sheet');
+var SheetCollection = require('es_client/models/sheet_collection');
 var $ = require('jquery');
 
 var $container = $('<div id="ethersheet-container" style="display:none;"></div').appendTo('body');
@@ -15,10 +16,11 @@ describe('Ethersheet Client', function(){
   beforeEach(function(done){
     $container.empty();
     user_trap = new EventTrap();
+
     es = new Ethersheet({
       target:'#ethersheet-container',
       channel:'test_channel',
-      sheet: new Sheet('test_channel'),
+      sheets: new SheetCollection([new Sheet()], 'test_channel'),
       user:{
         id: 'test_user'
       }
