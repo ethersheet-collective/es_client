@@ -18,6 +18,7 @@ var EthersheetContainer = module.exports = View.extend({
   initialize: function(){
     this.$expression = null;
     this.$table = null;
+    this.$grid = null;
     this.is_rendered = false;
     $(window).resize(this.resize.bind(this));
   },

@@ -29,7 +29,7 @@ width: 0;
 position:absolute;
 }
 .es-column-headers{
-margin-left:3%;
+margin-left:45px;
 left:0px;
 top:0px;
 height:18px;
@@ -38,12 +38,12 @@ background:#eeeeee;
 .es-row-headers{
 left:0px;
 top:0px;
-width:3%;
+width:45px;
 margin-top:18px;
 background:#eeeeee;
 }
 .es-grid-container{
-left:3%;
+left:45px;
 top:0;
 width:97%;
 height:97%;
@@ -58,7 +58,7 @@ font-size:14px;
 line-height:12px;
 }
 .es-table-corner{
-width:3%;
+width:45px;
 height:18px;
 position:absolute;
 top:0;

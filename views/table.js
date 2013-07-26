@@ -43,6 +43,7 @@ var Table = module.exports = View.extend({
 // ## LIFECYCLE
 
   initialize: function(o){
+    this.is_rendered = false;
     this.models = new RefBinder(this);
     this.draggedCell = null;
     this.draggingRow = false;
@@ -57,6 +58,8 @@ var Table = module.exports = View.extend({
     _.defer(function(caller){
       caller.onRefreshCells(); 
     }, this);
+    this.$grid = null;
+    $(window).resize(this.resize.bind(this));
   },
 
   destroy: function(){
@@ -227,7 +230,7 @@ var Table = module.exports = View.extend({
   render: function(){
     this.$el.empty();
     this.$el.append($(t.sheet_table({id:this.getId()})));
-
+    
     $('#es-data-table-'+this.getId(),this.$el)
       .html(t.table({sheet:this.getSheet()}));
 
@@ -241,7 +244,19 @@ var Table = module.exports = View.extend({
     setTimeout(this.resizeRowHeaders.bind(this),300);
     setTimeout(this.resizeColHeaders.bind(this),100);
     setTimeout(this.resizeColHeaders.bind(this),300);
+    this.$grid = $(".es-grid-container",this.$el);
+    this.is_rendered = true;
+    this.resize();
     return this;
+  },
+
+  resize: function(){
+    if(!this.is_rendered) return;
+    var grid_height = this.$el.innerHeight() - 70;
+    var grid_width = this.$el.innerWidth() - 45;
+    console.log(this.$grid, grid_height, grid_width);
+    this.$grid.height(grid_height);
+    this.$grid.width(grid_width);
   },
 
   initializeSelections: function(){

@@ -4,9 +4,10 @@
   font-weight: 400;
   src: local('Source Code Pro'), local('SourceCodePro-Regular'), url(/es_client/styles/sourcecodepro.woff) format('woff');
 }
+
 body{
-  background: #666;
-  color: #fff;
+  background: #fcfcfc;
+  color: #222;
 }
 #es-container{
 font-family: 'Source Code Pro', Ariel, Sans-Serif;
@@ -28,10 +29,11 @@ margin:0;
   margin-right: 2%;
   height: 100%;
   overflow-y: scroll;
+  display: none;
 }
 #es-panel-1{
-  margin-left: 200px;
-  margin-right: 200px;
+  margin-left: 10px;
+  margin-right: 10px;
 }
 #es-panel-2{
   width: 200px;
@@ -39,6 +41,7 @@ margin:0;
   margin-left: 2%;
   height: 100%;
   overflow-y: auto;
+  display: none;
 }
 #es-menu-container{
 }
@@ -78,16 +81,20 @@ color:#111111;
   cursor: pointer;
 }
 #es-logo{
-  display: inline;
-  float: left;
+  width: -moz-max-content;
+  width: -webkit-max-content;
+  width: intrinsic;
+  margin: auto;
 }
 #es-logo h1{
   margin: 0;
   padding: 0 25px ;
   display: inline;
+  font-size: 20px;
 }
 #es-header{
   margin-bottom: 10px;
-  background: black;
+  background: #222;
   padding: 5px 10px;
+  color: #fcfcfc;
 }
