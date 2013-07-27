@@ -22,10 +22,12 @@ var EthersheetContainer = module.exports = View.extend({
     this.is_rendered = false;
     $(window).resize(this.resize.bind(this));
   },
+  
   events: {
     'click #es-modal-close': 'closeModal',
     'click .es-sidebar-toggle': 'toggleSidebar',
   },
+  
   render: function(){
     $(this.el).html(t.es_container);
     this.$expression = $("#es-expression-editor-container",this.$el);
@@ -51,10 +53,12 @@ var EthersheetContainer = module.exports = View.extend({
   toggleSidebar: function(){
     var speed = 400;
     if(this.$panel_0.width() == 0){
+      this.$panel_0.show();
       this.$menu.animate({'right':'0px'},speed);
       this.$panel_0.animate({'width':'200px'},speed);
       this.$panel_1.animate({'margin-left':'200px'},speed);
     }else{
+      this.$panel_0.hide();
       this.$menu.animate({'right':'200px'},speed);
       this.$panel_0.animate({'width':'0'},speed);
       this.$panel_1.animate({'margin-left':'10px'},speed);

@@ -24,11 +24,11 @@ margin:0;
   position: relative;
 }
 #es-panel-0{
-  width: 200px;
+  width: 0px;
   float: left;
-  margin-right: 2%;
   height: 100%;
   overflow-y: scroll;
+  padding-left: 10px;
   display: none;
 }
 #es-panel-1{
@@ -36,17 +36,21 @@ margin:0;
   margin-right: 10px;
 }
 #es-panel-2{
-  width: 200px;
+  width: 0;
   float: right;
-  margin-left: 2%;
   height: 100%;
   overflow-y: auto;
-  display: none;
+}
+#es-header .es-sidebar-toggle{
+  float: left;
+  display: inline;
+  margin-right: 5px;
 }
 #es-menu-container{
 }
 #es-table-container{
 position:relative;
+border: 1px solid #333;
 }
 #es-modal-overlay{
 display: none;
