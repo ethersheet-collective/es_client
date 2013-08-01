@@ -2,30 +2,59 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define(function (require) {
 
 var Sheet = require('es_client/models/sheet');
-var SheetCollection = require('es_client/models/sheet_collection');
 var config = require('es_client/config');
 var expect = require('chai').expect;
 var should = require('chai').should();
 var sinon = require('sinon');
-var getData = require('es_client/test/fixtures');
+var connect = require('es_client/lib/share_db').connect;
+var disconnect = require('es_client/lib/share_db').disconnect;
 
 describe('Sheet', function(){
-  var sheet, events;
+  var sheet, events, data;
 
-  var initializeSheet = function(o){
-    var o = o || {};
-    var data = getData(o);
-    events = [];
-    sheet_collection = data.sheets
-    sheet = data.local_sheet;
-    sheet.on('all',function(){
-      events.push({
-        name: arguments[0],
-        args: Array.prototype.slice.call(arguments,1)
+  beforeEach(function(done){
+    initializeSheet({},done);
+  });
+
+  afterEach(function(done){
+    resetSheet(done);
+  });
+
+
+  function initializeSheet(sheet_options,done){
+    if(data){
+      return resetSheet(function(){
+        initializeSheet(sheet_options,done);
       });
+    }
+
+    sheet_options || {id:'test'};
+
+    connect({}, function(err,test_data){
+      events = [];
+      data = test_data;
+      data.sheets.addSheet(sheet_options);
+      sheet = data.sheets.at(0);
+      sheet.on('all',function(){
+        events.push({
+          name: arguments[0],
+          args: Array.prototype.slice.call(arguments,1)
+        });
+      });
+      done(err);
     });
-  };
-   
+  }
+  
+  function resetSheet(done){
+    if(!data) return done();
+    disconnect(data,function(err){
+      data = undefined;
+      sheet = undefined;
+      events = undefined;
+      done(err);
+    });
+  }
+
   var addCell = function(row,col,val){
     sheet.updateCell(row,col,val);
     sheet.commitCell(row,col);
@@ -36,9 +65,6 @@ describe('Sheet', function(){
   };
 
   describe('default initialization', function(){
-    before(function(){
-      initializeSheet();
-    });
 
     it('rowCount should get row count', function(){
       sheet.rowCount().should.equal(config.DEFAULT_ROW_COUNT);
@@ -80,7 +106,7 @@ describe('Sheet', function(){
   describe('initialization with data', function(){
     var data;
 
-    before(function(){
+    beforeEach(function(done){
       default_cell = function(rowcol){ return {value:rowcol, display_value: rowcol, type: 'string', styles: [] } } ;
       data = {
         cols: ['a','b','c'],
@@ -92,7 +118,7 @@ describe('Sheet', function(){
           '4':{'a':default_cell('a4'),'b':default_cell('b4'),'c':default_cell('c4')}
         }
       };
-      initializeSheet({sheet_options:data});
+      initializeSheet(data,done);
     });
 
     it('rowCount should get row count', function(){
@@ -131,12 +157,14 @@ describe('Sheet', function(){
   describe('sheet#updateCell', function(){
     var new_value,row_id, col_id, success;
 
-    before(function(){
-      initializeSheet();
-      new_value = 5;
-      row_id = sheet.rowIds()[0];
-      col_id = sheet.colIds()[0];
-      success = sheet.updateCell(row_id,col_id,new_value);
+    beforeEach(function(done){
+      initializeSheet({},function(){
+        new_value = 5;
+        row_id = sheet.rowIds()[0];
+        col_id = sheet.colIds()[0];
+        success = sheet.updateCell(row_id,col_id,new_value);
+        done();
+      });
     });
 
     it('should return true', function(){
@@ -173,16 +201,20 @@ describe('Sheet', function(){
 
   describe('sheet#commitCell', function(){
     var new_value,row_id, col_id, success;
-    before(function(){
-      initializeSheet();
-      new_value = "=1+1";
-      row_id = sheet.rowIds()[0];
-      col_id = sheet.colIds()[0];
-      row2 = sheet.rowIds()[0];
-      col2 = sheet.colIds()[0];
-      sheet.updateCell(row_id,col_id,new_value);
-      sheet.updateCell(row_id,col_id,new_value);
-      sheet.commitCell(row_id,col_id);
+
+    beforeEach(function(done){
+      console.log('COMMIT');
+      initializeSheet({},function(){
+        new_value = "=1+1";
+        row_id = sheet.rowIds()[0];
+        col_id = sheet.colIds()[0];
+        row2 = sheet.rowIds()[0];
+        col2 = sheet.colIds()[0];
+        sheet.updateCell(row_id,col_id,new_value);
+        sheet.updateCell(row_id,col_id,new_value);
+        sheet.commitCell(row_id,col_id);
+        done();
+      });
     });
 
     it('determines cell type', function(){
@@ -232,11 +264,13 @@ describe('Sheet', function(){
       sheet.getCell(row_id,col_id).value.should.equal(new_value.toString());
     });
 
-    it('should parse the display value', function(){
-      initializeSheet();
-      sheet.updateCell(row_id,col_id,'=1+1');
-      sheet.commitCell(row_id,col_id);
-      sheet.getCellDisplay(sheet.getCell(row_id,col_id)).should.equal(2);
+    it('should parse the display value', function(done){
+      initializeSheet({},function(){
+        sheet.updateCell(row_id,col_id,'=1+1');
+        sheet.commitCell(row_id,col_id);
+        sheet.getCellDisplay(sheet.getCell(row_id,col_id)).should.equal(2);
+        done();
+      });
     });
 
     it('should emit a commit_cell event', function(){
@@ -258,10 +292,12 @@ describe('Sheet', function(){
   describe('sheet#refreshCell', function(){
     var new_value,row_id, col_id, success;
 
-    before(function(){
-      initializeSheet();
-      row_id = sheet.rowIds()[0];
-      col_id = sheet.colIds()[0];
+    beforeEach(function(done){
+      initializeSheet({},function(){
+        row_id = sheet.rowIds()[0];
+        col_id = sheet.colIds()[0];
+        done();
+      });
     });
 
     it('should recalculate a cells value', function(){
@@ -303,11 +339,13 @@ describe('Sheet', function(){
   describe('insert row', function(){
     var old_row_id, new_row_id;
   
-    before(function(){
-      initializeSheet();
-      sheet.disableSend();
-      old_row_id = sheet.rowIds()[1];
-      new_row_id = sheet.insertRow(1);
+    beforeEach(function(done){
+      initializeSheet({},function(){
+        sheet.disableSend();
+        old_row_id = sheet.rowIds()[1];
+        new_row_id = sheet.insertRow(1);
+        done();
+      });
     });
     
     it('should put the new row in the correct position', function(){
@@ -329,14 +367,16 @@ describe('Sheet', function(){
   describe('delete row', function(){
     var row_id, col_id, cell_id;
 
-    before(function(){
-      initializeSheet();
-      sheet.disableSend();
-      row_id = sheet.rowIds()[0];
-      col_id = sheet.colIds()[0];
-      cell_id = sheet.updateCell(row_id,col_id,5);
-      clearEvents(); 
-      sheet.deleteRow(row_id);
+    beforeEach(function(done){
+      initializeSheet({},function(){
+        sheet.disableSend();
+        row_id = sheet.rowIds()[0];
+        col_id = sheet.colIds()[0];
+        cell_id = sheet.updateCell(row_id,col_id,5);
+        clearEvents(); 
+        sheet.deleteRow(row_id);
+        done();
+      });
     });
 
     it('should remove a single row', function(){
@@ -358,13 +398,15 @@ describe('Sheet', function(){
   describe('sort rows', function(){
     var col_id;
 
-    before(function(){
-      initializeSheet();
-      col_id = sheet.colAt(0);
-      sheet.updateCell(sheet.rowAt(0),col_id,"c");
-      sheet.updateCell(sheet.rowAt(1),col_id,"a");
-      sheet.updateCell(sheet.rowAt(2),col_id,"b");
-      sheet.sortRows(col_id);
+    beforeEach(function(done){
+      initializeSheet({},function(){
+        col_id = sheet.colAt(0);
+        sheet.updateCell(sheet.rowAt(0),col_id,"c");
+        sheet.updateCell(sheet.rowAt(1),col_id,"a");
+        sheet.updateCell(sheet.rowAt(2),col_id,"b");
+        sheet.sortRows(col_id);
+        done();
+      });
     });
     
     it('should put the new row in the correct position', function(){
@@ -377,11 +419,13 @@ describe('Sheet', function(){
   describe('insert column', function(){
     var second_col_id, new_row_id, new_col_id;
     
-    before(function(){
-      initializeSheet();
-      sheet.disableSend();
-      second_col_id = sheet.colIds()[1];
-      new_col_id = sheet.insertCol(1);
+    beforeEach(function(done){
+        initializeSheet({},function(){
+        sheet.disableSend();
+        second_col_id = sheet.colIds()[1];
+        new_col_id = sheet.insertCol(1);
+        done();
+      });
     });
 
     it('should put the col in the correct position', function(){
@@ -403,14 +447,16 @@ describe('Sheet', function(){
   describe('delete column', function(){
     var row_id, col_id, cell_id;
 
-    before(function(){
-      initializeSheet();
-      sheet.disableSend();
-      row_id = sheet.rowIds()[0];
-      col_id = sheet.colIds()[0];
-      cell_id = sheet.updateCell(row_id,col_id,5);
-      clearEvents(); 
-      sheet.deleteCol(col_id);
+    beforeEach(function(done){
+        initializeSheet({},function(){
+        sheet.disableSend();
+        row_id = sheet.rowIds()[0];
+        col_id = sheet.colIds()[0];
+        cell_id = sheet.updateCell(row_id,col_id,5);
+        clearEvents(); 
+        sheet.deleteCol(col_id);
+        done();
+      });
     });
 
     it('should remove a single column', function(){
@@ -430,16 +476,18 @@ describe('Sheet', function(){
   });
 
   describe('formula parsing', function(){
-    before(function(){
-      initializeSheet();
-      row_id = sheet.rowAt(0);
-      col_id = sheet.colAt(0);
-      a1_value = '3';
-      a11_value = '11';
-      sheet.updateCell(row_id, col_id, a1_value);
-      sheet.commitCell(row_id, col_id);
-      new_row = sheet.rowAt(0); 
-      new_col = sheet.colAt(1); 
+    beforeEach(function(done){
+        initializeSheet({},function(){
+        row_id = sheet.rowAt(0);
+        col_id = sheet.colAt(0);
+        a1_value = '3';
+        a11_value = '11';
+        sheet.updateCell(row_id, col_id, a1_value);
+        sheet.commitCell(row_id, col_id);
+        new_row = sheet.rowAt(0); 
+        new_col = sheet.colAt(1); 
+        done();
+      });
     });
 
     it('should reference a cell by identifier', function(done){
@@ -490,9 +538,6 @@ describe('Sheet', function(){
     });
   });
   describe('add formatting to cell', function(){
-    before(function(){
-      initializeSheet();
-    });
     it('should add a formatting class to the cell', function(){
       var row_id = sheet.rowAt(0);
       var col_id = sheet.colAt(0);
@@ -504,9 +549,6 @@ describe('Sheet', function(){
     });
   });
   describe('userland functions', function(){
-    before(function(){
-      initializeSheet();
-    });
     it('should display an error when the function does not exist', function(){
       addCell('0','0', '=KITTENS(123)');
       sheet.getCellDisplayById('0','0').should.equal('ERR: No such function.');

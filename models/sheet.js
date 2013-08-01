@@ -20,7 +20,7 @@ var _ = require('underscore');
 var ESModel = require('./es_model');
 var config = require('../config');
 var uid = require('../helpers/uid');
-var ex = require('../vendor/es_expression'); //sets a global variable called expression
+var ex = require('es_expression'); //sets a global variable called expression
 var parser = ex || es_expression; //setting things up incase we are running in node mode
 
 var CELL_ROW_ID = 0;
@@ -48,11 +48,25 @@ var Sheet = module.exports = ESModel.extend({
       this.setExpressionHelper(o.expressionHelpers);
     }
   },
+
+  initializeShareDB: function(){
+    this.share_db.set({
+      id:this.id,
+      title:this.getTitle(),
+      rows:this.rows,
+      cols:this.cols,
+      row_heights:this.row_heights,
+      col_widths:this.col_widths,
+      cells:this.cells
+    });
+  },
+
   setExpressionHelper: function(expressionHelper){
     this.expressionHelpers = expressionHelper;
     this.parser = parser;
     this.parser.yy = this.expressionHelpers;
   },
+
   initializeRows: function(rows){
     
     if(_.isArray(rows)){
@@ -65,6 +79,7 @@ var Sheet = module.exports = ESModel.extend({
       this.rows.push(String(i));
     }
   },
+
   initializeCols: function(cols){
     if(_.isArray(cols)){
       this.cols = cols;
@@ -76,6 +91,7 @@ var Sheet = module.exports = ESModel.extend({
       this.cols.push(String(i));
     }
   },
+
   initializeCells: function(cells){
     this.cells = cells || {};
   },
@@ -85,9 +101,19 @@ var Sheet = module.exports = ESModel.extend({
     meta.title = meta.title || this.initializeTitle();
     return meta;
   },
+  
   initializeTitle: function(){
     return "Sheet" + 1;
   },
+  
+  getTitle: function(){
+    return this.meta.title;
+  },
+  
+  setTitle: function(title){
+    this.meta.title = title;
+  },
+
   getData: function(){
     return {
       id: this.id,
