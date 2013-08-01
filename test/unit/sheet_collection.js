@@ -3,31 +3,45 @@ define(function (require) {
 
 var assert = require('chai').assert;
 var EventTrap = require('../event_trap');
-var config = require('es_client/config');
-var getData = require('es_client/test/fixtures');
+var connect = require('es_client/lib/share_db').connect;
+var disconnect = require('es_client/lib/share_db').disconnect;
 
 describe('SheetCollection', function(){
   var sheets, data, event_trap;
-  var initializeCollection = function(o){
-    var o = o || {};
-    data = getData(o);
-  };
 
 
-  beforeEach(function(){
-    initializeCollection();
-    event_trap = new EventTrap();
-    data.sheets.on('all', event_trap.eventHandler);
+  beforeEach(function(done){
+    var o = {
+      channel:'create_data_test',
+    };
+    connect(o,function(err,test_data){
+      data = test_data;
+      console.log('looloo',data);
+      event_trap = new EventTrap();
+      data.sheets.on('all', event_trap.eventHandler);
+      done();
+    });
   });
 
-  describe('adding a sheet', function(){
+  afterEach(function(done){
+    disconnect(data,function(err){
+      done(err);
+    });
+  });
+
+  describe('adding a x  sheet', function(){
 
     it('should increase the number of sheets', function(){
-      assert.equal(data.sheets.length, 1);
+      assert.equal(data.sheets.length, 0);
       data.sheets.addSheet();
-      assert.equal(data.sheets.length, 2);
+      assert.equal(data.sheets.length, 1);
     });
     
+    it('should create a sheet with the correct data', function(){
+      data.sheets.addSheet({id:'foobar'});
+      assert.equal(data.sheets.at(0).id, 'foobar');
+    });
+
     it('should trigger two events', function(){
       data.sheets.addSheet();
       assert.equal(event_trap.events.length, 2);
