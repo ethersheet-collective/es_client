@@ -13,30 +13,64 @@ var ES = require('es_client/config');
 var getData = require('es_client/test/fixtures');
 // setup dom attachment point
 var $container = $('<div id="ethersheet-container" style="display:none;"></div').appendTo('body');
+var connect = require('es_client/lib/share_db').connect;
+var disconnect = require('es_client/lib/share_db').disconnect;
 
 describe('TableView', function(){
+  var data, table, $el, sheet, selections;
 
-  var table, $el, sheet, selections;
+  var initializeTable = function(done){
+    if(data){
+      return resetSelection(function(){
+        initializeSelection(done);
+      });
+    }
 
-  var initializeTable = function(){
-    var data = getData({});
-    $container.empty()
-    $el = $('<div id="ethersheet"></div>').appendTo($container);
+    connect({}, function(err,test_data){
+      data = test_data;
+      $container.empty()
+      $el = $('<div id="ethersheet"></div>').appendTo($container);
 
-    table = new TableView({
-      el: $el,
-      data: data
+      data.sheets.addSheet({id:'test'});
+      sheet = data.sheets.at(0);
+
+      data.users
+          .getCurrentUser()
+          .setCurrentSheetId(sheet.id);
+
+      selections = data.selections;
+      selection = data.selections.getLocal();
+
+      table = new TableView({
+        el: $el,
+        data: data
+      });
+      table.render();
+      done(err);
     });
-    sheet =  data.local_sheet;
-    selections = data.selections;
-    selection = data.local_selection;
-    table.render();
+  }
+  
+  function resetTable(done){
+    if(!data) return done();
+    disconnect(data,function(err){
+      data = undefined;
+      table = undefined;
+      $el = undefined;
+      sheet = undefined;
+      selections = undefined;
+      done(err);
+    });
   }
 
+  beforeEach(function(done){
+    initializeTable(done);
+  });
+
+  afterEach(function(done){
+    resetTable(done);
+  });
+
   describe('by default, it should create a blank 20x100 table display', function(){
-    before(function(){
-      initializeTable();
-    });
 
     it('should render a table', function(){
       $('#ethersheet table').length.should.not.be.empty;
@@ -72,11 +106,11 @@ describe('TableView', function(){
     var row_id, col_id, value;
 
     beforeEach(function(){
-      initializeTable();
       value = 5;
       row_id = sheet.rowAt(0);
       col_id = sheet.colAt(0);
     });
+
     describe('on update cell', function(){
       it('should update the table display of the cell',function(){
         sheet.updateCell(row_id,col_id,'=1+1');
@@ -94,7 +128,9 @@ describe('TableView', function(){
       });
       it('should update th formula display with the new display formula');
     });
+
     describe('on insert_col', function(){
+
       it('should draw a new column', function(){
         var original_col_count = $('.es-table-row',$el)
                               .first()
@@ -124,7 +160,9 @@ describe('TableView', function(){
         .should.equal(value.toString()); 
       });
     });
+
     describe('on delete_col', function(){
+
       it('should remove a column', function(){
         var original_col_count = $('.es-table-row',$el)
                               .first()
@@ -156,7 +194,9 @@ describe('TableView', function(){
         .should.equal(''); 
       });
     });
+
     describe('on insert_row', function(){
+
       it('should draw a new row', function(){
         var original_row_count = $('.es-table-row',$el)
                               .length;
@@ -183,9 +223,11 @@ describe('TableView', function(){
         .text()
         .should.equal(value.toString()); 
       });
+
     });
     
     describe('on delete_row', function(){
+
       it('should draw a new row', function(){
         var original_row_count = $('.es-table-row',$el)
                               .length;
@@ -214,6 +256,7 @@ describe('TableView', function(){
         .text()
         .should.equal(''); 
       });
+
     });
 
 
@@ -221,8 +264,8 @@ describe('TableView', function(){
 
   describe("when a cell is clicked", function(){
     var initial_bgcolor, $clicked_cell, $input;
+
     beforeEach(function(){
-      initializeTable();
       row_id = sheet.rowAt(0);
       col_id = sheet.colAt(0);
       value = '=1+1';
@@ -304,9 +347,7 @@ describe('TableView', function(){
     });
 
     describe("When a user finishes editing a cell", function(){
-      beforeEach(function(){
-        initializeTable();
-      });
+
       it("should call Sheet#CommitCell()", function(){
         var called = false;
        /* sheet.commitCell = function(){
@@ -403,12 +444,13 @@ describe('TableView', function(){
   });
   
   describe('formatting cells', function(){
+    
     beforeEach(function(){
-      initializeTable();
       value = 5;
       row_id = sheet.rowAt(0);
       col_id = sheet.colAt(0);
     });
+
     it('should apply formatting classes to the display of a cell if they exist', function(){
       sheet.updateCell('0', '0', '4');
       selection.addCell(sheet.id, '0','0');
@@ -416,6 +458,7 @@ describe('TableView', function(){
       var $selected_cell = $('td#0-0');
       $selected_cell.hasClass('bg-red').should.be.true;
     });
+
   });
 
 });
