@@ -1,48 +1,74 @@
 if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define(function (require) {
 
-var SelectionCollection = require('es_client/models/selection_collection');
-var Sheet = require('es_client/models/sheet');
-var config = require('es_client/config');
 var expect = require('chai').expect;
 var should = require('chai').should();
-var Backbone = require('backbone');
-var SheetCollection = require('es_client/models/sheet_collection');
+var connect = require('es_client/lib/share_db').connect;
+var disconnect = require('es_client/lib/share_db').disconnect;
 
 // stub out server calls
 Backbone.sync = function(){};
 
 describe('Selection', function(){
-  var selections, selection, sheet, col_id,row_id, events;
+  var data, selections, selection, sheet, col_id,row_id, events;
 
-  var initializeSelection = function(){
-    events = [];
-    
-    sheets = new SheetCollection();
-    sheet = new Sheet();
-    sheets.add(sheet);
-    
-    selections = new SelectionCollection([],{sheet_collection:sheets});
-    selections.createLocal();
-    selection = selections.getLocal();
-    
-    col_id = sheet.colAt(0);
-    row_id = sheet.rowAt(0);
-    selection.on('all',function(){
-      events.push({
-        name: arguments[0],
-        args: Array.prototype.slice.call(arguments,1)
+  function initializeSelection(done){
+    if(data){
+      return resetSelection(function(){
+        initializeSelection(done);
       });
+    }
+
+    connect({}, function(err,test_data){
+      data =test_data;
+      events = [];
+      
+      data.sheets.addSheet({id:'test'});
+      sheet = data.sheets.at(0);
+
+      selections = data.selections;
+      selections.createLocal();
+      selection = selections.getLocal();
+      
+      col_id = sheet.colAt(0);
+      row_id = sheet.rowAt(0);
+      selection.on('all',function(){
+        events.push({
+          name: arguments[0],
+          args: Array.prototype.slice.call(arguments,1)
+        });
+      });
+      done();
     });
   };
   
-  var clearEvents = function(){
+  function resetSelection(done){
+    if(!data) return done();
+    disconnect(data,function(err){
+      data = undefined;
+      sheet = undefined;
+      selection = undefined;
+      selections = undefined;
+      events = undefined;
+      done(err);
+    });
+  }
+
+  function clearEvents(){
     events = [];
   };
 
+
+  beforeEach(function(done){
+    initializeSelection(done);
+  });
+
+  afterEach(function(done){
+    resetSelection(done);
+  });
+
   describe('clear selection', function(){
-    before(function(){
-      initializeSelection();
+    beforeEach(function(){
       selection.addCell(sheet.id,row_id,col_id);
       clearEvents();
       selection.clear();
@@ -59,8 +85,7 @@ describe('Selection', function(){
   });
 
   describe('add cell',function(){
-    before(function(){
-      initializeSelection();
+    beforeEach(function(){
       selection.addCell(sheet.id,row_id,col_id);
     });
 
@@ -94,8 +119,7 @@ describe('Selection', function(){
   });
 
   describe('add row', function(){
-    before(function(){
-      initializeSelection();
+    beforeEach(function(){
       sheet.updateCell('0','0','test');
       sheet.commitCell('0','0');
       sheet.updateCell('0','1','test');
@@ -115,8 +139,7 @@ describe('Selection', function(){
   });
   
   describe('add column', function(){
-    before(function(){
-      initializeSelection();
+    beforeEach(function(){
       selection.addColumn(sheet.id,col_id);
     });
     it('should increase the size of the selection',function(){
@@ -131,8 +154,7 @@ describe('Selection', function(){
   });
 
   describe('add formatting',function(){
-    before(function(){
-      initializeSelection();
+    beforeEach(function(){
       sheet.updateCell(row_id,col_id,'test');
       selection.addCell(sheet.id,row_id,col_id);
       clearEvents();
@@ -150,8 +172,7 @@ describe('Selection', function(){
   }); 
 
   describe('update cell', function(){
-    before(function(){
-      initializeSelection();
+    beforeEach(function(){
       selection.addCell(sheet.id,row_id,col_id);
       clearEvents();
       sheet.updateCell(row_id,col_id,10)
@@ -165,7 +186,6 @@ describe('Selection', function(){
 
   describe('remove cell', function(){
     beforeEach(function(){
-      initializeSelection();
       selection.addCell(sheet.id,row_id,col_id);
       clearEvents();
     });
@@ -192,7 +212,6 @@ describe('Selection', function(){
   describe('Replication',function(){
     describe('replicateLocalSelection',function(){
       it('should send a copy of the local selection',function(done){
-        initializeSelection();
         selection.addCell(sheet.id,'123','abc');
         var test_msg = {
           type: 'selection',
@@ -212,7 +231,6 @@ describe('Selection', function(){
       var rep_data, rep_selection, send_msg;
 
       beforeEach(function(done){
-        initializeSelection();
         rep_data = {
           id:'test_selection',
           color:'000000', 
