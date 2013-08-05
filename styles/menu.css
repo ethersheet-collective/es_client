@@ -9,7 +9,6 @@ padding:0;
 color:#111;
 }
 #es-menu-list li{
-margin:4px 0;
 background: #fff;
 padding: 0;
 }
@@ -19,8 +18,15 @@ padding:6px;
 display: block;
 color: #000;
 text-decoration: none;
+border: 1px solid black;
+box-shadow: 5px 5px 3px #888;
 }
 .clear{
   clear: both;
 }
 
+#es-sheet-list-container{
+  border: 1px solid black;
+  box-shadow: 5px 5px 5px #888;
+
+}
