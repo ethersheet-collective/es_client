@@ -28,7 +28,10 @@ var MenuView = module.exports = View.extend({
   initialize: function(o){
     this.models = new RefBinder(this);
     this.data = o.data;
-    this.setSheet(o.data.sheets.first() || null);
+    this.setSheets(o.data.sheets || null);
+    this.setUser(o.data.users.getCurrentUser());
+    var current_sheet_id = this.getUser().getCurrentSheetId();
+    this.setSheet(o.data.sheets.get(current_sheet_id) || null);
     this.setSelection(o.data.selections.getLocal() || null);
   },
 
@@ -48,6 +51,24 @@ var MenuView = module.exports = View.extend({
     this.models.set('selection',selection); 
   },
 
+  getSheets: function(){
+    return this.models.get('sheets');
+  },
+
+  setSheets: function(sheets){
+    this.models.set('sheets', sheets);
+  },
+
+  getUser: function(){
+    return this.models.get('user');
+  },
+
+  setUser: function(user){
+    this.models.set('user', user, {
+      'change_current_sheet_id': 'onChangeCurrentSheetID',
+    });
+  },
+
   render: function(){
     this.$el.empty();
     this.$el.html(t.menu());
@@ -58,7 +79,7 @@ var MenuView = module.exports = View.extend({
     if(!cells) return;
     return cells[0];
   },
-
+  
   onButtonClick: function(e){
     var action = $(e.currentTarget).data('action');
     switch(action){
@@ -84,6 +105,11 @@ var MenuView = module.exports = View.extend({
         this.importCSV();
         break;
     };
+  },
+
+  onChangeCurrentSheetID: function(){
+    var sheet = this.getSheets().get(this.getUser().getCurrentSheetId());
+    this.setSheet(sheet);
   },
 
   addRow:function(){
