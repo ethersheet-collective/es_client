@@ -13,7 +13,6 @@ body{
 font-family: 'Source Code Pro', Ariel, Sans-Serif;
 width:100%;
 height:100%;
-overflow: hidden;
 }
 #es-container h1,h2,h3,h4,h5,h6{
 margin:0;
@@ -30,13 +29,13 @@ margin:0;
   overflow-y: auto;
   padding-left: 10px;
   padding-right: 15px;
-  padding-top: 10px;
-  box-shadow: 5px -2px 5px #888;
-  z-index: 100;
+  padding-top: 15px;
+  box-shadow: 5px 0 5px #888;
+  z-index: 2;
   display: none;
 }
 #es-panel-1{
-  padding-top: 10px;
+  padding-top: 15px;
   margin-left: 10px;
   margin-right: 10px;
 }
@@ -50,6 +49,54 @@ margin:0;
   float: left;
   display: inline;
   margin-right: 5px;
+  position: absolute;
+  z-index: 3;
+}
+.es-sidebar-toggle.active {
+  border-radius: 0 0 5px 5px;
+  height: 60px;
+  top: -4px;
+  width: 60px;
+}
+#es-function-icon{
+  background-image: url('/es_client/icons/ethersheet-icon-function-gray.png');
+  left: 60px;
+}
+#es-function-icon.active{
+  background-image: url('/es_client/icons/ethersheet-icon-function.png');
+}
+#es-activity-icon{
+  background-image: url('/es_client/icons/ethersheet-icon-activity-gray.png');
+  left: 180px;
+}
+#es-activity-icon.active{
+  background-image: url('/es_client/icons/ethersheet-icon-activity.png');
+}
+#es-style-icon{
+  background-image: url('/es_client/icons/ethersheet-icon-style-gray.png');
+  left: 120px;
+}
+#es-style-icon.active{
+  background-image: url('/es_client/icons/ethersheet-icon-style.png');
+}
+#es-sheet-icon{
+  background-image: url('/es_client/icons/ethersheet-icon-sheets-gray.png');
+}
+#es-sheet-icon.active{
+  background-image: url('/es_client/icons/ethersheet-icon-sheets.png');
+}
+#es-sheet-list li{
+  cursor: pointer;
+}
+#es-sheet-list a {
+  cursor: pointer;
+}
+.es-sidebar-toggle{
+  height: 60px;
+  width: 60px;
+  background-position: top;
+  background-repeat: no-repeat;
+  cursor: pointer;
 }
 #es-menu-container{
 }
@@ -102,7 +149,8 @@ color:#111111;
   font-size: 20px;
 }
 #es-header{
-  background: #222;
+  background: url("/es_client/icons/dark_stripes.png");
   padding: 5px 10px;
   color: #fcfcfc;
+  height: 35px;
 }

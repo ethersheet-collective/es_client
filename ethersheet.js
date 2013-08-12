@@ -90,7 +90,8 @@ Ethersheet.prototype.initializeDisplay = function(o){
   $(function(){
     es.$el = $(o.target);
     es.ethersheet_container = new EthersheetContainerView({
-      el: es.$el
+      el: es.$el,
+      data: es.data
     }).render();
     es.expression_editor = new ExpressionEditorView({
       el: $('#es-expression-editor-container', es.$el),
@@ -101,15 +102,15 @@ Ethersheet.prototype.initializeDisplay = function(o){
       data: es.data
     }).render();
     es.menu = new MenuView({
-      el: $('#es-menu-container', es.$el),
+      el: $('#es-style-menu-container', es.$el),
       data: es.data,
     }).render();
     es.history = new HistoryView({
-      el: $('#es-history-container', es.$el),
+      el: $('#es-activity-menu-container', es.$el),
       data: es.data
     }).render();
     es.sheet_list = new SheetListView({
-      el: $('#es-sheet-list-container', es.$el),
+      el: $('#es-sheet-menu-container', es.$el),
       data: es.data
     }).render();
   });

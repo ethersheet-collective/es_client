@@ -1,22 +1,18 @@
 <div id="es-container">
   <div id="es-header">
-    <div class="es-sidebar-toggle" id="es-menu-icon"><img height="30" alt="Open Menu" src="/es_client/icons/menuIcon.png"></div>
-    <!--<div class="es-sidebar-toggle" id="es-document-icon"><img height="30" alt="Manage Sheets" src="/es_client/icons/sheetsIcon.png"></div>
-    <div class="es-sidebar-toggle" id="es-function-icon"><img height="30" alt="Funciton Help" src="/es_client/icons/functionIcon.png"></div> -->
-    <div id="es-logo"><h1>Ethersheet</h1> </div>
+    <div class="es-sidebar-toggle" id="es-sheet-icon" title="manage_sheets"></div>
+    <div class="es-sidebar-toggle" id="es-function-icon" title="function help"></div> 
+    <div class="es-sidebar-toggle" id="es-style-icon" title="style the sheet"></div>
+    <div class="es-sidebar-toggle" id="es-activity-icon" title="view activity and timeline"></div> 
+
+    <div id="es-logo"><h1><%=title%></h1> </div>
     <div class="clear"></div>
   </div>
   <div id="es-panel-0" class="es-panel">
-    <div id='es-sheet-list-container'>
-      <fieldset style="margin-top:8px;">
-        <legend>Sheets</legend>
-      </fieldset>
-    </div>
-    <!-- <div id="es-expression-editor-container"></div> -->
-    <div id="es-menu-container"></div>
-    <div id="es-history-container">
-      <h3 style="margin-top:8px;">History</h3>
-    </div>
+    <div class='menu-container' id='es-sheet-menu-container'> </div>
+    <div class='menu-container' id="es-function-menu-container"> </div> 
+    <div class='menu-container' id="es-style-menu-container"> </div>
+    <div class='menu-container' id="es-activity-menu-container"> </div>
   </div>
   <div id="es-panel-1" class="es-panel">
     <div id="es-table-container"></div>

@@ -15,11 +15,14 @@ var RefBinder = require('ref-binder');
 var View = require('backbone').View;
 
 var EthersheetContainer = module.exports = View.extend({
-  initialize: function(){
+  initialize: function(o){
     this.$expression = null;
     this.$table = null;
     this.$grid = null;
     this.is_rendered = false;
+    this.models = new RefBinder(this);
+    this.data = o.data;
+    this.models.set('sheets', o.data.sheets);
     $(window).resize(this.resize.bind(this));
   },
   
@@ -29,7 +32,8 @@ var EthersheetContainer = module.exports = View.extend({
   },
   
   render: function(){
-    $(this.el).html(t.es_container);
+    var title = this.models.get('sheets').id
+    $(this.el).html(t.es_container({title: title}));
     this.$expression = $("#es-expression-editor-container",this.$el);
     this.$table = $("#es-table-container",this.$el);
     this.$menu = $("#es-menu-container",this.$el);
@@ -42,7 +46,7 @@ var EthersheetContainer = module.exports = View.extend({
 
   resize: function(){
     if(!this.is_rendered) return;
-    var table_height = this.$el.innerHeight();
+    var table_height = this.$el.innerHeight() - 70;
     this.$table.height(table_height);
   },
 
@@ -50,18 +54,33 @@ var EthersheetContainer = module.exports = View.extend({
     $("#es-modal-overlay").hide()
   },
 
-  toggleSidebar: function(){
+  toggleSidebar: function(e){
     var speed = 400;
-    if(this.$panel_0.width() == 0){
-      this.$panel_0.show();
-      this.$menu.animate({'right':'0px'},speed);
-      this.$panel_0.animate({'width':'200px'},speed);
-      this.$panel_1.animate({'margin-left':'200px'},speed);
+    var $el = $(e.currentTarget);
+
+    if($el.hasClass('active')){
+      //close the panel
+      $el.removeClass('active');
+      this.$menu.animate({'right':'250px'},speed);
+      this.$panel_0.animate({'width':'0'},speed, 'swing', function(){
+        $("#es-panel-0").hide();
+        $('menu-container').hide();
+      });
+      $('#es-panel-1').animate({'margin-left':'10px'},speed);
     }else{
-      this.$panel_0.hide();
-      this.$menu.animate({'right':'200px'},speed);
-      this.$panel_0.animate({'width':'0'},speed);
-      this.$panel_1.animate({'margin-left':'10px'},speed);
+      $('.es-sidebar-toggle').removeClass('active');
+      $el.addClass('active');
+      this.$panel_0.show();
+      $('.menu-container').hide();
+      var container = $el.attr('id').replace('icon', 'menu-container');
+      console.log('container', container);
+      $("#" + container).show();
+      if(this.$panel_0.width() == 0){
+        this.$menu.animate({'right':'0px'},speed);
+        this.$panel_0.animate({'width':'250px'},speed);
+        this.$panel_1.animate({'margin-left':'285px'},speed);
+      }
+       
     }
     
   }
