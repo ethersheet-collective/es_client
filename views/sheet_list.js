@@ -11,7 +11,7 @@ var SheetListView = module.exports = View.extend({
 
   events: {
     'click #es-add-sheet-button': 'onAddSheetClick',
-    'click .es-sheet-selector': 'onSheetSelection'
+    'click .es-menu-button': 'onSheetSelection'
   },
 
   initialize: function(o){

@@ -34,6 +34,7 @@ margin:0;
   display: none;
 }
 #es-panel-1{
+  height: calc(100% - 50px);
   padding-top: 15px;
   margin-left: 10px;
   margin-right: 10px;
@@ -91,7 +92,7 @@ margin:0;
   cursor: pointer;
 }
 .es-sidebar-toggle{
-  height: 60px;
+  height: 40px;
   width: 60px;
   background-position: top;
   background-repeat: no-repeat;
