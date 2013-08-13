@@ -18,6 +18,7 @@ var TableView = require('./views/table');
 var ExpressionEditorView = require('./views/expression_editor');
 var EthersheetContainerView = require('./views/ethersheet_container');
 var MenuView = require('./views/menu');
+var FunctionMenuView = require('./views/function_menu');
 var HistoryView = require('./views/history');
 var SheetListView = require('./views/sheet_list');
 var initializeExpressionHelpers = require('./lib/expression_helpers');
@@ -103,6 +104,10 @@ Ethersheet.prototype.initializeDisplay = function(o){
     }).render();
     es.menu = new MenuView({
       el: $('#es-style-menu-container', es.$el),
+      data: es.data,
+    }).render();
+    es.menu = new FunctionMenuView({
+      el: $('#es-function-menu-container', es.$el),
       data: es.data,
     }).render();
     es.history = new HistoryView({
