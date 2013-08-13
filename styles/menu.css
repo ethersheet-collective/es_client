@@ -9,17 +9,12 @@ padding:0;
 color:#111;
 }
 #es-menu-list li{
-background: #fff;
-padding: 0;
-}
-.es-menu-button{
-cursor:pointer;
-padding:6px;
-display: block;
-color: #000;
-text-decoration: none;
-border: 1px solid black;
-box-shadow: 5px 5px 3px #888;
+  background: none repeat scroll 0 0 #FFFFFF;
+  border-bottom: 1px solid #D0D2D3;
+  color: #000000;
+  cursor: pointer;
+  padding: 10px;
+  text-decoration: none;
 }
 .clear{
   clear: both;
