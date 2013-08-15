@@ -34,7 +34,20 @@ color:#111;
   text-align: center;
   width: 85px;
 }
+#es-menu-grid img{
+  clear: both;
+  display: block;
+  margin: 15px auto;
+}
 #es-menu-grid {
   margin: 0;
   padding: 0;
+}
+#es-menu-list li.es-menu-button.active{
+  background: #2BB573;
+  border-bottom: 1px solid #009344;
+  color: #fcfcfc;
+}
+#es-menu-grid a{
+  color: #000;
 }
