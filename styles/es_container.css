@@ -8,6 +8,7 @@
 body{
   background: #fcfcfc;
   color: #222;
+  overflow: hidden;
 }
 #es-container{
 font-family: 'Source Code Pro', Ariel, Sans-Serif;
@@ -26,7 +27,7 @@ margin:0;
   width: 0px;
   float: left;
   height: 95%;
-  height: calc(100% - 50px);
+  height: calc(100% - 40px);
   overflow-y: auto;
   padding-top: 5px;
   box-shadow: 5px 0 5px #888;

@@ -25,3 +25,16 @@ color:#111;
   box-shadow: 5px 5px 5px #888;
 
 }
+#es-menu-grid li {
+  border-bottom: 1px solid #D0D2D3;
+  border-right: 1px solid #D0D2D3;
+  display: inline-block;
+  float: left;
+  height: 85px;
+  text-align: center;
+  width: 85px;
+}
+#es-menu-grid {
+  margin: 0;
+  padding: 0;
+}

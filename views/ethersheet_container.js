@@ -62,7 +62,7 @@ var EthersheetContainer = module.exports = View.extend({
       console.log('close!');
       //close the panel
       $el.removeClass('active');
-      this.$menu.animate({'right':'250px'},speed);
+      this.$menu.animate({'right':'258px'},speed);
       this.$panel_0.animate({'width':'0'},speed, 'swing', function(){
         $("#es-panel-0").hide();
         $('menu-container').hide();
@@ -80,7 +80,7 @@ var EthersheetContainer = module.exports = View.extend({
       console.log('width', this.$panel_0.width());
       if(this.$panel_0.width() <= 0){
         this.$menu.animate({'right':'0px'},speed);
-        this.$panel_0.animate({'width':'250px'},speed);
+        this.$panel_0.animate({'width':'258px'},speed);
         this.$panel_1.animate({'margin-left':'265px'},speed);
       }
        
