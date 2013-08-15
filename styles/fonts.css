@@ -1,0 +1,32 @@
+@font-face {
+  font-family: 'Source Code Pro';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Source Code Pro'), local('SourceCodePro-Regular'), url(/es_client/styles/fonts/sourcecodepro.woff) format('woff');
+}
+@font-face {
+  font-family: 'Droid Serif';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Droid Serif'), url(/es_client/styles/fonts/DroidSerif.ttf) format('ttf');
+}
+
+@font-face {
+    font-family: 'Oxygen';
+      font-style: normal;
+        font-weight: 400;
+          src: local('Oxygen'), local('Oxygen-Regular'), url(/es_client/styles/fonts/Oxygen.woff) format('woff');
+      }
+
+@font-face {
+  font-family: 'Quicksand';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Quicksand'), local('Quicksand-Regular'), url(/es_client/styles/fonts/Quicksand.woff) format('woff');
+}
+@font-face {
+  font-family: 'Tienne';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Tienne'), local('Tienne-Regular'), url(/es_client/styles/fonts/Tienne.woff) format('woff');
+}

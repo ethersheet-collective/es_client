@@ -1,17 +1,10 @@
-@font-face {
-  font-family: 'Source Code Pro';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Source Code Pro'), local('SourceCodePro-Regular'), url(/es_client/styles/sourcecodepro.woff) format('woff');
-}
-
 body{
   background: #fcfcfc;
   color: #222;
   overflow: hidden;
 }
 #es-container{
-font-family: 'Source Code Pro', Ariel, Sans-Serif;
+font-family: 'Oxygen', Ariel, Sans-Serif;
 width:100%;
 height:100%;
 }
