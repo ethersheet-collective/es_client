@@ -1,5 +1,5 @@
 body {
-  background: #F9F9FF;
+  background: #F9F9FF url("/es_client/icons/tiny_grid.png");
   color: #111;
   font-family: 'Oxygen', 'Times New Roman', times;
   margin: 0;
@@ -37,11 +37,10 @@ h1#title{
 }
 #instructions{
   text-align: center;
-  margin-top: 40px;
   font-size: 22px;
 }
 #about {
-	font-size: 16px;
+	font-size: 20px;
 	color: #3e5666;
 	margin-top: 15px;
 }
