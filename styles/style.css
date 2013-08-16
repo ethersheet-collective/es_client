@@ -1,5 +1,5 @@
 body {
-  background: #f9f9ff;
+  background: #F9F9FF;
   color: #111;
   font-family: 'Oxygen', 'Times New Roman', times;
   margin: 0;
@@ -8,6 +8,9 @@ body {
 a{
   color: #599AC6;
   text-decoration: none;
+}
+.clear {
+	clear: both;
 }
 h1#title{
   width: 100%;
@@ -20,14 +23,31 @@ h1#title{
 .text{
   font-size: 18px;
   min-width: 350px;
-  width: 33%;
+  width: 350px;
   margin: 0 auto;
+}
+#content-inner {
+	margin: 80px auto;
+	max-width:800px;
+}
+#instructions-container {
+	float: left;
+	padding: 15px;
+	margin: 0 auto;
 }
 #instructions{
   text-align: center;
-  margin-top: 5px;
+  margin-top: 40px;
+  font-size: 22px;
 }
-
+#about {
+	font-size: 16px;
+	color: #3e5666;
+	margin-top: 15px;
+}
+#about p {
+	margin: 9px 0;
+}
 input#sheetname{
   font-family: "Source Code Pro", "Courier New", Courier;
   height: 50px;
@@ -49,8 +69,37 @@ input#submit {
 #logo-container {
   text-align: center;
   width: 350px;
+  float: left;
+  padding: 15px;
   margin: 0 auto;
 }
 #logo-container img{
-width: 350px;
+	width: 350px;
+}
+
+@media all and 
+(max-width: 800px) {
+	#logo-container, #instructions-container  { 
+	float: none;
+	width: auto;
+	padding: 0;
+	}
+	#instructions-container {
+	padding: 0 5%;
+	}
+	#logo-container img {
+	width: 80%;
+	height: auto;
+	}
+	#content-inner {
+	margin: 10px auto;
+	width: 100%;
+	}
+	#instructions{ 
+	margin-top: 5px;
+	}
+	.text {
+	width: 90%;
+	min-width: 100%;
+	}
 }
