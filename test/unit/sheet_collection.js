@@ -32,14 +32,14 @@ describe('SheetCollection', function(){
   describe('adding a x  sheet', function(){
 
     it('should increase the number of sheets', function(){
-      assert.equal(data.sheets.length, 0);
-      data.sheets.addSheet();
       assert.equal(data.sheets.length, 1);
+      data.sheets.addSheet();
+      assert.equal(data.sheets.length, 2);
     });
     
     it('should create a sheet with the correct data', function(){
       data.sheets.addSheet({id:'foobar'});
-      assert.equal(data.sheets.at(0).id, 'foobar');
+      assert.equal(data.sheets.at(1).id, 'foobar');
     });
 
     it('should trigger two events', function(){

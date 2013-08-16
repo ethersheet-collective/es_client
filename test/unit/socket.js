@@ -11,29 +11,29 @@ var should = require('chai').should();
 var sinon = require('sinon');
 var Socket = require('es_client/lib/socket');
 
-var fake_websocket = {
-  send: function(){}
-};
-
 describe('Socket', function(){
   var socket, selections, sheets, sheet;
 
-  beforeEach(function(){
+  beforeEach(function(done){
      es = new Ethersheet({
       target:'#ethersheet-container',
-      channel:'test_channel',
-      socket: fake_websocket,
-      sheets: new SheetCollection([new Sheet()], 'test_channel'),
+      channel:'socket_test',
       user:{
         id: 'test_user'
+      },
+      onConnect:function(){
+        sheets = es.data.sheets; 
+        sheet = sheets.first();
+        selections = es.data.selections; 
+        socket = es.socket; 
+        cell = {value:1,type:"number"};
+        done();
       }
     });
-    sheets = es.data.sheets; 
-    sheets.add({});
-    sheet = sheets.first();
-    selections = es.data.selections; 
-    socket = es.socket; 
-    cell = {value:1,type:"number"};
+  });
+
+  afterEach(function(done){
+    es.destroy(done);
   });
 
   it('should trigger data event when cell is updated', function(){
@@ -51,7 +51,12 @@ describe('Socket', function(){
 
   it('should not trigger data event when cell is committed', function(){
     var mock = sinon.mock(socket);
-
+    mock.expects('send').withArgs(JSON.stringify({
+      id: sheet.id,
+      type: 'sheet',
+      action: 'commitCell',
+      params:[sheet.rowAt(0),sheet.colAt(0)]
+    }));
     sheet.disableSend();
     sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),1);
     sheet.enableSend();
@@ -108,15 +113,14 @@ describe('Socket', function(){
     mock.verify();
   });
 
-  it('should call correct method on sheet when "sheet" event is emitted', function(){
+  it('should call correct method when receiving a message', function(){
     cell_value = '=9000';
     var msg ={
       id: sheet.id,
       type: 'sheet',
-      action:'commitCell', 
+      action:'updateCell', 
       params:[sheet.rowAt(0),sheet.colAt(0),{value:cell_value, type:"formula"}]
     };
-    sheet.updateCell(sheet.rowAt(0),sheet.colAt(0),cell_value);
     socket.message({
       data:JSON.stringify(msg)
     });

@@ -2,16 +2,15 @@ if (typeof define !== 'function') { var define = require('amdefine')(module) }
 define( function(require,exports,module) {
 
 var $ = require('jquery');
+var async = require('async');
 
 var config = require('./config');
 var Socket = require('./lib/socket');
 var Command = require('es_command');
 var UndoQ = require('./lib/undo');
 
-// models
-var UserCollection = require('./models/user_collection');
-var SheetCollection = require('./models/sheet_collection');
-var SelectionCollection = require('./models/selection_collection');
+// shareDB
+var shareDB = require('es_client/lib/share_db');
 
 // views
 var TableView = require('./views/table');
@@ -27,48 +26,45 @@ var keyboardEvents = require('./lib/keyboard');
 
 var Ethersheet = module.exports = function(o) {
   if(!o.target) throw Error('el or target required');
- 
-  this.connection_handler = function(){};
+
+  var es = this;
+  this.connection_handler = o.onConnect || function(){};
+  this.onReady = o.onReady || function(){};
   this.data = {};
   this.socket = null;
   this.undoQ = new UndoQ();
   this.keyboard = keyboardEvents();
   this.expressionHelpers = initializeExpressionHelpers(this.data);
-  this.initializeData(o);
-  this.initializeSocket(o);
-  this.initializeDisplay(o);
-  this.initializeCommands(o);
 
+  async.series([
+    function(cb){ es.initializeData(o,cb) },
+    function(cb){ es.initializeSocket(o,cb) },
+    function(cb){ es.initializeDisplay(o,cb) },
+    function(cb){ es.initializeCommands(o,cb) }
+    ],function(err){ 
+      if(err) console.log(err);
+    });
 };
 
-Ethersheet.prototype.initializeData = function(o){
-  this.data.sheets = new SheetCollection(o.sheets, o);
-
-  this.data.sheets.each(function(sheet){
-    sheet.setExpressionHelper(this.expressionHelpers);
-  }, this);
-
-  this.data.selections = new SelectionCollection([],{sheet_collection: this.data.sheets});
-  this.data.users = new UserCollection([],{selection_collection:this.data.selections});
-  this.data.users.createCurrentUser(o.user);
-  this.data.undo_stack = this.undoQ;
-  this.data.current_user_id = this.data.users.getCurrentUser().id;
-
-  this.data.users
-    .getCurrentUser()
-    .setCurrentSheetId(this.data.sheets.first().id);
-  this.data.selections.createLocal({
-    user_id:this.data.users.getCurrentUser().id,
-    color:config.DEFAULT_LOCAL_SELECTION_COLOR
+Ethersheet.prototype.initializeData = function(o,done){
+  console.log('initializeData');
+  var es = this;
+  shareDB.connect(o,function(err,data){
+    console.log('data',data);
+    es.data = data;
+    es.data.undo_stack = es.undoQ;
+    done(err);
   });
 };
 
-Ethersheet.prototype.initializeSocket = function(o){
+Ethersheet.prototype.initializeSocket = function(o,done){
+  console.log('initializeSocket');
   var es = this;
   
   this.socket = new Socket(o.channel,this.data.users.getCurrentUser().id,o.socket);
-
+  console.log('init sock',arguments);
   this.socket.onOpen(function(e){
+    console.log('open sock');
     es.data.users.replicateCurrentUser();
     es.data.users.requestReplicateCurrentUser();
     es.data.selections.replicateLocalSelection();
@@ -83,9 +79,12 @@ Ethersheet.prototype.initializeSocket = function(o){
   });
 
   this.bindDataToSocket();
+
+  done();
 };
 
-Ethersheet.prototype.initializeDisplay = function(o){
+Ethersheet.prototype.initializeDisplay = function(o,done){
+  console.log('initializeDisplay');
   var es = this;
   $(function(){
     es.$el = $(o.target);
@@ -112,14 +111,25 @@ Ethersheet.prototype.initializeDisplay = function(o){
       el: $('#es-sheet-list-container', es.$el),
       data: es.data
     }).render();
+
+    done();  
   });
+
 };
 
-Ethersheet.prototype.initializeCommands = function(o){
+Ethersheet.prototype.initializeCommands = function(o,done){
+  console.log('initializeCommands');
   var es = this;
   this.keyboard.on('meta_90',this.undoCommand.bind(this));
   this.keyboard.on('shift_meta_90',this.redoCommand.bind(this));
+  done();
+};
 
+Ethersheet.prototype.destroy = function(done){
+  shareDB.disconnect(this.data,function(err){
+    if(err) console.log("error disconnecting shareDB",err);
+    if(typeof done === 'function') done(err);
+  });
 };
 
 Ethersheet.prototype.onConnect = function(handler){
@@ -132,6 +142,9 @@ Ethersheet.prototype.connect = function(){
 
 Ethersheet.prototype.executeCommand = function(c){
   var model = this.getModel(c.getDataType(),c.getDataId());
+  if (!model) {
+    console.log("WARNING: FAILED TO EXECUTE REMOTE COMMAND: cannot find model",c.getMessage());
+  }
   model.disableSend();
   c.execute(model);
   model.enableSend();
@@ -163,9 +176,7 @@ Ethersheet.prototype.redoCommand = function(){
 
 Ethersheet.prototype.getModel = function(type,id){
   var collection = this.data[type];
-  if(collection){
-    return collection;
-  } else {
+  if(!collection){
     collection = this.data[this.pluralizeType(type)];
   }
   if(!collection) return false;

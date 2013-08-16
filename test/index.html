@@ -35,6 +35,8 @@
 
   <!--Ethersheet-->
   <link rel="stylesheet" type="text/css" href="/es_client/styles/table.css" />
+  <script src="/es_client/vendor/bcsocket.js"></script>
+  <script src="/es_client/vendor/share.js"></script>
   <script src="/es_client/vendor/require.js"></script>
   <script src="/es_client/boot.js"></script>
   
@@ -43,12 +45,13 @@
     var deps = ['jquery'];
     
     var tests = [
+      'test/ethersheet',
+      'test/share_client',
       'test/sheet',
       'test/sheet_collection',
       'test/selection',
       'test/table',
       'test/user',
-      'test/ethersheet',
       'test/undo',
       'test/socket'
     ];

@@ -30,10 +30,10 @@ describe('Sheet', function(){
 
     sheet_options || {id:'test'};
 
-    connect({}, function(err,test_data){
+    connect({sheets:[sheet_options]}, function(err,test_data){
       events = [];
       data = test_data;
-      data.sheets.addSheet(sheet_options);
+      data.sheets.addSheet();
       sheet = data.sheets.at(0);
       sheet.on('all',function(){
         events.push({
