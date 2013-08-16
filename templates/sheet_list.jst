@@ -1,6 +1,12 @@
-<ul id='es-sheet-list'>
+<ul id='es-menu-list'>
 <% var _ = require('underscore'); %>
+<% var cls = "" %>
 <% sheets.each(function(sheet){ %>
-<li><a class='es-sheet-selector' id=<%=sheet.id%> > <%=sheet.meta.title%> </a></li>
+<li class="es-menu-button" id=<%=sheet.id%> > <%=sheet.meta.title%> </li>
 <%});%>
-<a id='es-add-sheet-button'>+ Add Sheet</a>
+</ul>
+<ul id='es-menu-grid'>
+<li id='es-add-sheet-button'><img src="/es_client/icons/ethersheet-icon-newtable.png">New Sheet</li>
+<a href="/s/<%=current_sheet_id%>.csv" target=_blank><li id="es-export-csv"><img src="/es_client/icons/ethersheet-icon-export.png">Export CSV</li></a>
+<!--<li id="es-import-csv"><img src="/es_client/icons/ethersheet-icon-import.png">Import CSV</li>-->
+</ul>

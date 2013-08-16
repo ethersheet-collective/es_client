@@ -1,19 +1,12 @@
-@font-face {
-  font-family: 'Source Code Pro';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Source Code Pro'), local('SourceCodePro-Regular'), url(/es_client/styles/sourcecodepro.woff) format('woff');
-}
-
 body{
   background: #fcfcfc;
   color: #222;
+  overflow: hidden;
 }
 #es-container{
-font-family: 'Source Code Pro', Ariel, Sans-Serif;
+font-family: 'Oxygen', Ariel, Sans-Serif;
 width:100%;
 height:100%;
-overflow: hidden;
 }
 #es-container h1,h2,h3,h4,h5,h6{
 margin:0;
@@ -24,29 +17,86 @@ margin:0;
   position: relative;
 }
 #es-panel-0{
-  width: 200px;
+  width: 0px;
   float: left;
-  margin-right: 2%;
-  height: 100%;
-  overflow-y: scroll;
+  height: 95%;
+  height: calc(100% - 40px);
+  overflow-y: auto;
+  padding-top: 5px;
+  box-shadow: 5px 0 5px #888;
+  z-index: 2;
   display: none;
 }
 #es-panel-1{
+  height: calc(100% - 50px);
+  padding-top: 15px;
   margin-left: 10px;
   margin-right: 10px;
 }
 #es-panel-2{
-  width: 200px;
+  width: 0;
   float: right;
-  margin-left: 2%;
   height: 100%;
   overflow-y: auto;
-  display: none;
+}
+#es-header .es-sidebar-toggle{
+  float: left;
+  display: inline;
+  margin-right: 5px;
+  position: absolute;
+  z-index: 3;
+}
+.es-sidebar-toggle.active {
+  border-radius: 0 0 5px 5px;
+  height: 60px;
+  top: -4px;
+  width: 60px;
+}
+#es-function-icon{
+  background-image: url('/es_client/icons/ethersheet-icon-function-gray.png');
+  left: 60px;
+}
+#es-function-icon.active{
+  background-image: url('/es_client/icons/ethersheet-icon-function.png');
+}
+#es-activity-icon{
+  background-image: url('/es_client/icons/ethersheet-icon-activity-gray.png');
+  left: 180px;
+}
+#es-activity-icon.active{
+  background-image: url('/es_client/icons/ethersheet-icon-activity.png');
+}
+#es-style-icon{
+  background-image: url('/es_client/icons/ethersheet-icon-style-gray.png');
+  left: 120px;
+}
+#es-style-icon.active{
+  background-image: url('/es_client/icons/ethersheet-icon-style.png');
+}
+#es-sheet-icon{
+  background-image: url('/es_client/icons/ethersheet-icon-sheets-gray.png');
+}
+#es-sheet-icon.active{
+  background-image: url('/es_client/icons/ethersheet-icon-sheets.png');
+}
+#es-sheet-list li{
+  cursor: pointer;
+}
+#es-sheet-list a {
+  cursor: pointer;
+}
+.es-sidebar-toggle{
+  height: 40px;
+  width: 60px;
+  background-position: top;
+  background-repeat: no-repeat;
+  cursor: pointer;
 }
 #es-menu-container{
 }
 #es-table-container{
 position:relative;
+border: 1px solid #333;
 }
 #es-modal-overlay{
 display: none;
@@ -93,8 +143,8 @@ color:#111111;
   font-size: 20px;
 }
 #es-header{
-  margin-bottom: 10px;
-  background: #222;
+  background: url("/es_client/icons/dark_stripes.png");
   padding: 5px 10px;
   color: #fcfcfc;
+  height: 35px;
 }

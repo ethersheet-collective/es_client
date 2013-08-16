@@ -17,6 +17,7 @@ var TableView = require('./views/table');
 var ExpressionEditorView = require('./views/expression_editor');
 var EthersheetContainerView = require('./views/ethersheet_container');
 var MenuView = require('./views/menu');
+var FunctionMenuView = require('./views/function_menu');
 var HistoryView = require('./views/history');
 var SheetListView = require('./views/sheet_list');
 var initializeExpressionHelpers = require('./lib/expression_helpers');
@@ -89,7 +90,8 @@ Ethersheet.prototype.initializeDisplay = function(o,done){
   $(function(){
     es.$el = $(o.target);
     es.ethersheet_container = new EthersheetContainerView({
-      el: es.$el
+      el: es.$el,
+      data: es.data
     }).render();
     es.expression_editor = new ExpressionEditorView({
       el: $('#es-expression-editor-container', es.$el),
@@ -100,15 +102,19 @@ Ethersheet.prototype.initializeDisplay = function(o,done){
       data: es.data
     }).render();
     es.menu = new MenuView({
-      el: $('#es-menu-container', es.$el),
+      el: $('#es-style-menu-container', es.$el),
+      data: es.data,
+    }).render();
+    es.menu = new FunctionMenuView({
+      el: $('#es-function-menu-container', es.$el),
       data: es.data,
     }).render();
     es.history = new HistoryView({
-      el: $('#es-history-container', es.$el),
+      el: $('#es-activity-menu-container', es.$el),
       data: es.data
     }).render();
     es.sheet_list = new SheetListView({
-      el: $('#es-sheet-list-container', es.$el),
+      el: $('#es-sheet-menu-container', es.$el),
       data: es.data
     }).render();
 
