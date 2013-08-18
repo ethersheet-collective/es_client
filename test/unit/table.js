@@ -20,12 +20,6 @@ describe('TableView', function(){
   var data, table, $el, sheet, selections;
 
   var initializeTable = function(done){
-    if(data){
-      return resetSelection(function(){
-        initializeSelection(done);
-      });
-    }
-
     connect({}, function(err,test_data){
       data = test_data;
       $container.empty()
@@ -52,6 +46,7 @@ describe('TableView', function(){
   
   function resetTable(done){
     if(!data) return done();
+    table.destroy();
     disconnect(data,function(err){
       data = undefined;
       table = undefined;

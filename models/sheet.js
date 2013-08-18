@@ -43,12 +43,14 @@ var Sheet = module.exports = ESModel.extend({
     this.initializeRows(o.rows);
     this.initializeCols(o.cols);
     this.initializeCells(o.cells);
+    this.initializeShareDB(o.share_db);
     if(_.isObject(o.expressionHelpers)){
       this.setExpressionHelper(o.expressionHelpers);
     }
   },
 
-  initializeShareDB: function(){
+  initializeShareDB: function(share_db){
+    this.share_db = share_db;
     this.share_db.set({
       id:this.id,
       title:this.getTitle(),
@@ -116,8 +118,8 @@ var Sheet = module.exports = ESModel.extend({
   getData: function(){
     return {
       id: this.id,
-      rows: this.rows,
-      cols: this.cols,
+      rows: this.rowIds(),
+      cols: this.colIds(),
       cells: this.cells,
       row_heights: this.row_heights,
       col_widths: this.col_widths,
@@ -128,56 +130,44 @@ var Sheet = module.exports = ESModel.extend({
 // # Rows
   
   rowCount: function(){
-    return this.rows.length;
+    return this.share_db.getLength('rows');
   },
   rowIds: function(){
-    return this.rows;
+    return this.share_db.get('rows');
   },
   rowExists: function(row_id){
-    return _.include(this.rows,row_id);
+    return _.include(this.rowIds(),row_id);
   },
   rowAt: function(index){
-    return this.rows[index];
+    return this.share_db.get(['rows',index]);
   },
   indexForRow: function(row_id){
-    return _.indexOf(this.rows,row_id);
-  },
-  /* takes a column identifier ('A') and converts it to an array index */
-  identifierToIndex: function(letters){
-    var scale = 1;
-    var pieces = letters.toLowerCase().split('');
-    var idx = _.reduceRight(pieces, function(memo,letter){
-      var pos = (letter.charCodeAt(0) - 96) * scale;
-      scale = scale * 26;
-      return memo + pos; 
-    }, -1);
-    return idx;
-       
+    return _.indexOf(this.rowIds(),row_id);
   },
   insertRow: function(position, id){
-    var new_id = id || uid();
-    this.rows.splice(position,0,new_id);
+    id = id || uid();
+    this.share_db.insert('rows',position,id);
     this.trigger('insert_row',{
-      row_id:new_id,
+      row_id:id,
       sheet_id:this.id
     });
     this.send({
       id: this.id,
       type: 'sheet',
       action: 'insertRow',
-      params:[position, new_id]
+      params:[position, id]
     },{
       id: this.id,
       type: 'sheet',
       action: 'deleteRow',
-      params:[new_id]
+      params:[id]
     });
-    return new_id;
+    return id;
   },
   deleteRow: function(row_id){
-    var row_pos = _.indexOf(this.rows,row_id);
+    var row_pos = this.indexForRow(row_id);
     if(row_pos === -1) return false;
-    this.rows.splice(row_pos,1);
+    this.share_db.remove(['rows',row_pos]);
     this.trigger('delete_row',{
       row_id:row_id,
       sheet_id:this.id
@@ -197,7 +187,7 @@ var Sheet = module.exports = ESModel.extend({
   },
   sortRows: function(col_id){
     var sheet = this;
-    var rows = _.clone(this.rows);
+    var rows = _.clone(this.rowIds());
 
     rows.sort(function compareRows(row_a,row_b){
       var value_a = sheet.getCellValue(row_a,col_id).toString().trim();
@@ -216,7 +206,7 @@ var Sheet = module.exports = ESModel.extend({
        return value_a === value_b ? 0 : value_a > value_b ? 1 : -1;
     });
     
-    this.rows = rows;
+    this.share_db.set('rows',rows);
 
     this.trigger('sort_rows',{});
     this.send({
@@ -229,47 +219,57 @@ var Sheet = module.exports = ESModel.extend({
 
 // # Columns
 
+  /* takes a column identifier ('A') and converts it to an array index */
+  identifierToIndex: function(letters){
+    var scale = 1;
+    var pieces = letters.toLowerCase().split('');
+    var idx = _.reduceRight(pieces, function(memo,letter){
+      var pos = (letter.charCodeAt(0) - 96) * scale;
+      scale = scale * 26;
+      return memo + pos; 
+    }, -1);
+    return idx;
+  },
   colCount: function(){
-    return this.cols.length;
+    return this.share_db.getLength('cols');
   },
   colIds: function(){
-    return this.cols;
+    return this.share_db.get('cols');
   },
   colExists: function(col_id){
-    return _.include(this.cols,col_id);
+    return _.include(this.colIds(),col_id);
   },
   colAt: function(index){
-    return this.cols[index];
+    return this.colIds()[index];
   },
   indexForCol: function(col_id){
-    return _.indexOf(this.cols,col_id);
+    return _.indexOf(this.colIds(),col_id);
   },
   insertCol: function(position, id){
-    var new_id = id || uid();
-    this.cols.splice(position,0,new_id);
+    id = id || uid();
+    this.share_db.insert('cols',position,id);
     this.trigger('insert_col',{
-      col_id:new_id,
+      col_id:id,
       sheet_id:this.id
     });
     this.send({
       id: this.id,
       type: 'sheet',
       action: 'insertCol',
-      params:[position, new_id]
+      params:[position, id]
     },{
       id: this.id,
       type: 'sheet',
       action: 'deleteCol',
-      params:[new_id]
+      params:[id]
     });
-    return new_id;
+    return id;
   },
   deleteCol: function(col_id){
-    var es = this;
-    var col_pos = _.indexOf(es.cols,col_id);
+    var col_pos = this.indexForCol(col_id);
     if(col_pos === -1) return false;
-    es.cols.splice(col_pos,1);
-    es.trigger('delete_col',{
+    this.share_db.remove(['cols',col_pos]);
+    this.trigger('delete_col',{
       col_id:col_id,
       sheet_id:this.id
     });

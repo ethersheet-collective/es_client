@@ -131,12 +131,12 @@ describe('Sheet', function(){
 
     it('rowIds should return an array of ids', function(){
       var row_ids = sheet.rowIds();
-      row_ids.should.equal(data.rows);
+      row_ids.should.deep.equal(data.rows);
     });
 
     it('colIds should return an array of ids', function(){
       var col_ids = sheet.colIds();
-      col_ids.should.equal(data.cols);
+      col_ids.should.deep.equal(data.cols);
     });
 
     it('colAt should return the id of the column at index', function(){
@@ -447,7 +447,7 @@ describe('Sheet', function(){
     var row_id, col_id, cell_id;
 
     beforeEach(function(done){
-        initializeSheet({},function(){
+      initializeSheet({},function(){
         sheet.disableSend();
         row_id = sheet.rowIds()[0];
         col_id = sheet.colIds()[0];
@@ -523,12 +523,15 @@ describe('Sheet', function(){
       sheet.commitCell(row_id, col_id);
       sheet.getDisplayFormula(row_id,col_id).should.equal('=B2');
     });
+
     it('should deal with deleting or adding columns and rows', function(){
-      initializeSheet;
       addCell('0','0', '123');
-      addCell('0','1', '=A1'); sheet.insertCol(0); sheet.getDisplayFormula('0', '1').should.equal('=B1'); });
+      addCell('0','1', '=A1'); 
+      sheet.insertCol(0); 
+      sheet.getDisplayFormula('0', '1').should.equal('=B1'); 
+    });
+
     it('should deal with math on nested cell references', function(){
-      initializeSheet;
       test_val = '123';
       addCell('0','0', test_val);
       addCell('0','1', '=A1');

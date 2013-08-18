@@ -49,6 +49,7 @@ var Table = module.exports = View.extend({
     this.draggingRow = false;
     this.draggingCol = false;
     this.data = o.data;
+    this.timers = [];
     this.setCurrentUser(o.data.users.getCurrentUser() || null);
     var current_sheet_id = this.getCurrentUser().getCurrentSheetId();
     this.setSheet(o.data.sheets.get(current_sheet_id) || null);
@@ -66,6 +67,9 @@ var Table = module.exports = View.extend({
     this.remove();
     this.models.unsetAll();
     this.models = null;
+    _.each(this.timers,function(id){
+      clearTimeout(id);
+    });
   },
 
 
@@ -240,10 +244,12 @@ var Table = module.exports = View.extend({
     this.initializeElements();
     this.initializeScrolling();
     this.initializeSelections();
-    setTimeout(this.resizeRowHeaders.bind(this),100);
-    setTimeout(this.resizeRowHeaders.bind(this),300);
-    setTimeout(this.resizeColHeaders.bind(this),100);
-    setTimeout(this.resizeColHeaders.bind(this),300);
+
+    this.timers.push(setTimeout(this.resizeRowHeaders.bind(this),100));
+    this.timers.push(setTimeout(this.resizeRowHeaders.bind(this),300));
+    this.timers.push(setTimeout(this.resizeColHeaders.bind(this),100));
+    this.timers.push(setTimeout(this.resizeColHeaders.bind(this),300));
+
     this.$grid = $(".es-grid-container",this.$el);
     this.is_rendered = true;
     this.resize();
