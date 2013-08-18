@@ -203,7 +203,6 @@ describe('Sheet', function(){
     var new_value,row_id, col_id, success;
 
     beforeEach(function(done){
-      console.log('COMMIT');
       initializeSheet({},function(){
         new_value = "=1+1";
         row_id = sheet.rowIds()[0];

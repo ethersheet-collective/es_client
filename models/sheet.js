@@ -44,7 +44,6 @@ var Sheet = module.exports = ESModel.extend({
     this.initializeCols(o.cols);
     this.initializeCells(o.cells);
     if(_.isObject(o.expressionHelpers)){
-      console.log('calling set', o.expressionHelpers);
       this.setExpressionHelper(o.expressionHelpers);
     }
   },
@@ -352,7 +351,6 @@ var Sheet = module.exports = ESModel.extend({
   },
 
   commitCell: function(row_id,col_id){
-    console.log('commitng cell');
     var cell = this.getCell(row_id,col_id);
     if(!cell) return false;
     cell.type = this.getCellType(cell.value); 
@@ -372,7 +370,6 @@ var Sheet = module.exports = ESModel.extend({
       action: 'commitCell',
       params:[row_id,col_id]
     });
-    console.log('refreshing cells');
     this.refreshCells();
     return true;
   },

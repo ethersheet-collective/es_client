@@ -84,7 +84,6 @@ describe('Socket', function(){
       action:'deleteCol', 
       params:[sheet.cols[0]]
     }));
-    console.log(sheet);
     sheet.deleteCol(sheet.cols[0]);
     mock.verify();
   });

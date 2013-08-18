@@ -16,7 +16,6 @@ describe('SheetCollection', function(){
     };
     connect(o,function(err,test_data){
       data = test_data;
-      console.log('looloo',data);
       event_trap = new EventTrap();
       data.sheets.on('all', event_trap.eventHandler);
       done();

@@ -41,7 +41,6 @@ describe('ShareDB', function(){
         };
         createData(o,function(err,data){
           test_data = data;
-          console.log('baa',test_data);
           done();
         });
       });

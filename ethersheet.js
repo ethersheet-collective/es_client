@@ -48,10 +48,8 @@ var Ethersheet = module.exports = function(o) {
 };
 
 Ethersheet.prototype.initializeData = function(o,done){
-  console.log('initializeData');
   var es = this;
   shareDB.connect(o,function(err,data){
-    console.log('data',data);
     es.data = data;
     es.data.undo_stack = es.undoQ;
     done(err);
@@ -59,13 +57,10 @@ Ethersheet.prototype.initializeData = function(o,done){
 };
 
 Ethersheet.prototype.initializeSocket = function(o,done){
-  console.log('initializeSocket');
   var es = this;
   
   this.socket = new Socket(o.channel,this.data.users.getCurrentUser().id,o.socket);
-  console.log('init sock',arguments);
   this.socket.onOpen(function(e){
-    console.log('open sock');
     es.data.users.replicateCurrentUser();
     es.data.users.requestReplicateCurrentUser();
     es.data.selections.replicateLocalSelection();
@@ -85,7 +80,6 @@ Ethersheet.prototype.initializeSocket = function(o,done){
 };
 
 Ethersheet.prototype.initializeDisplay = function(o,done){
-  console.log('initializeDisplay');
   var es = this;
   $(function(){
     es.$el = $(o.target);
@@ -124,7 +118,6 @@ Ethersheet.prototype.initializeDisplay = function(o,done){
 };
 
 Ethersheet.prototype.initializeCommands = function(o,done){
-  console.log('initializeCommands');
   var es = this;
   this.keyboard.on('meta_90',this.undoCommand.bind(this));
   this.keyboard.on('shift_meta_90',this.redoCommand.bind(this));
@@ -132,6 +125,7 @@ Ethersheet.prototype.initializeCommands = function(o,done){
 };
 
 Ethersheet.prototype.destroy = function(done){
+  this.table.destroy();
   shareDB.disconnect(this.data,function(err){
     if(err) console.log("error disconnecting shareDB",err);
     if(typeof done === 'function') done(err);

@@ -254,7 +254,6 @@ var Table = module.exports = View.extend({
     if(!this.is_rendered) return;
     var grid_height = this.$el.innerHeight() - 18;
     var grid_width = this.$el.innerWidth() - 45;
-    console.log(this.$grid, grid_height, grid_width);
     this.$grid.height(grid_height);
     this.$grid.width(grid_width);
   },

@@ -128,7 +128,6 @@ describe('Selection', function(){
       selection.addRow(sheet.id,row_id);
     });
     it('should increase the size of the selection',function(){
-      console.log('getting row', row_id);
       selection.getCells().length.should.equal(sheet.cols.length);
     });
     it('should emit an add_row event and a send event', function(){
@@ -143,7 +142,6 @@ describe('Selection', function(){
       selection.addColumn(sheet.id,col_id);
     });
     it('should increase the size of the selection',function(){
-      console.log('getting col', col_id);
       selection.getCells().length.should.equal(sheet.rows.length);
     });
     it('should emit an add_cell event for each cell in the row', function(){
@@ -158,7 +156,6 @@ describe('Selection', function(){
       sheet.updateCell(row_id,col_id,'test');
       selection.addCell(sheet.id,row_id,col_id);
       clearEvents();
-      console.log('selcol', selection.collection);
       selection.addFormat('bg-red');
     });
     it('should emit an add_format event', function(){
