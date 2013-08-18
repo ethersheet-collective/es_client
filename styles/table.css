@@ -33,14 +33,14 @@ margin-left:45px;
 left:0px;
 top:0px;
 height:18px;
-background:#eeeeee;
+background:#edeff0;
 }
 .es-row-headers{
 left:0px;
 top:0px;
 width:45px;
 margin-top:18px;
-background:#eeeeee;
+background:#edeff0;
 }
 .es-grid-container{
 left:45px;
@@ -86,9 +86,8 @@ border-left: none;
 padding: 0;
 }
 .es-table-cell{
-border:1px solid #888888;
+border-top:1px solid #D0D2D3;
 overflow:hidden;
-background: #fff;
 }
 .es-table-cell-input{
 border: 0px;
@@ -143,4 +142,12 @@ overflow:scroll;
 }
 .es-italic{
   font-style: italic;
+}
+.es-row-odd{
+  background: #FBFBFB;
+}
+.es-row-first{
+  background: #edeff0;
+  height: 100px;
+  box-shadow: -1px 1px 5px #333;
 }
