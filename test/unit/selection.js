@@ -127,9 +127,11 @@ describe('Selection', function(){
       clearEvents();
       selection.addRow(sheet.id,row_id);
     });
+
     it('should increase the size of the selection',function(){
-      selection.getCells().length.should.equal(sheet.cols.length);
+      selection.getCells().length.should.equal(sheet.colIds().length);
     });
+
     it('should emit an add_row event and a send event', function(){
       events.length.should.equal(2);
       events.pop().name.should.equal('send');
@@ -142,7 +144,7 @@ describe('Selection', function(){
       selection.addColumn(sheet.id,col_id);
     });
     it('should increase the size of the selection',function(){
-      selection.getCells().length.should.equal(sheet.rows.length);
+      selection.getCells().length.should.equal(sheet.rowIds().length);
     });
     it('should emit an add_cell event for each cell in the row', function(){
       events.length.should.equal(2);

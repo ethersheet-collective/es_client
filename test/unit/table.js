@@ -267,7 +267,7 @@ describe('TableView', function(){
       sheet.updateCell(row_id,col_id,value);
       sheet.commitCell(row_id,col_id);
       $clicked_cell = $('.es-table-cell').first()
-      initial_bgcolor = 'rgb(255, 255, 255)';
+      initial_bgcolor = $clicked_cell.css('background-color');
       $clicked_cell.click()
       $input = $('#'+$clicked_cell.attr('id')+'-input');
     });
@@ -284,13 +284,6 @@ describe('TableView', function(){
       var bgcolor = $clicked_cell.css('background-color');
       bgcolor.should.not.equal(initial_bgcolor);
     });
-
-    /*it("should create an input for selected cell", function(done){
-      var value = '=1+1';
-      $input[0].should.not.equal(undefined);
-      $input.val().should.equal(value);
-      done();
-    });*/
 
     describe("and then a new cell is clicked", function(){
       var $new_cell;

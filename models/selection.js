@@ -108,7 +108,7 @@ var Selection = module.exports = ESModel.extend({
     var self = this;
     this.setSheet(sheet_id);
     var sheet = this.collection.getSheet(sheet_id);
-    _.each(sheet.cols, function(col_id){
+    _.each(sheet.colIds(), function(col_id){
       self.addCell(sheet_id,row_id,col_id,true);
     });
     this.trigger('select_row',self.getCells());
@@ -124,7 +124,7 @@ var Selection = module.exports = ESModel.extend({
     var self = this;
     self.setSheet(sheet_id);
     var sheet = this.collection.getSheet(sheet_id);
-    _.each(sheet.rows, function(row_id){
+    _.each(sheet.rowIds(), function(row_id){
       self.addCell(sheet_id,row_id,col_id,true);
     });
     this.trigger('select_col',self.getCells());

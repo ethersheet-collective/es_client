@@ -595,8 +595,8 @@ var Table = module.exports = View.extend({
   moveSelection: function(e, row_offset, col_offset){
     var selection = this.getLocalSelection();
     var old_cell = selection.getCells()[0];
-    var rows = this.getSheet().rows;
-    var cols = this.getSheet().cols;
+    var rows = this.getSheet().rowIds();
+    var cols = this.getSheet().colIds();
     var new_col_idx = _.indexOf(cols,old_cell.col_id) + col_offset;
     var new_col = cols[new_col_idx];
     var new_row_idx = _.indexOf(rows,old_cell.row_id) + row_offset;

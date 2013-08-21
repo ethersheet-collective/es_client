@@ -82,9 +82,9 @@ describe('Socket', function(){
       id: sheet.id,
       type: 'sheet',
       action:'deleteCol', 
-      params:[sheet.cols[0]]
+      params:[sheet.colIds()[0]]
     }));
-    sheet.deleteCol(sheet.cols[0]);
+    sheet.deleteCol(sheet.colIds()[0]);
     mock.verify();
   });
 
@@ -94,9 +94,9 @@ describe('Socket', function(){
       id: sheet.id,
       type: 'sheet',
       action:'deleteRow', 
-      params:[sheet.rows[0]]
+      params:[sheet.rowIds()[0]]
     }));
-    sheet.deleteRow(sheet.rows[0]);
+    sheet.deleteRow(sheet.rowIds()[0]);
     mock.verify();
   });
 

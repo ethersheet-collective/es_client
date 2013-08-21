@@ -147,10 +147,10 @@ describe('Sheet', function(){
       sheet.rowAt(0).should.equal('1');
     });
     it('getCell should return the correct cell', function(){
-      sheet.getCell('1','a').should.equal(sheet.cells['1']['a']);
+      sheet.getCell('1','a').should.deep.equal(default_cell('a1'));
     });
     it('getCells should return the correct data', function(){
-      sheet.getCells().should.equal(data.cells);
+      sheet.getCells().should.deep.equal(data.cells);
     });
   });
 
@@ -508,7 +508,7 @@ describe('Sheet', function(){
     it('should have a cell reference function', function(done){
       sheet.updateCell(row_id, col_id, a1_value);
       sheet.commitCell(row_id, col_id);
-      sheet.cells[new_row][new_col] = {value:"=cellReference('" + sheet.id +"','0','0')", type:'formula'};
+      sheet.updateCell(new_row,new_col,"=cellReference('" + sheet.id +"','0','0')");
       sheet.getCellDisplay(sheet.getCell(new_row, new_col)).should.equal(a1_value);
       done();
     });
@@ -546,8 +546,8 @@ describe('Sheet', function(){
       var cls = 'bg-red';
       sheet.addCell(row_id,col_id,{value:'1', type:'new'});
       sheet.addFormatToCell(row_id,col_id,cls);
-      sheet.cells[row_id][col_id].formatting.length.should.equal(1);
-      sheet.cells[row_id][col_id].formatting[0].should.equal(cls);
+      sheet.getCell(row_id,col_id).formatting.length.should.equal(1);
+      sheet.getCell(row_id,col_id).formatting[0].should.equal(cls);
     });
   });
   describe('userland functions', function(){

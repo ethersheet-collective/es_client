@@ -32,33 +32,27 @@ var Sheet = module.exports = ESModel.extend({
 // # Initialization
 
   initialize: function(o){
-    o = o||{};
-    this.id = o.id||uid();
+    o = o || {};
+    this.id = o.id || uid();
     this.meta = this.initializeMeta(o);
     this.send_enabled = true;
-    
-    this.row_heights = o.row_heights || {};
-    this.col_widths = o.col_widths || {};
 
-    this.initializeRows(o.rows);
-    this.initializeCols(o.cols);
-    this.initializeCells(o.cells);
-    this.initializeShareDB(o.share_db);
+    this.initializeShareDB(o);
     if(_.isObject(o.expressionHelpers)){
       this.setExpressionHelper(o.expressionHelpers);
     }
   },
 
-  initializeShareDB: function(share_db){
-    this.share_db = share_db;
+  initializeShareDB: function(o){
+    this.share_db = o.share_db;
     this.share_db.set({
-      id:this.id,
-      title:this.getTitle(),
-      rows:this.rows,
-      cols:this.cols,
-      row_heights:this.row_heights,
-      col_widths:this.col_widths,
-      cells:this.cells
+      id: this.id,
+      title: this.getTitle(),
+      rows: this.initializeRows(o.rows),
+      cols: this.initializeCols(o.cols),
+      row_heights: o.row_heights || {},
+      col_widths: o.col_widths || {},
+      cells: o.cells || {}
     });
   },
 
@@ -69,32 +63,25 @@ var Sheet = module.exports = ESModel.extend({
   },
 
   initializeRows: function(rows){
-    
-    if(_.isArray(rows)){
-      this.rows = rows;
-      return;
-    }
+    if(_.isArray(rows)) return rows;
+
     // default initialization
-    this.rows = [];
+    rows = [];
     for(var i = 0; i<config.DEFAULT_ROW_COUNT; i++){
-      this.rows.push(String(i));
+      rows.push(String(i));
     }
+    return rows;
   },
 
   initializeCols: function(cols){
-    if(_.isArray(cols)){
-      this.cols = cols;
-      return;
-    }
+    if(_.isArray(cols)) return cols;
+    
     // default initialization
-    this.cols = [];
+    cols = [];
     for(var i = 0; i<config.DEFAULT_COL_COUNT; i++){
-      this.cols.push(String(i));
+      cols.push(String(i));
     }
-  },
-
-  initializeCells: function(cells){
-    this.cells = cells || {};
+    return cols;
   },
 
   initializeMeta: function(o){
@@ -120,7 +107,7 @@ var Sheet = module.exports = ESModel.extend({
       id: this.id,
       rows: this.rowIds(),
       cols: this.colIds(),
-      cells: this.cells,
+      cells: this.getCells(),
       row_heights: this.row_heights,
       col_widths: this.col_widths,
       meta: this.meta
@@ -206,7 +193,7 @@ var Sheet = module.exports = ESModel.extend({
        return value_a === value_b ? 0 : value_a > value_b ? 1 : -1;
     });
     
-    this.share_db.set('rows',rows);
+    this.share_db.set('rows', rows);
 
     this.trigger('sort_rows',{});
     this.send({
@@ -296,6 +283,7 @@ var Sheet = module.exports = ESModel.extend({
    *    styles: ["bg-red","fg-white", "us_dollar"], //list of styles used for formatting cell
    *}
    **************************************************/
+
   updateCell: function(row_id,col_id,cell){
     var value;
     var formatting;
@@ -377,19 +365,19 @@ var Sheet = module.exports = ESModel.extend({
 // ## CELL SIZE
 
   getRowHeight: function(row_id,height){
-    return this.row_heights[row_id] || 22;
+    return this.share_db.get(['row_heights',row_id]) || config.DEFAULT_ROW_HEIGHT;
   },
 
   setRowHeight: function(row_id,height){
-    this.row_heights[row_id] = height;
+    return this.share_db.set(['row_heights',row_id], height);
   },
 
   getColWidth: function(col_id){
-    return this.col_widths[col_id] || 100;
+    return this.share_db.get(['col_widths',col_id]) || config.DEFAULT_COL_WIDTH;
   },
 
   setColWidth: function(col_id,width){
-    this.col_widths[col_id] = width;
+    return this.share_db.set(['col_widths',col_id], width);
   },
 
   resizeCell: function(row_id,col_id,width,height){
@@ -420,9 +408,10 @@ var Sheet = module.exports = ESModel.extend({
       cb();
     }
   },
+
   getFormulaCells: function(){
     var formula_cells = [];
-    _.each(this.cells, function(cols,row){
+    _.each(this.getCells(), function(cols,row){
       _.each(cols, function(cell,col){
         if(!_.isObject(cell)) return;
         if(cell.type == 'formula'){
@@ -432,6 +421,7 @@ var Sheet = module.exports = ESModel.extend({
     });
     return formula_cells;
   },
+
   refreshCell: function(row_id,col_id){
     var cell = this.getCell(row_id,col_id);
     var display_value = ''
@@ -448,10 +438,12 @@ var Sheet = module.exports = ESModel.extend({
     });
     return display_value;
   },
+
   refreshSheet: function(row_id,col_id){
     alert('refreshing the window because the underlying sheet has changed');
     location.reload();
   },
+
   getCellType: function(cell_value){
     if(_.isNumber(cell_value)) return 'number';
     if(_.isString(cell_value) && cell_value.charAt(0) == '=') return 'formula';
@@ -460,6 +452,7 @@ var Sheet = module.exports = ESModel.extend({
     debugger;
     throw new Error('Undefined Cell Type ', cell_value);
   },
+
   parseValue: function(value){
     if(value.charAt(0) != '=') return value;
     try{
@@ -469,17 +462,20 @@ var Sheet = module.exports = ESModel.extend({
     }
     return parsed;
   },
+
   getCell: function(row_id,col_id){
     if(!this.rowExists(row_id)) return undefined;
     if(!this.colExists(col_id)) return undefined;
-    if(_.isUndefined(this.cells[row_id])) return null;
-    return this.cells[row_id][col_id] || null;
+    if(_.isUndefined(this.share_db.get(['cells',row_id]))) return null;
+    return this.share_db.get(['cells',row_id,col_id]) || null;
   },
+
   getCellFormatString: function(row_id,col_id){
     cell = this.getCell(row_id,col_id);
     if(!cell || !cell.formatting) return 'es-table-cell';
     return 'es-table-cell ' + cell.formatting.join(' ');
   },
+
   getCellValue: function(row_id,col_id){
     var cell = this.getCell(row_id,col_id);
     if(!cell || _.isUndefined(cell) || _.isNull(cell)) return '';
@@ -487,12 +483,13 @@ var Sheet = module.exports = ESModel.extend({
     if(!value || _.isUndefined(value) || _.isNull(value)) return '';
     return value;
   },
+
   addCell: function(row_id,col_id,value,formatting){
     if(!this.rowExists(row_id)) return false;
     if(!this.colExists(col_id)) return false;
-    if(!this.cells[row_id]) this.cells[row_id] = {};
+    if(!this.share_db.get(['cells',row_id])) this.share_db.set(['cells',row_id], {});
     if(_.isNull(value) || _.isUndefined(value)){
-      delete this.cells[row_id][col_id];
+      this.share_db.remove(['cells',row_id,col_id]);
       return true;
     }
     if(_.isObject(value) && _.has(value,"value")){
@@ -503,23 +500,27 @@ var Sheet = module.exports = ESModel.extend({
       type:   this.getCellType(value),
       formatting: formatting
     }
-    this.cells[row_id][col_id] = cell;
+    this.share_db.set(['cells',row_id,col_id], cell);
     return true;
   },
+
   getCellDisplay: function(cell){
     if(!cell) return '';
     var value = this.getRawValue(cell,true);
     //this is where we can do formatting
     return value;
   },
+
   getDisplayValue: function(row_id, col_id){
     console.warn("sheet.getDisplayValue() is deprecated, please call getCellDisplayById instead");
     return this.getCellDisplayById(row_id,col_id);
   },
+
   getCellDisplayById: function(row_id, col_id){
     var cell = this.getCell(row_id,col_id);
     return this.getCellDisplay(cell);
   },
+
   getDisplayFormula: function(row_id, col_id){
     var cell = this.getCell(row_id,col_id);
     if(!cell){return ''};
@@ -527,6 +528,7 @@ var Sheet = module.exports = ESModel.extend({
     display_formula = this.expressionHelpers.xlRefToEsRef(display_formula);
     return display_formula;
   },
+
   //just get the value without the formatting
   getRawValue: function(cell,force_recalc){
     if(!cell) return 0;
@@ -536,8 +538,9 @@ var Sheet = module.exports = ESModel.extend({
     }
     return cell.cachedValue
   },
+
   getCells: function(){
-    return this.cells;
+    return this.share_db.get('cells');
   },
 
 // # Colors
@@ -545,6 +548,7 @@ var Sheet = module.exports = ESModel.extend({
   getColor: function(row_id, col_id){
     return '#ffffff';
   },
+
   setColor: function(row_id, col_id, color){
   },
 
