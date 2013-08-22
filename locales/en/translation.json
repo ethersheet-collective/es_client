@@ -1,0 +1,47 @@
+{
+  "nameSpreadsheet": "Name your spreadsheet:",
+  "goToSheet": "Go to the sheet",
+
+  "manageSheets": "Manage Sheets",
+  "functionHelp": "View Functions",
+  "styleSheet": "Style Sheets and Cells",
+  "viewTimeline": "View Activities and Timeline",
+
+  "format_cell": "Format Cell",
+  "sort_row": "Sort Row",
+  "remove_row": "Remove Row",
+  "add_row": "Add Row",
+  "remove_column": "Remove Column",
+  "add_column": "Add Column",
+  
+  "newSheet": "New Sheet",
+  "exportCSV": "Export CSV",
+
+  "sum_def": "SUM(num1,num2,...)",
+  "sum_desc": "Sum one or more numbers",
+  "product_def": "PRODUCT(num1,num2,...)",
+  "product_desc": "Multiply zero or more numbers",
+  "abs_def": "ABS(num)",
+  "abs_desc": "Get the absolute value of a number",
+  "acos_def": "ACOS(num)",
+  "acos_desc": "Get the Arccosine of a number",
+  "asin_def": "ASIN(num)",
+  "asin_desc": "Get the Arcsine of a number",
+  "atan_def": "ATAN(num)",
+  "atan_desc": "Get the Arctangent of a number",
+  "atan2_def": "ATAN2(y,x)",
+  "atan2_desc": "Returns the arctangent of the quotient of its arguments",
+  "ceil_def": "CEIL(num)",
+  "ceil_desc": "Return the smallest integer greater than or equal to a number",
+  "cos_def": "COS(num)",
+  "cos_desc": "Get the cosine of a number",
+  "exp_def": "EXP(num)",
+  "exp_desc": "Returns E raised to x, where x is the argument, and E is Euler's constant, the base of the natural logarithms.",
+  "floor_def": "FLOOR(num)",
+  "floor_desc": "Round a number down to the nearest whole number",
+  "log_def": "LOG(num)",
+  "log_desc": "Get the natural logarithm of a number",
+
+  "frontpageCopy": "<p>Ethersheet is an open source tool to make collaborating on spreadsheets fast, easy and secure.  </p> <p>Ethersheet does not store IP addresses and we require https connections. For added anonymity we suggest that you use this service over <a href=\"https://torproject.org/\">TOR</a>.  </p> If you want to find out more, report bugs, or contirbute code, visit the <a href=\"https://github.com/ethersheet-collective\">Github Page</a>.  <p>This service should be considered alpha and should not be used where stability and security are requirement.</p>"
+  
+}
