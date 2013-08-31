@@ -26,6 +26,7 @@ describe('ShareDB', function(){
 
     it('should create default data structure', function(){
       var expected_snapshot = {
+        meta:{},
         sheets:{},
         selections:{},
         users:{}

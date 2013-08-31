@@ -2,7 +2,7 @@
 <% var _ = require('underscore'); %>
 <% var cls = "" %>
 <% sheets.each(function(sheet){ %>
-<li class="es-menu-button" id=<%=sheet.id%> > <%=sheet.meta.title%> </li>
+<li class="es-menu-button" id=<%=sheet.id%> > <%=sheet.getTitle()%> </li>
 <%});%>
 </ul>
 <ul id='es-menu-grid'>

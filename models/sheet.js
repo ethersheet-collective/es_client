@@ -34,7 +34,6 @@ var Sheet = module.exports = ESModel.extend({
   initialize: function(o){
     o = o || {};
     this.id = o.id || uid();
-    this.meta = this.initializeMeta(o);
     this.send_enabled = true;
 
     this.initializeShareDB(o);
@@ -47,7 +46,7 @@ var Sheet = module.exports = ESModel.extend({
     this.share_db = o.share_db;
     this.share_db.set({
       id: this.id,
-      title: this.getTitle(),
+      meta: this.initializeMeta(o),
       rows: this.initializeRows(o.rows),
       cols: this.initializeCols(o.cols),
       row_heights: o.row_heights || {},
@@ -94,24 +93,31 @@ var Sheet = module.exports = ESModel.extend({
     return "Sheet" + 1;
   },
   
-  getTitle: function(){
-    return this.meta.title;
-  },
-  
-  setTitle: function(title){
-    this.meta.title = title;
-  },
-
   getData: function(){
+    return this.share_db.get();
     return {
       id: this.id,
       rows: this.rowIds(),
       cols: this.colIds(),
       cells: this.getCells(),
-      row_heights: this.row_heights,
-      col_widths: this.col_widths,
-      meta: this.meta
+      row_heights: this.getRowHeights(),
+      col_widths: this.getColWidths(),
+      meta: this.getMeta()
     }
+  },
+
+// # Meta
+  
+  getMeta: function(){
+    return this.share_db.get('meta');
+  },
+
+  getTitle: function(){
+    return this.share_db.get(['meta','title']);
+  },
+  
+  setTitle: function(title){
+    this.share_db.set(['meta','title'],title);
   },
 
 // # Rows
@@ -363,13 +369,20 @@ var Sheet = module.exports = ESModel.extend({
   },
 
 // ## CELL SIZE
-
+  getRowHeights: function(){
+    return this.share_db.get('row_heights');
+  },
+  
   getRowHeight: function(row_id,height){
     return this.share_db.get(['row_heights',row_id]) || config.DEFAULT_ROW_HEIGHT;
   },
 
   setRowHeight: function(row_id,height){
     return this.share_db.set(['row_heights',row_id], height);
+  },
+
+  getColWidths: function(){
+    return this.share_db.get('col_widths');
   },
 
   getColWidth: function(col_id){
