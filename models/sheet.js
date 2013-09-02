@@ -33,7 +33,6 @@ var Sheet = module.exports = ESModel.extend({
 
   initialize: function(o){
     o = o || {};
-    this.id = o.id || uid();
     this.send_enabled = true;
 
     this.initializeShareDB(o);
@@ -44,9 +43,18 @@ var Sheet = module.exports = ESModel.extend({
 
   initializeShareDB: function(o){
     this.share_db = o.share_db;
+    var id = this.share_db.get().id;
+
+    if(id){
+      this.id = id;
+      return;
+    }
+
+    this.id = o.id || uid();
+
     this.share_db.set({
       id: this.id,
-      meta: this.initializeMeta(o),
+      meta: {title:''},
       rows: this.initializeRows(o.rows),
       cols: this.initializeCols(o.cols),
       row_heights: o.row_heights || {},
@@ -82,28 +90,9 @@ var Sheet = module.exports = ESModel.extend({
     }
     return cols;
   },
-
-  initializeMeta: function(o){
-    var meta = o.meta || {};
-    meta.title = meta.title || this.initializeTitle();
-    return meta;
-  },
-  
-  initializeTitle: function(){
-    return "Sheet" + 1;
-  },
   
   getData: function(){
     return this.share_db.get();
-    return {
-      id: this.id,
-      rows: this.rowIds(),
-      cols: this.colIds(),
-      cells: this.getCells(),
-      row_heights: this.getRowHeights(),
-      col_widths: this.getColWidths(),
-      meta: this.getMeta()
-    }
   },
 
 // # Meta

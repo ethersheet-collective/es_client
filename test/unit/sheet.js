@@ -8,6 +8,7 @@ var should = require('chai').should();
 var sinon = require('sinon');
 var connect = require('es_client/lib/share_db').connect;
 var disconnect = require('es_client/lib/share_db').disconnect;
+var uid = require('es_client/helpers/uid');
 
 describe('Sheet', function(){
   var sheet, events, data;
@@ -27,14 +28,13 @@ describe('Sheet', function(){
         initializeSheet(sheet_options,done);
       });
     }
+    var o = {id: 'test-'+uid()}
 
-    sheet_options || {id:'test'};
-
-    connect({sheets:[sheet_options]}, function(err,test_data){
+    connect(o, function(err,test_data){
       events = [];
       data = test_data;
-      data.sheets.addSheet();
-      sheet = data.sheets.at(0);
+      if(sheet_options) data.sheets.addSheet(sheet_options);
+      sheet = data.sheets.last();
       sheet.on('all',function(){
         events.push({
           name: arguments[0],

@@ -5,15 +5,14 @@ var assert = require('chai').assert;
 var EventTrap = require('../event_trap');
 var connect = require('es_client/lib/share_db').connect;
 var disconnect = require('es_client/lib/share_db').disconnect;
+var uid = require('es_client/helpers/uid');
 
 describe('SheetCollection', function(){
   var sheets, data, event_trap;
 
 
   beforeEach(function(done){
-    var o = {
-      channel:'create_data_test',
-    };
+    var o = {id: 'test-'+uid()};
     connect(o,function(err,test_data){
       data = test_data;
       event_trap = new EventTrap();

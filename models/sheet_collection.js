@@ -8,6 +8,7 @@ define( function(require,exports,module) {
 var _ = require('underscore');
 var ESCollection= require('./es_collection');
 var Sheet= require('./sheet');
+var uid = require('../helpers/uid');
 
 var SheetCollection = module.exports = ESCollection.extend({
 
@@ -19,20 +20,33 @@ var SheetCollection = module.exports = ESCollection.extend({
     this.send_enabled = true;
     this.share_db = o.share_db
     this.expressionHelpers = o.expressionHelpers;
-    this.initializeShareDB();
   },
 
   initializeShareDB: function(){
-    var defaults = {
-      id:'foo',
-      collection:[]
-    };
-    this.share_db.set([],defaults);
+    var self = this;
+    var collection = this.share_db.get().collection;
+    if(collection){
+      this.share_db.get('collection').forEach(function(sheet_data,index){
+        var context = self.share_db.createContextAt(['collection',index]);
+        var sheet = new Sheet({
+          share_db:context,
+          expressionHelpers:self.expressionHelpers
+        });
+        self.add(sheet);
+      });
+    } else {
+      var defaults = {
+        id:uid(),
+        collection:[]
+      };
+      this.share_db.set([],defaults);
+      this.addSheet();
+    }
   },
   
   addSheet: function(o){
     o = o || {};
-    o.expressionHelpers = this.expressionHelpers;;
+    o.expressionHelpers = this.expressionHelpers;
     
     var pos = this.share_db.getLength('collection');
     this.share_db.insert(['collection'],pos,{});
