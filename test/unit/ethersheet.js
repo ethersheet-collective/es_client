@@ -17,11 +17,7 @@ describe('Ethersheet Client', function(){
 
     es = new Ethersheet({
       target:'#ethersheet-container',
-      channel:'test_channel',
-      sheets:[
-        {id: 'test_sheet_0'},
-        {id: 'test_sheet_1'}
-      ],
+      id:'es_test_id',
       onConnect: function(){
         done();
       }
@@ -36,16 +32,12 @@ describe('Ethersheet Client', function(){
 
   describe('options we have defined so far', function(){
 
-    it('sheets',function(){
-      assert.equal(es.data.sheets.length, 2);
-    });
-
     it('target',function(){
       assert.ok($container.html().length < 10);
     });
 
-    it('channel',function(){
-      assert.ok(es.socket.ws._base_url.indexOf("/test_channel/") !== -1);
+    it('id',function(){
+      assert.ok(es.socket.ws._base_url.indexOf("/es_test_id/") !== -1);
     });
   });
 });

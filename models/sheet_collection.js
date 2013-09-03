@@ -16,16 +16,15 @@ var SheetCollection = module.exports = ESCollection.extend({
 
   initialize: function(models,o){
     o = o || {};
-    this.id = o.channel;
     this.send_enabled = true;
-    this.share_db = o.share_db
+    this.share_db = o.share_db;
     this.expressionHelpers = o.expressionHelpers;
   },
 
   initializeShareDB: function(){
     var self = this;
-    var collection = this.share_db.get().collection;
-    if(collection){
+    if(this.share_db.get('collection')){
+      this.id = this.share_db.get('id');
       this.share_db.get('collection').forEach(function(sheet_data,index){
         var context = self.share_db.createContextAt(['collection',index]);
         var sheet = new Sheet({
@@ -35,8 +34,9 @@ var SheetCollection = module.exports = ESCollection.extend({
         self.add(sheet);
       });
     } else {
+      this.id = uid();
       var defaults = {
-        id:uid(),
+        id:this.id,
         collection:[]
       };
       this.share_db.set([],defaults);

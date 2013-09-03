@@ -4,33 +4,30 @@ define(function (require) {
 var expect = require('chai').expect;
 var should = require('chai').should();
 var $ = require('jquery');
-
 var Sheet = require('es_client/models/sheet');
 var SheetCollection = require('es_client/models/sheet_collection');
 var SelectionCollection = require('es_client/models/selection_collection');
 var TableView = require('es_client/views/table');
 var ES = require('es_client/config');
 var getData = require('es_client/test/fixtures');
-// setup dom attachment point
-var $container = $('<div id="ethersheet-container" style="display:none;"></div').appendTo('body');
 var connect = require('es_client/lib/share_db').connect;
 var disconnect = require('es_client/lib/share_db').disconnect;
+var uid = require('es_client/helpers/uid');
+
+// setup dom attachment point
+var $container = $('<div id="ethersheet-container" style="display:none;"></div').appendTo('body');
 
 describe('TableView', function(){
   var data, table, $el, sheet, selections;
 
   var initializeTable = function(done){
-    connect({}, function(err,test_data){
+    var o = {id: 'test-'+uid()};
+    connect(o, function(err,test_data){
       data = test_data;
       $container.empty()
       $el = $('<div id="ethersheet"></div>').appendTo($container);
 
-      data.sheets.addSheet({id:'test'});
-      sheet = data.sheets.at(0);
-
-      data.users
-          .getCurrentUser()
-          .setCurrentSheetId(sheet.id);
+      sheet = data.sheets.first();
 
       selections = data.selections;
       selection = data.selections.getLocal();

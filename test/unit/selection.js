@@ -5,6 +5,7 @@ var expect = require('chai').expect;
 var should = require('chai').should();
 var connect = require('es_client/lib/share_db').connect;
 var disconnect = require('es_client/lib/share_db').disconnect;
+var uid = require('es_client/helpers/uid');
 
 // stub out server calls
 Backbone.sync = function(){};
@@ -19,25 +20,24 @@ describe('Selection', function(){
       });
     }
 
-    connect({}, function(err,test_data){
+    var o = {id: 'test-'+uid()};
+    connect(o, function(err,test_data){
       data =test_data;
       events = [];
-      
-      data.sheets.addSheet({id:'test'});
-      sheet = data.sheets.at(0);
 
-      selections = data.selections;
-      selections.createLocal();
-      selection = selections.getLocal();
-      
+      sheet = data.sheets.first();
       col_id = sheet.colAt(0);
       row_id = sheet.rowAt(0);
+
+      selections = data.selections;
+      selection = selections.getLocal();
       selection.on('all',function(){
         events.push({
           name: arguments[0],
           args: Array.prototype.slice.call(arguments,1)
         });
       });
+      
       done();
     });
   };

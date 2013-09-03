@@ -29,6 +29,7 @@ var Ethersheet = module.exports = function(o) {
   if(!o.target) throw Error('el or target required');
 
   var es = this;
+  this.id = o.id || 'es_default_id';
   this.connection_handler = o.onConnect || function(){};
   this.onReady = o.onReady || function(){};
   this.data = {};
@@ -59,7 +60,7 @@ Ethersheet.prototype.initializeData = function(o,done){
 Ethersheet.prototype.initializeSocket = function(o,done){
   var es = this;
   
-  this.socket = new Socket(o.channel,this.data.users.getCurrentUser().id,o.socket);
+  this.socket = new Socket(this.id,this.data.users.getCurrentUser().id,o.socket);
   this.socket.onOpen(function(e){
     es.data.users.replicateCurrentUser();
     es.data.users.requestReplicateCurrentUser();
