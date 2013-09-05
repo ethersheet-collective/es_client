@@ -41,6 +41,17 @@
   "floor_desc": "Round a number down to the nearest whole number",
   "log_def": "LOG(num)",
   "log_desc": "Get the natural logarithm of a number",
+  "pow_def": "POW(base, exponent)",
+  "pow_desc": "Get the base raised to the exponent",
+  "rand_def": "RAND()",
+  "rand_desc": "Get a random number between 0 and 1",
+  "sin_def": "SIN(num)",
+  "sin_desc": "Get the sine of a number",
+  "sqrt_def": "SQRT(num)",
+  "sqrt_desc": "Get the square root of a number",
+  "tan_def": "TAN(num)",
+  "tan_desc": "Get the tangent of a number",
+  
 
   "frontpageCopy": "<p>Ethersheet is an open source tool to make collaborating on spreadsheets fast, easy and secure.  </p> <p>Ethersheet does not store IP addresses and we require https connections. For added anonymity we suggest that you use this service over <a href=\"https://torproject.org/\">TOR</a>.  </p> If you want to find out more, report bugs, or contirbute code, visit the <a href=\"https://github.com/ethersheet-collective\">Github Page</a>.  <p>This service should be considered alpha and should not be used where stability and security are requirement.</p>"
   
