@@ -49,7 +49,7 @@ var SheetCollection = module.exports = ESCollection.extend({
     o.expressionHelpers = this.expressionHelpers;
     
     var pos = this.share_db.getLength('collection');
-    this.share_db.insert(['collection'],pos,{});
+    this.share_db.insert(['collection',pos],{});
 
     o.share_db = this.share_db.createContextAt(['collection',pos]);
     var sheet = new Sheet(o);

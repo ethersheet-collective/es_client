@@ -128,7 +128,7 @@ var Sheet = module.exports = ESModel.extend({
   },
   insertRow: function(position, id){
     id = id || uid();
-    this.share_db.insert('rows',position,id);
+    this.share_db.insert(['rows',position], id);
     this.trigger('insert_row',{
       row_id:id,
       sheet_id:this.id
@@ -229,7 +229,7 @@ var Sheet = module.exports = ESModel.extend({
   },
   insertCol: function(position, id){
     id = id || uid();
-    this.share_db.insert('cols',position,id);
+    this.share_db.insert(['cols',position],id);
     this.trigger('insert_col',{
       col_id:id,
       sheet_id:this.id
