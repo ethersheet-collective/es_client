@@ -32,6 +32,9 @@ require.config({
     },
     'lookbehind':{
       exports: 'lookbehind'
+    },
+    'i18next':{
+      exports: 'i18n'
     }
   }
 });
