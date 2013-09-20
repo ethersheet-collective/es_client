@@ -54,7 +54,6 @@ var SheetListView = module.exports = View.extend({
     $el = $(e.currentTarget);
     $('.es-menu-button').removeClass('active');
     $el.addClass('active');
-    console.log('setting sheet', $el.attr('id'));
     this.getUsers().getCurrentUser().setCurrentSheetId($el.attr('id'));
   }
 });

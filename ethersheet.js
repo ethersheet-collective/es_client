@@ -119,7 +119,6 @@ Ethersheet.prototype.initializeDisplay = function(o){
       data: es.data
     }).render();
 
-    console.log($('.i18n'));
     $('.i18n').i18n();
   });
 };

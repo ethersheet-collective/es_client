@@ -59,7 +59,6 @@ var EthersheetContainer = module.exports = View.extend({
     var $el = $(e.currentTarget);
 
     if($el.hasClass('active')){
-      console.log('close!');
       //close the panel
       $el.removeClass('active');
       this.$menu.animate({'right':'258px'},speed);
@@ -69,15 +68,12 @@ var EthersheetContainer = module.exports = View.extend({
       });
       $('#es-panel-1').animate({'margin-left':'10px'},speed);
     }else{
-      console.log('open!');
       $('.es-sidebar-toggle').removeClass('active');
       $el.addClass('active');
       this.$panel_0.show();
       $('.menu-container').hide();
       var container = $el.attr('id').replace('icon', 'menu-container');
-      console.log('container', container);
       $("#" + container).show();
-      console.log('width', this.$panel_0.width());
       if(this.$panel_0.width() <= 0){
         this.$menu.animate({'right':'0px'},speed);
         this.$panel_0.animate({'width':'258px'},speed);

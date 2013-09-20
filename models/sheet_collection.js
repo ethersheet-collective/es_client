@@ -24,7 +24,6 @@ var SheetCollection = module.exports = ESCollection.extend({
     var sheet = new Sheet(o);
     sheet.meta.title = 'Sheet' + (this.length * 1 + 1);
     this.add(sheet);
-    console.log('getting title', this);
     this.send({
       id: this.id,
       type: 'sheets',
