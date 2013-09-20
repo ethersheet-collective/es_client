@@ -332,6 +332,7 @@ var Sheet = module.exports = ESModel.extend({
     cell.type = this.getCellType(cell.value); 
     if(cell.type == 'formula'){
       cell.value = this.expressionHelpers.preprocessFormula(cell.value,this.id);
+      console.log('preprocessed', cell.value);
     }
     var cell_display = this.getCellDisplay(cell);
     this.trigger('commit_cell', _.extend(_.clone(cell),{
@@ -344,7 +345,7 @@ var Sheet = module.exports = ESModel.extend({
       id: this.id,
       type: 'sheet',
       action: 'commitCell',
-      params:[row_id,col_id]
+      params:[row_id,col_id,cell]
     });
     console.log('refreshing cells');
     this.refreshCells();
