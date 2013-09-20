@@ -44,7 +44,6 @@ var Sheet = module.exports = ESModel.extend({
     this.initializeCols(o.cols);
     this.initializeCells(o.cells);
     if(_.isObject(o.expressionHelpers)){
-      console.log('calling set', o.expressionHelpers);
       this.setExpressionHelper(o.expressionHelpers);
     }
   },
@@ -326,13 +325,11 @@ var Sheet = module.exports = ESModel.extend({
   },
 
   commitCell: function(row_id,col_id){
-    console.log('commitng cell');
     var cell = this.getCell(row_id,col_id);
     if(!cell) return false;
     cell.type = this.getCellType(cell.value); 
     if(cell.type == 'formula'){
       cell.value = this.expressionHelpers.preprocessFormula(cell.value,this.id);
-      console.log('preprocessed', cell.value);
     }
     var cell_display = this.getCellDisplay(cell);
     this.trigger('commit_cell', _.extend(_.clone(cell),{
@@ -347,7 +344,6 @@ var Sheet = module.exports = ESModel.extend({
       action: 'commitCell',
       params:[row_id,col_id,cell]
     });
-    console.log('refreshing cells');
     this.refreshCells();
     return true;
   },
@@ -387,7 +383,6 @@ var Sheet = module.exports = ESModel.extend({
 
   refreshCells: function(cb){
     var self = this;
-    this.trigger('refresh_cells', this.id);
     _.each(self.getFormulaCells(), function(cell_id){
       self.refreshCell(cell_id[CELL_ROW_ID],cell_id[CELL_COL_ID]);
     });
@@ -397,6 +392,7 @@ var Sheet = module.exports = ESModel.extend({
     if(cb){
       cb();
     }
+    this.trigger('refresh_cells', this.id);
   },
   getFormulaCells: function(){
     var formula_cells = [];

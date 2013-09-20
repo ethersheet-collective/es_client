@@ -97,9 +97,9 @@ var Table = module.exports = View.extend({
     $('.es-usd').each(function(idx, el){
       $el = $(el);
       var cell = sheet.getCell($el.data('row_id'), $el.data('col_id'));
-      if(cell.type != 'number'){ return; }
-      var cell_display = sheet.getCellDisplay(cell);
-      $el.text('$' + parseFloat(cell_display).toFixed(2));
+      var cell_display = parseFloat(sheet.getCellDisplay(cell));
+      if(_.isNaN(cell_display)){ return; }
+      $el.text('$' + cell_display.toFixed(2));
     });
   },
   setSelections: function(selections){
@@ -254,7 +254,6 @@ var Table = module.exports = View.extend({
     if(!this.is_rendered) return;
     var grid_height = this.$el.innerHeight() - 18;
     var grid_width = this.$el.innerWidth() - 45;
-    console.log(this.$grid, grid_height, grid_width);
     this.$grid.height(grid_height);
     this.$grid.width(grid_width);
   },
