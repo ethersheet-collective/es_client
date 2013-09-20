@@ -87,6 +87,7 @@ padding: 0;
 }
 .es-table-cell{
 border-top:1px solid #D0D2D3;
+border-left:1px solid #D0D2D3;
 overflow:hidden;
 }
 .es-table-cell-input{
