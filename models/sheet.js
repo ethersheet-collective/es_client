@@ -437,7 +437,10 @@ var Sheet = module.exports = ESModel.extend({
   parseValue: function(value){
     if(value.charAt(0) != '=') return value;
     try{
-      var parsed = this.parser.parse(value.slice(1));
+      var code = value.slice(1).
+        replace(/&gt;/g, '>').
+        replace(/&lt;/g, '<');
+      var parsed = this.parser.parse(code);
     } catch (e) {
       return this.expressionHelpers.handleError(e);
     }
