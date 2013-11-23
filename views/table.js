@@ -36,6 +36,8 @@ var Table = module.exports = View.extend({
     'click .es-row-header': 'selectRow',
     'click .es-column-header': 'selectCol',
     'change .es-table-cell-input': 'changeCell',
+    'mouseover .es-row-header': 'showMenuIcon',
+    'mouseover .es-col-header': 'showMenuIcon',
     'keydown': 'inputKeypress'
   },
 
@@ -60,6 +62,10 @@ var Table = module.exports = View.extend({
     }, this);
     this.$grid = null;
     $(window).resize(this.resize.bind(this));
+  },
+
+  showMenuIcon: function(){
+    console.log('hello');
   },
 
   destroy: function(){
@@ -295,7 +301,8 @@ var Table = module.exports = View.extend({
     _.each(this.getSheet().rowIds(), function(row_id,index){
       row_name = index+1;
       height = view.heightForRow(row_id);
-      html +='<tr id="es-header-'+row_id+'" style="height:'+height+'px;"><th class="es-row-header">'+row_name+'</th></tr>'
+      html +='<tr id="es-header-'+row_id+'" style="height:'+height+'px;"><th class="es-row-header">'+row_name
+      +'<div class="es-col-menu"><img src="/es_client/icons/ethersheet-downarrow.png"></div></th></tr>';
     });
 
     $('#es-row-headers-'+this.getId(),this.$el).html(html);
@@ -343,7 +350,7 @@ var Table = module.exports = View.extend({
       width = view.widthForCol(col_id);
       html +='<th id="es-col-header-'+col_id+'" class="es-column-header" style="width:'+width+'px;">'
               +h.columnIndexToName(index)
-              +'</th>';
+              +'<div class="es-col-menu"><img src="/es_client/icons/ethersheet-downarrow.png"></div></th>';
     });
 
     $('#es-column-headers-'+this.getId(),this.$el).html(html);

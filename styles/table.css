@@ -152,3 +152,9 @@ overflow:scroll;
   height: 100px;
   box-shadow: -1px 1px 5px #333;
 }
+.es-col-menu{
+  display: inline;
+  float: right;
+  padding-right: 5px;
+  display: none;
+}
