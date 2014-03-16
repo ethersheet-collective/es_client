@@ -36,6 +36,7 @@ var Sheet = module.exports = ESModel.extend({
     this.send_enabled = true;
 
     this.initializeShareDB(o);
+    this.initializeShareEvents();
     if(_.isObject(o.expressionHelpers)){
       this.setExpressionHelper(o.expressionHelpers);
     }
@@ -60,6 +61,22 @@ var Sheet = module.exports = ESModel.extend({
       row_heights: o.row_heights || {},
       col_widths: o.col_widths || {},
       cells: o.cells || {}
+    });
+  },
+
+  initializeShareEvents: function(){
+    var sheet = this;
+    this.share_db.on(['cells'],'child op',function(){
+      console.log('cell op',arguments);
+    });
+    this.share_db.on(['cells'],'insert',function(){
+      console.log('insert',arguments);
+    });
+    this.share_db.on(['cells'],'replace',function(){
+      console.log('replace',arguments);
+    });
+    this.share_db.on(['cells'],'add',function(){
+      console.log('add',arguments);
     });
   },
 
@@ -318,17 +335,17 @@ var Sheet = module.exports = ESModel.extend({
       col_id:col_id,
       cell_display:value || ""
     });
-    this.send({
-      id: this.id,
-      type: 'sheet',
-      action: 'updateCell',
-      params:[row_id,col_id,cell]
-    },{
-      id: this.id,
-      type: 'sheet',
-      action: 'updateCell',
-      params:[row_id,col_id,old_cell]
-    });
+    // this.send({
+    //   id: this.id,
+    //   type: 'sheet',
+    //   action: 'updateCell',
+    //   params:[row_id,col_id,cell]
+    // },{
+    //   id: this.id,
+    //   type: 'sheet',
+    //   action: 'updateCell',
+    //   params:[row_id,col_id,old_cell]
+    // });
 
     return true;
   },

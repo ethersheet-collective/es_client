@@ -114,7 +114,7 @@ Ethersheet.prototype.initializeDisplay = function(o,done){
     }).render();
 
     done();  
-    $('.i18n').i18n();
+//    $('.i18n').i18n();
   });
 
 };
@@ -153,6 +153,7 @@ Ethersheet.prototype.executeCommand = function(c){
 };
 
 Ethersheet.prototype.sendCommand = function(c){
+  return;
   if(c.getSerializedMessage){
     this.socket.send(c.getSerializedMessage());
   } else {
