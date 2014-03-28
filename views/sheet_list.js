@@ -11,7 +11,8 @@ var SheetListView = module.exports = View.extend({
 
   events: {
     'click #es-add-sheet-button': 'onAddSheetClick',
-    'click .es-menu-button': 'onSheetSelection'
+    'click .es-menu-button': 'onSheetSelection',
+    'click #es-import-csv': 'importCSV'
   },
 
   initialize: function(o){
@@ -55,6 +56,11 @@ var SheetListView = module.exports = View.extend({
     $('.es-menu-button').removeClass('active');
     $el.addClass('active');
     this.getUsers().getCurrentUser().setCurrentSheetId($el.attr('id'));
+  },
+  importCSV:function(){
+    var current_sheet_id = this.getUsers().getCurrentUser().getCurrentSheetId();
+    $('#es-modal-box').html(t.import_dialog({sheet_id: current_sheet_id}));
+    $('#es-modal-overlay').show();
   }
 });
 

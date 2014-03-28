@@ -101,9 +101,6 @@ var MenuView = module.exports = View.extend({
       case 'format_cell':
         this.formatCell();
         break;
-      case 'import_csv':
-        this.importCSV();
-        break;
     };
   },
 
@@ -151,12 +148,6 @@ var MenuView = module.exports = View.extend({
     var col_id = this.getCurrentCell().col_id;
     this.getSheet().deleteCol(col_id);
   },
-
-  importCSV:function(){
-    $('#es-modal-box').html(t.import_dialog({sheet_id: this.getSheet().id}));
-    $('#es-modal-overlay').show();
-  }
-  
 });
 
 });
