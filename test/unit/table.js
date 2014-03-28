@@ -229,7 +229,7 @@ describe('TableView', function(){
       sheet.updateCell(row_id,col_id,value);
       sheet.commitCell(row_id,col_id);
       $clicked_cell = $('.es-table-cell').first()
-      initial_bgcolor = 'rgb(255, 255, 255)';
+      initial_bgcolor = $clicked_cell.css('background-color');
       $clicked_cell.click()
       $input = $('#'+$clicked_cell.attr('id')+'-input');
     });

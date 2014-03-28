@@ -85,13 +85,16 @@ var Table = module.exports = View.extend({
       'add_format_to_cell': 'updateCellClass'
     });
   },
+
   setSheets: function(sheets){
     this.models.set('sheets',sheets,{});
   },
+
   updateCellClass: function(row_id,col_id, cls){
     var $cell = $('#'+row_id+'-'+col_id, this.el);
     $cell.addClass(cls);
   },
+
   onRefreshCells: function(){
     var sheet = this.getSheet();
     $('.es-usd').each(function(idx, el){
@@ -102,6 +105,7 @@ var Table = module.exports = View.extend({
       $el.text('$' + cell_display.toFixed(2));
     });
   },
+
   setSelections: function(selections){
     this.models.set('selections',selections,{
       'add_cell': 'onRemoteAddCell',
@@ -180,7 +184,6 @@ var Table = module.exports = View.extend({
     var e = {currentTarget: $cell};
      
     this.paintCell($cell);
-    this.removeCellInputs();
     this.createCellInput(e);
   },
 
@@ -197,6 +200,7 @@ var Table = module.exports = View.extend({
 
   onClear: function(cells){
     var table = this;
+    this.removeCellInputs();
     _.each(cells, function(cell){
       table.unpaintCell(cell);
     });
@@ -397,7 +401,6 @@ var Table = module.exports = View.extend({
   },
 
   cellMouseMove: function(e){
-
     if(!this.isDraggingCell()){
       var $cell = $(e.currentTarget);
       if(this.isOverRowDragHandle($cell,e.pageY)){
@@ -460,6 +463,13 @@ var Table = module.exports = View.extend({
     if(width) this.resizeCol(col_id,width);
     this.resizeRowHeader(row_id);
     this.resizeColHeader(col_id);
+    this.updateCellInputs();
+  },
+
+  changeCell: function(e){
+    var $el = $(e.currentTarget);
+    var data = $el.data();
+    this.getSheet().commitCell(data.row_id.toString(), data.col_id.toString());
   },
 
 // ## CELL DRAGGING
@@ -502,27 +512,42 @@ var Table = module.exports = View.extend({
 
   createCellInput: function(e){
     if(e.currentTarget.length == 0) return;
-    var s = this.getSelections().getLocal();
     var $el = $(e.currentTarget);
-    var x = $el.position().left + this.$grid.scrollLeft();
-    var y = $el.position().top + this.$grid.scrollTop();;
-    var width = $el.width();
-    var height = $el.height() - 2;
-    var color = s.getColor();
     var row_id = $el.data().row_id.toString();
     var col_id = $el.data().col_id.toString();
+    var cell_id = $el.attr('id');
     var cell_value = this.getSheet().getDisplayFormula(row_id,col_id);
 
-    var $input = $("<input id='"+$el.attr('id')+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' class='es-table-cell-input' value='"+cell_value+"' style='left: "+x+"px; top: "+y+"px; width: "+width+"px; height: "+height+"px; background-color: "+color+";' />");
+    var $input = $("<input id='"+cell_id+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' data-cell_id='"+cell_id+"' class='es-table-cell-input' value='"+cell_value+"' />");
     
     this.$grid.append($input);
-    $input.focus();
-    var timer = null;
+
     var sheet = this.getSheet();
     $input.on('keyup', function(){
       sheet.updateCell(row_id, col_id, $input.val()); 
     });
+    this.updateCellInput($input);
+    $input.focus();
     return $input;
+  },
+
+  updateCellInput: function($input){
+    var s = this.getSelections().getLocal();
+    var $cell = $("#"+$input.data().cell_id.toString());
+    var x = $cell.position().left + this.$grid.scrollLeft();
+    var y = $cell.position().top + this.$grid.scrollTop();;
+    var width = $cell.width();
+    var height = $cell.height() - 2;
+    var color = s.getColor();
+    var style="left: "+x+"px; top: "+y+"px; width: "+width+"px; height: "+height+"px; background-color: "+color;
+    $input.attr("style",style)
+  },
+
+  updateCellInputs: function(){
+    var table = this;
+    $('.es-table-cell-input').each(function(idx, el){
+      table.updateCellInput($(el));
+    })
   },
 
   removeCellInputs: function(){
@@ -553,20 +578,18 @@ var Table = module.exports = View.extend({
     return false;
   },
 
-  changeCell: function(e){
-    var $el = $(e.currentTarget);
-    var data = $el.data();
-    this.getSheet().commitCell(data.row_id.toString(), data.col_id.toString());
-  },
-
 
 // ## CELL SELECTIONS
 
-  selectCell: function(e){
+  addCellToSelection: function(e){
     var s = this.getLocalSelection();
     var data = $(e.currentTarget).data();
-    s.clear();
     s.addCell(this.getSheet().id,data.row_id.toString(),data.col_id.toString());
+  },
+
+  selectCell: function(e){
+    var s = this.getLocalSelection().clear();
+    this.addCellToSelection(e);
   },
 
   selectRow: function(e){
@@ -579,11 +602,10 @@ var Table = module.exports = View.extend({
   },
 
   selectCol: function(e){
-    var sel = this.getLocalSelection();
-    var sheet = this.getSheet();
     var col_id = $(e.currentTarget).attr('id').replace('es-col-header-','');
+    var sel = this.getLocalSelection();
     sel.clear();
-    sel.addColumn(sheet.id, col_id);
+    sel.addColumn(this.getSheet().id, col_id);
   },
 
   moveSelection: function(e, row_offset, col_offset){
@@ -597,9 +619,9 @@ var Table = module.exports = View.extend({
     var new_row = rows[new_row_idx];
     selection.clear();
     selection.addCell(this.getSheet().id, new_row, new_col);
-
   },
 
+// ## SHEET LEVEL EVENTS
   onChangeCurrentSheetId: function(e){
     var sheet_id = this.getCurrentUser().getCurrentSheetId();
     var sheet = this.getSheets().get(sheet_id);
