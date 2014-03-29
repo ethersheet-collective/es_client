@@ -217,6 +217,7 @@ var Table = module.exports = View.extend({
       input.val(cell.cell_display);
     }
     this.resizeRowHeader(cell.row_id);
+    this.updateCellInputs();
   },  
 
   onCommitCell: function(cell){
