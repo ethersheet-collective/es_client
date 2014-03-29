@@ -18,8 +18,23 @@ var SheetCollection = module.exports = ESCollection.extend({
     this.id = o.channel;
     this.send_enabled = true;
   },
-
-  
+  deleteSheet: function(id){
+    var sheet = this.get(id);
+    console.log(sheet);
+    var sheet_data = sheet.getData();
+    this.send({
+      id: this.id,
+      type: 'sheets',
+      action: 'deleteSheet',
+      params:[sheet.id]
+    },{
+      id: this.id,
+      type: 'sheets',
+      action: 'addSheet',
+      params:[sheet_data]
+    });
+    sheet.destroy();
+  },
   addSheet: function(o){
     var sheet = new Sheet(o);
     sheet.meta.title = 'Sheet' + (this.length * 1 + 1);

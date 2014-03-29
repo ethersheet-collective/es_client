@@ -12,7 +12,8 @@ var SheetListView = module.exports = View.extend({
   events: {
     'click #es-add-sheet-button': 'onAddSheetClick',
     'click .es-menu-button': 'onSheetSelection',
-    'click #es-import-csv': 'importCSV'
+    'click #es-import-csv': 'importCSV',
+    'click #delete-sheet': 'deleteSheet'
   },
 
   initialize: function(o){
@@ -29,7 +30,8 @@ var SheetListView = module.exports = View.extend({
 
   setSheets: function(sheets){
     this.models.set('sheets', sheets,{
-      'add': 'render'
+      'add': 'render',
+      'remove': 'onSheetRemoved'
     });
   },
 
@@ -47,7 +49,6 @@ var SheetListView = module.exports = View.extend({
     this.$el.html(t.sheet_list({sheets:this.getSheets(), current_sheet_id:current_sheet_id}));
     $('#' + current_sheet_id).addClass('active');
   },
-
   onAddSheetClick: function(e){
     this.getSheets().addSheet();
   },
@@ -61,7 +62,19 @@ var SheetListView = module.exports = View.extend({
     var current_sheet_id = this.getUsers().getCurrentUser().getCurrentSheetId();
     $('#es-modal-box').html(t.import_dialog({sheet_id: current_sheet_id}));
     $('#es-modal-overlay').show();
-  }
+  },
+  deleteSheet: function(e){
+    var confirm_delete = "Warning: This will permanently delete the sheet, are you sure you wish to continue?";
+    var sheet_id = $(e.currentTarget).data('sheet-id');
+    console.log(sheet_id);
+    if(confirm(confirm_delete)){
+      this.getSheets().deleteSheet(sheet_id);
+    }
+  },
+  onSheetRemoved: function(){
+    this.render();
+    this.getUsers().getCurrentUser().setCurrentSheetId(this.getSheets().first().id);
+  },
 });
 
 });

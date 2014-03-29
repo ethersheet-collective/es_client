@@ -2,7 +2,11 @@
 <% var _ = require('underscore'); %>
 <% var cls = "" %>
 <% sheets.each(function(sheet){ %>
-<li class="es-menu-button" id=<%=sheet.id%> > <%=sheet.meta.title%> </li>
+<li class="es-menu-button" id=<%=sheet.id%> > 
+  <span style="float:left;padding-top:5px;"><%=sheet.meta.title%> </span>
+  <button class="es-sheet-control" id="delete-sheet" data-sheet-id="<%=sheet.id%>"><img src="/es_client/icons/es-trashcan.png" height=16 width=16></button>
+  <div class="clear"></div>
+</li>
 <%});%>
 </ul>
 <ul id='es-menu-grid'>

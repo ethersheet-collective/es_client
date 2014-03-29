@@ -51,3 +51,10 @@ color:#111;
 #es-menu-grid a{
   color: #000;
 }
+.es-sheet-control {
+  margin-right: 5px;
+  cursor: pointer;
+  float: right;
+}
+.es-sheet-control#delete-sheet {
+}
