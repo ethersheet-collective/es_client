@@ -238,16 +238,14 @@ var Table = module.exports = View.extend({
     $('#es-data-table-'+this.getId(),this.$el)
       .html(t.table({sheet:this.getSheet()}));
 
-    this.drawRowHeaders();
-    this.drawColHeaders();
 
     this.initializeElements();
     this.initializeScrolling();
     this.initializeSelections();
-    setTimeout(this.resizeRowHeaders.bind(this),100);
-    setTimeout(this.resizeRowHeaders.bind(this),300);
-    setTimeout(this.resizeColHeaders.bind(this),100);
-    setTimeout(this.resizeColHeaders.bind(this),300);
+
+    this.drawRowHeaders();
+    this.drawColHeaders();
+    
     this.$grid = $(".es-grid-container",this.$el);
     this.is_rendered = true;
     this.resize();
@@ -311,13 +309,6 @@ var Table = module.exports = View.extend({
       return row_el.offsetHeight;
     }
     return undefined;
-  },
-
-  resizeRowHeaders: function(){
-    var view = this;
-    _.each(this.getSheet().rowIds(), function(row_id){
-      view.resizeRowHeader(row_id);
-    });
   },
 
   resizeRowHeader: function(row_id){
