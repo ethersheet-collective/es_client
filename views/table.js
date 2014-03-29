@@ -245,7 +245,11 @@ var Table = module.exports = View.extend({
 
     this.drawRowHeaders();
     this.drawColHeaders();
-    
+
+    setTimeout(this.drawRowHeaders.bind(this),100);
+    setTimeout(this.drawRowHeaders.bind(this),300);
+    setTimeout(this.drawColHeaders.bind(this),100);
+    setTimeout(this.drawColHeaders.bind(this),300);
     this.$grid = $(".es-grid-container",this.$el);
     this.is_rendered = true;
     this.resize();
