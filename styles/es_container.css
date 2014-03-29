@@ -91,6 +91,10 @@ margin:0;
   background-repeat: no-repeat;
   cursor: pointer;
 }
+.es-table-corner .es-sidebar-toggle{
+  height: 18px;
+  width: 45px;
+}
 #es-menu-container{
 }
 #es-table-container{
