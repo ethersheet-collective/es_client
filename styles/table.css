@@ -147,8 +147,3 @@ overflow:scroll;
 .es-row-odd{
   background: #FBFBFB;
 }
-.es-row-first{
-  background: #edeff0;
-  height: 100px;
-  box-shadow: -1px 1px 5px #333;
-}
