@@ -514,7 +514,7 @@ var Table = module.exports = View.extend({
     var cell_id = $el.attr('id');
     var cell_value = this.getSheet().getDisplayFormula(row_id,col_id);
 
-    var $input = $("<input id='"+cell_id+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' data-cell_id='"+cell_id+"' class='es-table-cell-input' value='"+cell_value+"' />");
+    var $input = $("<textarea id='"+cell_id+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' data-cell_id='"+cell_id+"' class='es-table-cell-input'>"+cell_value+"</textarea>");
     
     this.$grid.append($input);
 
