@@ -11,11 +11,11 @@ var SheetListView = module.exports = View.extend({
 
   events: {
     'click #es-add-sheet-button': 'onAddSheetClick',
-    'click .es-menu-button': 'onSheetSelection',
     'click #es-import-csv': 'importCSV',
     'click #rename-sheet': 'editSheet',
     'submit #sheet_edit_form': 'renameSheet',
-    'click #delete-sheet': 'deleteSheet'
+    'click #delete-sheet': 'deleteSheet',
+    'click span#sheet_name': 'onSheetSelection',
   },
 
   initialize: function(o){
