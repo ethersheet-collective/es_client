@@ -18,6 +18,23 @@ var SheetCollection = module.exports = ESCollection.extend({
     this.id = o.channel;
     this.send_enabled = true;
   },
+  renameSheet: function(id,new_name){
+    var sheet = this.get(id);
+    var old_name = sheet.meta.title;
+    sheet.meta.title = new_name;
+    this.trigger('rename_sheet',{});
+    this.send({
+      id: this.id,
+      type: 'sheets',
+      action: 'renameSheet',
+      params: [sheet.id,new_name] 
+    },{
+      id: this.id,
+      type: 'sheets',
+      action: 'renameSheet',
+      params: [sheet.id,old_name] 
+    });
+  },
   deleteSheet: function(id){
     var sheet = this.get(id);
     console.log(sheet);

@@ -13,6 +13,8 @@ var SheetListView = module.exports = View.extend({
     'click #es-add-sheet-button': 'onAddSheetClick',
     'click .es-menu-button': 'onSheetSelection',
     'click #es-import-csv': 'importCSV',
+    'click #rename-sheet': 'editSheet',
+    'submit #sheet_edit_form': 'renameSheet',
     'click #delete-sheet': 'deleteSheet'
   },
 
@@ -31,6 +33,7 @@ var SheetListView = module.exports = View.extend({
   setSheets: function(sheets){
     this.models.set('sheets', sheets,{
       'add': 'render',
+      'rename_sheet': 'render',
       'remove': 'onSheetRemoved'
     });
   },
@@ -62,6 +65,17 @@ var SheetListView = module.exports = View.extend({
     var current_sheet_id = this.getUsers().getCurrentUser().getCurrentSheetId();
     $('#es-modal-box').html(t.import_dialog({sheet_id: current_sheet_id}));
     $('#es-modal-overlay').show();
+  },
+  editSheet: function(e){
+    $("#sheet_name").hide();
+    $("#sheet_edit_form").show();
+  },
+  renameSheet: function(e){
+    e.preventDefault();
+    var sheet_id = $(e.currentTarget).children('#sheet-id').val();
+    var sheet_name = $(e.currentTarget).children('#sheet-name').val();
+    console.log('renaming',sheet_id,'to',sheet_name);
+    this.getSheets().renameSheet(sheet_id,sheet_name);
   },
   deleteSheet: function(e){
     var confirm_delete = "Warning: This will permanently delete the sheet, are you sure you wish to continue?";
