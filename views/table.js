@@ -33,8 +33,10 @@ var Table = module.exports = View.extend({
     'mousemove .es-table-cell': 'cellMouseMove',
     'mouseup .es-table-cell': 'cellMouseUp',
     'click .es-table-cell': 'cellClicked',
-    'click .es-row-header': 'selectRow',
-    'click .es-column-header': 'selectCol',
+    'click .es-row-header': 'showRowMenu',
+    'click .es-column-header': 'showColMenu',
+    'contextmenu .es-column-header': 'showColMenu',
+    'contextmenu .es-row-header': 'showRowMenu',
     'change .es-table-cell-input': 'changeCell',
     'keydown': 'inputKeypress'
   },
@@ -302,7 +304,7 @@ var Table = module.exports = View.extend({
     _.each(this.getSheet().rowIds(), function(row_id,index){
       row_name = index+1;
       height = view.heightForRow(row_id);
-      html +='<tr id="es-header-'+row_id+'" style="height:'+height+'px;"><th class="es-row-header">'+row_name+'</th></tr>'
+      html +='<tr id="es-header-'+row_id+'" style="height:'+height+'px;"><th class="es-row-header">'+row_name+' <img src="/es_client/icons/ethersheet-downarrow.png" class="es-menu-arrow"></th></tr>'
     });
 
     $('#es-row-headers-'+this.getId(),this.$el).html(html);
@@ -343,6 +345,7 @@ var Table = module.exports = View.extend({
       width = view.widthForCol(col_id);
       html +='<th id="es-col-header-'+col_id+'" class="es-column-header" style="width:'+width+'px;">'
               +h.columnIndexToName(index)
+              +'<img src="/es_client/icons/ethersheet-downarrow.png" class="es-menu-arrow">'
               +'</th>';
     });
 
@@ -623,7 +626,17 @@ var Table = module.exports = View.extend({
     var sheet = this.getSheets().get(sheet_id);
     this.setSheet(sheet);
     this.render();
-  }
+  },
+
+  showColMenu: function(e){
+    e.preventDefault();
+    alert('hi');
+  },
+
+  showRowMenu: function(e){
+    e.preventDefault();
+    alert('hi');
+  },
 
 });
 

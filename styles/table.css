@@ -28,6 +28,11 @@ width: 0;
 .es-column-headers,.es-row-headers,.es-grid-container{
 position:absolute;
 }
+.es-column-headers th:hover, .es-row-headers th:hover{
+  background-color: #222;
+  color: #dadada;
+  cursor: pointer;
+}
 .es-column-headers{
 margin-left:45px;
 left:0px;
@@ -147,3 +152,12 @@ overflow:scroll;
 .es-row-odd{
   background: #FBFBFB;
 }
+.es-menu-arrow{
+  display: none;
+  float: right;
+  padding-top: 2px;
+}
+.es-column-headers th:hover .es-menu-arrow, .es-row-headers th:hover .es-menu-arrow{
+  display: inline;
+}
+
