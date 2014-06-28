@@ -98,6 +98,8 @@ overflow:hidden;
 .es-table-cell-input{
 border: 0px;
 position: absolute;
+resize:none;
+overflow: hidden;
 }
 .es-expression-editor{
 height: 100%;
