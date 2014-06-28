@@ -98,9 +98,6 @@ var MenuView = module.exports = View.extend({
       case 'sort_rows':
         this.sortRows();
         break;
-      case 'format_cell':
-        this.formatCell();
-        break;
     };
   },
 
@@ -124,17 +121,6 @@ var MenuView = module.exports = View.extend({
   sortRows:function(){
     var col_id = this.getCurrentCell().col_id;
     this.getSheet().sortRows(col_id);
-  },
-
-  formatCell:function(){
-    var cell = this.getCurrentCell();
-    var selection = this.getSelection();
-    $('#es-modal-box').html(t.cell_format_dialog({selection: selection}));
-    $('#es-modal-overlay').show();
-    $('.es-format-toggle').click(function(){
-      var format_string = $(this)[0].id;
-      selection.addFormat(format_string);
-    });
   },
 
   addCol:function(){
