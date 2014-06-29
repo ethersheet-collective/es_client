@@ -16,11 +16,12 @@ define( function(require,exports,module){
 var $ = require('jquery');
 var t = require('../templates');
 var RefBinder = require('ref-binder');
-var View = require('backbone').View;
+//var View = require('backbone').View;
+var MenuView = require('./menu');
 var ExpressionHelpers = require('../lib/expression_helpers');
 var _ = require('underscore');
 
-var FunctionMenuView = module.exports = View.extend({
+var FunctionMenuView = module.exports = MenuView.extend({
 
   events: {
     'click .es-menu-button': 'onButtonClick'
