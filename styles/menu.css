@@ -43,7 +43,7 @@ color:#111;
   margin: 0;
   padding: 0;
 }
-#es-menu-list li.es-menu-button.active{
+#es-menu-list li.es-menu-button:hover{
   background: #2BB573;
   border-bottom: 1px solid #009344;
   color: #fcfcfc;

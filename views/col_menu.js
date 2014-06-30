@@ -19,7 +19,7 @@ var RefBinder = require('ref-binder');
 var View = require('backbone').View;
 var _ = require('underscore');
 
-var MenuView = module.exports = View.extend({
+var ColMenuView = module.exports = View.extend({
 
   events: {
     'click .es-menu-button': 'onButtonClick'
@@ -28,11 +28,11 @@ var MenuView = module.exports = View.extend({
   initialize: function(o){
     this.models = new RefBinder(this);
     this.data = o.data;
+    this.col_id = o.col_id;
     this.setSheets(o.data.sheets || null);
     this.setUser(o.data.users.getCurrentUser());
     var current_sheet_id = this.getUser().getCurrentSheetId();
     this.setSheet(o.data.sheets.get(current_sheet_id) || null);
-    this.setSelection(o.data.selections.getLocal() || null);
   },
 
   getSheet: function(){
@@ -41,14 +41,6 @@ var MenuView = module.exports = View.extend({
 
   setSheet: function(sheet){
     this.models.set('sheet',sheet);
-  },
-
-  getSelection: function(){
-    return this.models.get('selection');
-  },
-
-  setSelection: function(selection){
-    this.models.set('selection',selection); 
   },
 
   getSheets: function(){
@@ -71,16 +63,16 @@ var MenuView = module.exports = View.extend({
 
   render: function(){
     this.$el.empty();
-    this.$el.html(t.menu());
-  },
-
-  getCurrentCell: function(){
-    var cells =this.getSelection().getCells();
-    if(!cells) return;
-    return cells[0];
+    this.$el.html(t.col_menu());
   },
   
+  onChangeCurrentSheetID: function(){
+    var sheet = this.getSheets().get(this.getUser().getCurrentSheetId());
+    this.setSheet(sheet);
+  },
+
   onButtonClick: function(e){
+    console.log("CLICKLICKLCIK")
     var action = $(e.currentTarget).data('action');
     switch(action){
       case 'add_column':
@@ -89,51 +81,25 @@ var MenuView = module.exports = View.extend({
       case 'remove_column':
         this.deleteCol();
         break;
-      case 'add_row':
-        this.addRow();
-        break;
-      case 'remove_row':
-        this.deleteRow();
-        break;
-      case 'sort_rows':
+      case 'sort_row':
         this.sortRows();
         break;
     };
   },
 
-  onChangeCurrentSheetID: function(){
-    var sheet = this.getSheets().get(this.getUser().getCurrentSheetId());
-    this.setSheet(sheet);
-  },
-
-  addRow:function(){
-    var row_id = this.getCurrentCell().row_id;
-    var row_position = this.getSheet().indexForRow(row_id); 
-    if(row_position == -1) return;
-    this.getSheet().insertRow(row_position);
-  },
-
-  deleteRow:function(){
-    var row_id = this.getCurrentCell().row_id;
-    this.getSheet().deleteRow(row_id);
-  },
-
   sortRows:function(){
-    var col_id = this.getCurrentCell().col_id;
-    this.getSheet().sortRows(col_id);
+    this.getSheet().sortRows(this.col_id);
   },
 
   addCol:function(){
-    var col_id = this.getCurrentCell().col_id;
-    var col_position = this.getSheet().indexForCol(col_id); 
+    var col_position = this.getSheet().indexForCol(this.col_id); 
     if(col_position == -1) return;
     this.getSheet().insertCol(col_position);
   },
 
   deleteCol:function(){
-    var col_id = this.getCurrentCell().col_id;
-    this.getSheet().deleteCol(col_id);
-  },
+    this.getSheet().deleteCol(this.col_id);
+  }
 });
 
 });

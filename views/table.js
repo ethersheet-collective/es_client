@@ -17,6 +17,8 @@ var $ = require('jquery');
 var t = require('../templates');
 var RefBinder = require('ref-binder');
 var View = require('backbone').View;
+var ColMenuView = require('./col_menu');
+var RowMenuView = require('./row_menu');
 var _ = require('underscore');
 var h = require('es_client/helpers');
 
@@ -201,6 +203,7 @@ var Table = module.exports = View.extend({
   },
 
   onClear: function(cells){
+    console.log("onClear");
     var table = this;
     this.removeCellInputs();
     _.each(cells, function(cell){
@@ -235,6 +238,7 @@ var Table = module.exports = View.extend({
   },
 
   render: function(){
+    console.log("RENDER");
     this.$el.empty();
     this.$el.append($(t.sheet_table({id:this.getId()})));
     
@@ -304,7 +308,7 @@ var Table = module.exports = View.extend({
     _.each(this.getSheet().rowIds(), function(row_id,index){
       row_name = index+1;
       height = view.heightForRow(row_id);
-      html +='<tr id="es-header-'+row_id+'" style="height:'+height+'px;"><th class="es-row-header">'+row_name+' <img src="/es_client/icons/ethersheet-downarrow.png" class="es-menu-arrow"></th></tr>'
+      html +='<tr id="es-header-'+row_id+'" style="height:'+height+'px;"><th class="es-row-header"  data-row_id="'+row_id+'">'+row_name+' <img src="/es_client/icons/ethersheet-downarrow.png" class="es-menu-arrow"></th></tr>'
     });
 
     $('#es-row-headers-'+this.getId(),this.$el).html(html);
@@ -343,7 +347,7 @@ var Table = module.exports = View.extend({
 
     _.each(this.getSheet().colIds(), function(col_id,index){
       width = view.widthForCol(col_id);
-      html +='<th id="es-col-header-'+col_id+'" class="es-column-header" style="width:'+width+'px;">'
+      html +='<th id="es-col-header-'+col_id+'" data-col_id="'+col_id+'" class="es-column-header" style="width:'+width+'px;">'
               +h.columnIndexToName(index)
               +'<img src="/es_client/icons/ethersheet-downarrow.png" class="es-menu-arrow">'
               +'</th>';
@@ -393,6 +397,7 @@ var Table = module.exports = View.extend({
   },
   
   cellMouseDown: function(e){
+    this.clearOverlays();
     this.setCellDragTarget(e);
     if (this.isDraggingCell()){
       return false;
@@ -517,7 +522,7 @@ var Table = module.exports = View.extend({
     var cell_id = $el.attr('id');
     var cell_value = this.getSheet().getDisplayFormula(row_id,col_id);
 
-    var $input = $("<textarea id='"+cell_id+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' data-cell_id='"+cell_id+"' class='es-table-cell-input'>"+cell_value+"</textarea>");
+    var $input = $("<textarea id='"+cell_id+"-input' data-row_id='"+row_id+"' data-col_id='"+col_id+"' data-cell_id='"+cell_id+"' class='es-table-cell-input es-overlay'>"+cell_value+"</textarea>");
     
     this.$grid.append($input);
 
@@ -587,7 +592,7 @@ var Table = module.exports = View.extend({
   },
 
   selectCell: function(e){
-    var s = this.getLocalSelection().clear();
+    var s = this.clearOverlays();
     this.addCellToSelection(e);
   },
 
@@ -630,14 +635,59 @@ var Table = module.exports = View.extend({
 
   showColMenu: function(e){
     e.preventDefault();
-    alert('hi');
+    this.clearOverlays();
+    var $headerCell = $(e.currentTarget)
+    $headerCell.addClass('es-header-active');
+    var pos = $headerCell.position();
+    var offset = Number(this.$table_col_headers.css("margin-left").replace("px",""));
+    console.log("offest",offset)
+
+    var left = pos.left + offset;
+    var top = pos.top + $headerCell.innerHeight();
+    var width = $headerCell.outerWidth()
+    var html = "<div class='es-context-menu es-overlay' style='left:"+left+"px;top:"+top+"px;position: absolute;'></div>";
+    var $menu = $(html);
+
+    var menu = new ColMenuView({
+      el: $menu,
+      col_id: String($headerCell.data("col_id")),
+      data: this.data,
+    }).render();
+
+    $menu.i18n();
+
+    this.$el.append($menu);
   },
 
   showRowMenu: function(e){
     e.preventDefault();
-    alert('hi');
+    this.clearOverlays();
+    var $headerCell = $(e.currentTarget);
+    $headerCell.addClass('es-header-active');
+    var pos = $headerCell.position();
+
+    var left = pos.left + $headerCell.outerWidth();
+    var top = pos.top;
+    var width = $headerCell.outerWidth()
+    var html = "<div class='es-context-menu es-overlay' style='left:"+left+"px;top:"+top+"px;position: absolute;'></div>";
+    var $menu = $(html);
+
+    var menu = new RowMenuView({
+      el: $menu,
+      row_id: String($headerCell.data("row_id")),
+      data: this.data,
+    }).render();
+
+    $menu.i18n();
+
+    this.$el.append($menu);
   },
 
+  clearOverlays: function(){
+    $(".es-header-active").removeClass("es-header-active");
+    $(".es-overlay").remove();
+    this.getLocalSelection().clear();
+  }
 });
 
 });

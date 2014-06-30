@@ -52,9 +52,11 @@ var SheetListView = module.exports = View.extend({
     this.$el.html(t.sheet_list({sheets:this.getSheets(), current_sheet_id:current_sheet_id}));
     $('#' + current_sheet_id).addClass('active');
   },
+
   onAddSheetClick: function(e){
     this.getSheets().addSheet();
   },
+
   onSheetSelection: function(e){
     $el = $(e.currentTarget);
     $('.es-menu-button').removeClass('active');
