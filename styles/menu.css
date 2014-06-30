@@ -16,14 +16,20 @@ color:#111;
   padding: 10px;
   text-decoration: none;
 }
+#es-panel-1 #es-menu-list li {
+  background: none repeat scroll 0 0 #000000;
+  border-bottom: 1px solid #D0D2D3;
+  color: #dadada;
+  cursor: pointer;
+  padding: 10px;
+  text-decoration: none;
+}
 .clear{
   clear: both;
 }
-
-#es-sheet-list-container{
+#es-sheet-list-container {
   border: 1px solid black;
   box-shadow: 5px 5px 5px #888;
-
 }
 #es-menu-grid li {
   border-bottom: 1px solid #D0D2D3;
@@ -44,6 +50,11 @@ color:#111;
   padding: 0;
 }
 #es-menu-list li.es-menu-button:hover{
+  background: #2BB573;
+  border-bottom: 1px solid #009344;
+  color: #fcfcfc;
+}
+#es-panel-1 #es-menu-list li.es-menu-button:hover{
   background: #2BB573;
   border-bottom: 1px solid #009344;
   color: #fcfcfc;
