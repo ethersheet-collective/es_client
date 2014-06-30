@@ -91,7 +91,6 @@ var RowMenuView = module.exports = View.extend({
   },
 
   onButtonClick: function(e){
-    console.log("CLICK")
     var action = $(e.currentTarget).data('action');
     switch(action){
       case 'add_row':
