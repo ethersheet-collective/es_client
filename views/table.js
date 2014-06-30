@@ -203,7 +203,6 @@ var Table = module.exports = View.extend({
   },
 
   onClear: function(cells){
-    console.log("onClear");
     var table = this;
     this.removeCellInputs();
     _.each(cells, function(cell){
@@ -238,7 +237,6 @@ var Table = module.exports = View.extend({
   },
 
   render: function(){
-    console.log("RENDER");
     this.$el.empty();
     this.$el.append($(t.sheet_table({id:this.getId()})));
     
@@ -640,7 +638,7 @@ var Table = module.exports = View.extend({
     $headerCell.addClass('es-header-active');
     var pos = $headerCell.position();
     var offset = Number(this.$table_col_headers.css("margin-left").replace("px",""));
-    console.log("offest",offset)
+    
 
     var left = pos.left + offset;
     var top = pos.top + $headerCell.innerHeight();
@@ -665,9 +663,10 @@ var Table = module.exports = View.extend({
     var $headerCell = $(e.currentTarget);
     $headerCell.addClass('es-header-active');
     var pos = $headerCell.position();
+    var offset = Number(this.$table_row_headers.css("margin-top").replace("px",""));
 
     var left = pos.left + $headerCell.outerWidth();
-    var top = pos.top;
+    var top = pos.top + offset;
     var width = $headerCell.outerWidth()
     var html = "<div class='es-context-menu es-overlay' style='left:"+left+"px;top:"+top+"px;position: absolute;'></div>";
     var $menu = $(html);
