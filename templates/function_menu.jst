@@ -1,4 +1,4 @@
-<ul id='es-menu-list'>
+<ul class='es-menu-list'>
 <% _.each(eh.userFunctions,function(func){ %>
   <% if(!func || !func.def){ return }; %>
   <li class="es-menu-button" data-action=<%= func.def %> > <%= func.def %> - <%= func.desc  %> </li>
