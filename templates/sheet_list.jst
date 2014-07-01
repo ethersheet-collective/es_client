@@ -3,10 +3,10 @@
 <% var cls = "" %>
 <% sheets.each(function(sheet){ %>
 <li class="es-menu-button" id=<%=sheet.id%> > 
-  <span id="sheet_name" style="float:left;padding-top:5px;"><%=sheet.meta.title%> </span>
-  <form id="sheet_edit_form" style="display:none;float:left;padding-top:5px;height:22px;width:155px;">
-    <input id='sheet-name' type="text" style="width: 145px; font-size: 16px; border: 1px solid #ccc;" value="<%=sheet.meta.title%>">
-    <input id='sheet-id' type="hidden" value="<%=sheet.id%>">
+  <span class="es-sheet-name" style="float:left;padding-top:5px;"><%=sheet.meta.title%> </span>
+  <form class="es-sheet-edit-form" style="display:none;float:left;padding-top:5px;height:22px;width:155px;">
+    <input class='es-sheet-input-name' type="text" style="width: 145px; font-size: 16px; border: 1px solid #ccc;" value="<%=sheet.meta.title%>">
+    <input class='es-sheet-input-id' type="hidden" value="<%=sheet.id%>">
   </form>
   <button class="es-sheet-control" id="delete-sheet" data-sheet-id="<%=sheet.id%>"><img src="/es_client/icons/es-trashcan.png" height=16 width=16></button>
   <button class="es-sheet-control" id="rename-sheet" data-sheet-id="<%=sheet.id%>"><img src="/es_client/icons/es_pen.png" height=16 width=16></button>
