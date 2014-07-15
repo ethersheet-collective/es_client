@@ -2,20 +2,20 @@
 <% var _ = require('underscore'); %>
 <% var cls = "" %>
 <% sheets.each(function(sheet){ %>
-<li class="es-menu-button" id=<%=sheet.id%> > 
-  <span class="es-sheet-name" style="float:left;padding-top:5px;"><%=sheet.meta.title%> </span>
-  <form class="es-sheet-edit-form" style="display:none;float:left;padding-top:5px;height:22px;width:155px;">
-    <input class='es-sheet-input-name' type="text" style="width: 145px; font-size: 16px; border: 1px solid #ccc;" value="<%=sheet.meta.title%>">
-    <input class='es-sheet-input-id' type="hidden" value="<%=sheet.id%>">
-  </form>
-  <button class="es-sheet-control" id="delete-sheet" data-sheet-id="<%=sheet.id%>"><img src="/es_client/icons/es-trashcan.png" height=16 width=16></button>
-  <button class="es-sheet-control" id="rename-sheet" data-sheet-id="<%=sheet.id%>"><img src="/es_client/icons/es_pen.png" height=16 width=16></button>
-  <div class="clear"></div>
-</li>
+	<li class="es-menu-button" id=<%=sheet.id%> > 
+  	<span class="es-sheet-name" style="float:left;padding-top:5px;"><%=sheet.meta.title%> </span>
+  	<form class="es-sheet-edit-form" style="display:none;float:left;padding-top:5px;height:22px;width:155px;">
+    	<input class='es-sheet-input-name' type="text" style="width: 145px; font-size: 16px; border: 1px solid #ccc;" value="<%=sheet.meta.title%>">
+    	<input class='es-sheet-input-id' type="hidden" value="<%=sheet.id%>">
+  	</form>
+ 		<button class="es-sheet-control" id="delete-sheet" data-sheet-id="<%=sheet.id%>"><img src="/es_client/icons/es-trashcan.png" height=16 width=16></button>
+  	<button class="es-sheet-control" id="rename-sheet" data-sheet-id="<%=sheet.id%>"><img src="/es_client/icons/es_pen.png" height=16 width=16></button>
+  	<div class="clear"></div>
+	</li>
 <%});%>
 </ul>
 <ul id='es-menu-grid'>
-<li id='es-add-sheet-button'><img src="/es_client/icons/ethersheet-icon-newtable.png"><span class="i18n" data-i18n="newSheet"></span></li>
-<a href="/s/<%=current_sheet_id%>.csv" target=_blank><li id="es-export-csv"><img src="/es_client/icons/ethersheet-icon-export.png"><span class="i18n" data-i18n="exportCSV"></span></li></a>
-<li id="es-import-csv"><img src="/es_client/icons/ethersheet-icon-import.png">Import CSV</li>
+	<li id='es-add-sheet-button' class="es-menu-grid-button"><img src="/es_client/icons/ethersheet-icon-newtable.png"><span class="i18n" data-i18n="newSheet"></span></li>
+	<a href="/s/<%=current_sheet_id%>.csv" target=_blank><li id="es-export-csv" class="es-menu-grid-button"><img src="/es_client/icons/ethersheet-icon-export.png"><span class="i18n" data-i18n="exportCSV"></span></li></a>
+	<li id="es-import-csv" class="es-menu-grid-button"><img src="/es_client/icons/ethersheet-icon-import.png"><span>Import CSV</span></li>
 </ul>
