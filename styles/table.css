@@ -28,7 +28,7 @@ width: 0;
 .es-column-headers,.es-row-headers,.es-grid-container{
 position:absolute;
 }
-.es-column-headers th:hover, .es-row-headers th:hover{
+.es-column-headers th:hover, .es-row-headers th:hover, .es-header-active {
   background-color: #222;
   color: #dadada;
   cursor: pointer;
@@ -83,12 +83,14 @@ border-top:none;
 border-bottom:none;
 height:100%;
 line-height: 19px;
+position:relative;
 }
 .es-row-header{
 border:1px solid #666666;
 border-right: none;
 border-left: none;
 padding: 0;
+position:relative;
 }
 .es-table-cell{
 border-top:1px solid #D0D2D3;
@@ -156,10 +158,11 @@ overflow:scroll;
 }
 .es-menu-arrow{
   display: none;
-  float: right;
-  padding-top: 2px;
+  top: 2px;
+  right:4px;
 }
 .es-column-headers th:hover .es-menu-arrow, .es-row-headers th:hover .es-menu-arrow{
-  display: inline;
+  position: absolute;
+  display:block;
 }
 

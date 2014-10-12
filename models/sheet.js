@@ -216,7 +216,7 @@ var Sheet = module.exports = ESModel.extend({
     return this.cols[index];
   },
   indexForCol: function(col_id){
-    return _.indexOf(this.cols,col_id);
+    return _.indexOf(this.cols,String(col_id));
   },
   insertCol: function(position, id){
     var new_id = id || uid();

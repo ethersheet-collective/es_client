@@ -2,13 +2,13 @@
 #es-menu-container h2{
   margin-top: 0;
 }
-#es-menu-list{
+.es-menu-list{
 list-style:none;
 margin:0;
 padding:0;
 color:#111;
 }
-#es-menu-list li{
+.es-menu-list li{
   background: none repeat scroll 0 0 #FFFFFF;
   border-bottom: 1px solid #D0D2D3;
   color: #000000;
@@ -16,14 +16,23 @@ color:#111;
   padding: 10px;
   text-decoration: none;
 }
+#es-panel-1 .es-menu-list li {
+  background: none repeat scroll 0 0 #000000;
+  border-bottom: 1px solid #D0D2D3;
+  color: #dadada;
+  cursor: pointer;
+  padding: 10px;
+  text-decoration: none;
+}
+.es-sheet-name {
+ width: 145px;
+}
 .clear{
   clear: both;
 }
-
-#es-sheet-list-container{
+#es-sheet-list-container {
   border: 1px solid black;
   box-shadow: 5px 5px 5px #888;
-
 }
 #es-menu-grid li {
   border-bottom: 1px solid #D0D2D3;
@@ -43,7 +52,16 @@ color:#111;
   margin: 0;
   padding: 0;
 }
-#es-menu-list li.es-menu-button.active{
+.es-menu-grid-button span {
+  font-size: 14px;
+  padding: 2px 0;
+}
+.es-menu-list li.es-menu-button:hover, .es-menu-list li.es-menu-button.active{
+  background: #2BB573;
+  border-bottom: 1px solid #009344;
+  color: #fcfcfc;
+}
+#es-panel-1 .es-menu-list li.es-menu-button:hover{
   background: #2BB573;
   border-bottom: 1px solid #009344;
   color: #fcfcfc;
