@@ -24,8 +24,7 @@
     "chai": "*"
   },
   "scripts": {
-    "test": "make",
-    "postinstall": "bin/install.sh"
+    "test": "make"
   },
   "repository": "",
   "author": "",
