@@ -637,7 +637,7 @@ var Table = module.exports = View.extend({
     var $headerCell = $(e.currentTarget)
     $headerCell.addClass('es-header-active');
     var pos = $headerCell.position();
-    var offset = Number(this.$table_col_headers.css("margin-left").replace("px",""));
+    var offset = this.$table_col_headers.position().left + Number(this.$table_col_headers.css("margin-left").replace("px",""));
     
 
     var left = pos.left + offset;
@@ -663,7 +663,7 @@ var Table = module.exports = View.extend({
     var $headerCell = $(e.currentTarget);
     $headerCell.addClass('es-header-active');
     var pos = $headerCell.position();
-    var offset = Number(this.$table_row_headers.css("margin-top").replace("px",""));
+    var offset = this.$table_row_headers.position().top + Number(this.$table_row_headers.css("margin-top").replace("px",""));
 
     var left = pos.left + $headerCell.outerWidth();
     var top = pos.top + offset;
